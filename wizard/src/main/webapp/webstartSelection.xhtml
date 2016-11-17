@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="masterLayout.xhtml">
+
+    <!--***************JAVASCRIPT***************-->
+    <ui:define name="javascript">
+    </ui:define>
+    <!--***************INFOBOX***************-->
+    <ui:define name="infoBox">
+        #{msg.webstartSelectionInfo}
+    </ui:define>
+    <!--***************HEADER***************-->
+    <ui:define name="header">
+        #{msg.webstartSelection}
+    </ui:define>
+    <!--***************MAIN***************-->
+    <ui:define name="main">
+        
+        <p:messages id="error"/>
+        
+        <h:panelGrid columns="2"  styleClass="top centered twoColumnTable">
+
+            <h:outputLabel value="#{msg.webstarts}:" styleClass="selectionLable"/>
+
+            <h:dataTable id="usedWebstarts"  var="webstart" value="#{webstartSelectionBean.selectedWebstartsWithId}">
+                <h:column>
+                    <h:panelGrid columns="4" styleClass="selectionTable">
+
+                        <h:selectOneMenu  value="#{webstart.second}" styleClass="elementWidth"
+                                          valueChangeListener="#{webstartSelectionBean.dropDownValueChangeMethod}">
+                            <f:ajax render="@form"/>
+                            <f:selectItem itemLabel="#{msg.chooseWebstart}" itemValue=""/>
+                            <f:selectItems value="#{webstartSelectionBean.readyWebstartList}" var="name"
+                                           itemLabel="#{name}" itemValue="#{name}"/>
+                        </h:selectOneMenu>
+
+                        <h:commandButton image="resources/plus.gif" title="#{msg.addWebstartDropdownToolTip}" action="#{webstartSelectionBean.addDropdown(webstart.first)}">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+                        <h:commandButton image="resources/remove.gif" title="#{msg.removeWebstartDropdownToolTip}"  action="#{webstartSelectionBean.removeDropdown(webstart.first)}" rendered="#{webstartSelectionBean.showRemove}" styleClass="removeButton">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+                        <p:panel styleClass="removeButton" rendered="#{!webstartSelectionBean.showRemove}"/>
+                    </h:panelGrid>
+                </h:column>
+            </h:dataTable>
+
+        </h:panelGrid>
+    </ui:define>
+
+    <!--***************BOXES ON SIDE***************-->
+    <ui:define name="box">
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newWebstartGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.webstarts}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addWebstartToolTip}" action="#{webstartSelectionBean.newWebstart()}"/>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noWebstarts" value="#{msg.noWebstart}" rendered="#{webstartSelectionBean.webstartsEmpty}" />
+            <h:dataTable id="webstartBox" var="str" value="#{webstartSelectionBean.readyWebstartList}">
+                <h:column>
+                    <div class="forceWrapBox">#{str}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editWebstartToolTip}" action="#{webstartSelectionBean.editWebstart(str)}"/>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeWebstartToolTip}" action="#{webstartSelectionBean.removeWebstart(str)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+    </ui:define>
+
+    <!--***************BUTTONS ON THE BOTTOM***************-->
+    <ui:define name="buttons">
+        
+        <h:outputLabel id="changeLabel" value="#{msg.unsavedChanges} " title="#{msg.unsavedChangesTooltip}" rendered="#{webstartSelectionBean.renderUnsavedChanges}" class="changeLabel" />
+        
+        <h:panelGrid columns="3" styleClass="centered" border="0">
+            <p:commandButton id="saveRetButton" value="#{msg.saveReturn}" update="@form" actionListener="#{webstartSelectionBean.saveReturn}" />
+            <p:commandButton id="saveButton"  value="#{msg.save}" update="@form" actionListener="#{webstartSelectionBean.save}" />
+            <p:commandButton ajax="false" id="cancel" action="#{webstartSelectionBean.cancel}" immediate="true" value="#{msg.cancel}"  />
+        </h:panelGrid>
+    </ui:define>
+
+
+    <!--***************POPUP***************-->
+    <ui:define name="popup"> 
+    </ui:define>
+
+    <!--***************ACTION ON ONLOAD***************-->
+    <ui:param name="onLoadFunction" value="#{webstartSelectionBean.preRender()}" />
+
+</ui:composition>

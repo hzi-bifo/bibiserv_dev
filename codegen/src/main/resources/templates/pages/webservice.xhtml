@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+
+Copyright 2010-2013 BiBiServ Curator Team, http://bibiserv.cebitec.uni-bielefeld.de,
+All rights reserved.
+
+The contents of this file are subject to the terms of the Common
+Development and Distribution License("CDDL") (the "License"). You
+may not use this file except in compliance with the License. You can
+obtain a copy of the License at http://www.sun.com/cddl/cddl.html
+
+See the License for the specific language governing permissions and
+limitations under the License.  When distributing the software, include
+this License Header Notice in each file.  If applicable, add the following
+below the License Header, with the fields enclosed by brackets [] replaced
+ by your own identifying information:
+
+"Portions Copyrighted 2010-2013 BiBiServ Curator Team, http://bibiserv.cebitec.uni-bielefeld.de"
+
+Contributor(s): Jan Krueger
+
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/WEB-INF/templates/toolTpl.xhtml">
+
+
+
+    <ui:define name="headContentTitle">
+       #{messages.property('<#getToolId/#>_name')}
+    </ui:define>
+
+    <ui:define name="app_title">
+            <h:outputText class="title" escape="false" value="#{messages.property('<#getToolId/#>_name')}"/>
+            <div class="separator app_separator"/>
+    </ui:define>
+
+    <ui:define name="app_content">
+    <div class="content">
+            <p>
+                If you're not familiar with using REST webservices  you should have 
+                a closer look to our webservice related <a href="/wslinklist">webpage</a>.
+            </p>
+         
+        </div>
+
+       
+
+            <h:panelGroup styleClass="content" rendered="#{!toolBean_<#getToolId/#>_tooldescription.singleFunction}" layout="block">
+           
+                #{messages.property('<#getToolId/#>_name')} has the following functions :
+
+                <script type="text/javascript">
+                bla = new Array( <c:forEach var = "fct" items = "#{toolBean_<#getToolId/#>_tooldescription.functionIDs}" varStatus = "status" > "#{fct}"#{status.last?'':','} </c:forEach>); 
+
+                        function visible(id_vis){
+                        for (var i = 0; i &lt; bla.length; i++) {
+                        obj = document.getElementById(bla[i]);
+                                if ((id_vis) == (bla[i])) {
+                        obj.style.display = 'block';
+                        } else {
+                        obj.style.display = 'none';
+                        }
+                        }
+                        }
+                </script>
+                <form>
+                    <c:forEach var="fct" items="#{toolBean_<#getToolId/#>_tooldescription.functionIDs}" varStatus="status">   
+                        <c:if test="#{status.first}">
+                            <input type="radio" name="fct_sel" value="#{fct}" checked="checked" onchange="visible('#{fct}');"> #{messages.property(fct.concat('_name'))}</input><br/>
+                        </c:if>
+                        <c:if test ="#{!status.first}">
+                            <input type="radio" name="fct_sel" value="#{fct}"  onchange="visible('#{fct}');"> #{messages.property(fct.concat('_name'))}</input><br/>
+                        </c:if> 
+                
+                    </c:forEach>
+                </form>
+
+                Select a function to adapt following short developer guide.
+            </h:panelGroup>
+
+        <c:forEach var='fct' items="#{toolBean_<#getToolId/#>_tooldescription.functionIDs}" varStatus="status">
+            <div class="content" id="#{fct}" style="display:  #{status.first?'block':'none'}">
+                <h4>Provided functions/methods (parameters and datatypes)</h4>
+
+                <p>A function provides 4 public REST methods (request, response, status and statuscode) as 
+                    described in the introduction before. The table below gives an overview about the name, the supported http command, 
+                    the accepted and produced mime-type.</p>
+
+                <table style="width:100%">
+                    <tr class="param_table_row">
+                        <th class="param_table_header">name</th>
+                        <th class="param_table_header">type</th>
+                        <th class="param_table_header">consumes</th>
+                        <th class="param_table_header">produces</th>
+                    </tr>
+                    <tr class="param_table_row">
+                        <td class="param_table_cell">request</td>
+                        <td class="param_table_cell">POST</td>
+                        <td class="param_table_cell">application/json</td>
+                        <td class="param_table_cell">text/plain <em>(job-id)</em></td>
+                    </tr>                 
+                    <tr class="param_table_row">
+                        <td class="param_table_cell">response</td>
+                        <td class="param_table_cell">POST</td>
+                        <td class="param_table_cell">text/plain <em>(job-id)</em></td>
+                        <td class="param_table_cell">depends on tool<br/>typical: text/plain</td>
+                    </tr>
+                    <tr class="param_table_row" >
+                        <td class="param_table_cell">status</td>
+                        <td class="param_table_cell">POST</td>
+                        <td class="param_table_cell">text/plain <em>(job-id)</em></td>
+                        <td class="param_table_cell">text/plain <em>(code + description)</em></td>      
+                    </tr>
+                    <tr class="param_table_row">
+                        <td class="param_table_cell">statuscode</td>
+                        <td class="param_table_cell">POST</td>
+                        <td class="param_table_cell">text/plain <em>(job-id)</em></td>
+                        <td class="param_table_cell">text/plain <em>(<a href="/statuscodes">statuscode</a>)</em></td>
+                    </tr>
+                </table>
+
+                <p>
+                    The parameters and supported data types for each function are the 
+                    same as for the browser based interface.
+
+                    <c:if test="#{toolBean_mt_pipeline_tooldescription.isSetPG(fct)}">
+                    <h5>Parameter </h5>
+
+                    The following table is a more technical description of all supported
+                    parameters. A more descriptive table is located 
+                    in the <a href="<#getToolId/#>?viewType=manual">manual</a>.
+
+
+                    <!-- technical parameter table tag -->
+                    <table style="width:100%">
+
+                        <tr class="param_table_row" >
+                            <th class="param_table_header">
+                                name(ID)
+                            </th>
+
+                            <th class="param_table_header">
+                                type
+                            </th>
+                            <th class="param_table_header">
+                                constraints
+                            </th>
+                            <th class="param_table_header">
+                                default
+                            </th>
+
+                        </tr>
+
+
+                        <c:forEach var="param" items="#{toolBean_<#getToolId/#>_tooldescription.param(fct)}">
+                            <tr class="param_table_row">
+                                <td class="param_table_cell"> #{messages.property(param.id.concat('_name'))} <br/>(#{param.id})
+                                </td>
+                                <td class="param_table_cell">
+                                    #{param.type}
+                                </td>
+                                <td class="param_table_cell">
+
+                                    <c:if test="#{param.setMin}">
+                                        #{param.min.included?'&#x2265;':'&gt;'} #{param.min.value} <br/>
+                                    </c:if>
+
+                                    <c:if test="#{param.setMax}">
+                                        #{param.max.included?'&#x2264;':'&lt;'} #{param.max.value} <br/>
+                                    </c:if>
+
+                                    <c:if test="#{param.setRegexp}">
+                                        must match #{param.regexp} <br/>
+                                    </c:if>
+
+                                    <c:if test="#{param.minLength}">
+                                        #{param.minLength.included?'&#x2265;':'&gt;'} #{param.minLength.value} <br/>
+                                    </c:if>
+
+                                    <c:if test="#{param.maxLength}">
+                                        #{param.maxLength.included?'&#x2264;':'&lt;'} #{param.maxLength.value} <br/>
+                                    </c:if>
+
+                                </td>
+                                <td class="param_table_cell">
+                                    #{param.setDefaultValue?param.defaultValue:'NA'}
+                                </td>               
+                            </tr>       
+                        </c:forEach>
+
+                        <c:forEach var="enum" items="#{toolBean_<#getToolId/#>_tooldescription.enumParam(fct)}"> 
+                            <tr class="param_table_row" >
+                                <td class="param_table_cell">
+                                    #{messages.property(enum.id.concat('_name'))} <br/>(#{enum.id})
+                                </td>
+                                <td class="param_table_cell">
+                                    #{enum.type.value()}
+                                </td>
+                                <td colspan="2" class="param_table_cell">
+                                    <c:forEach var="ev" items="#{enum.values}" varStatus="status">
+
+                                        <c:if test="#{ev.setDefaultValue and ev.defaultValue}">
+                                            <strong>#{ev.value}</strong>
+                                        </c:if>
+                                        <c:if test="#{!(ev.setDefaultValue and ev.defaultValue)}">
+                                            #{ev.value}
+                                        </c:if>                                
+                                        <c:if test="#{!status.last}">,</c:if>
+
+                                    </c:forEach>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </table>
+                    </c:if>
+
+                    <h5>Input</h5>
+                    <p>
+                        Input are supported in two different ways. The content can be given as
+                        argument or as (Amazon-S3) URL. For Amazon-S3 there are three additional
+                        parameters.
+                    </p>
+                    <table style="width:100%">
+                        <tr>
+                            <th class="param_table_header">name</th>
+                            <th class="param_table_header">description</th>
+                        </tr>
+                        <tr class="param_table_row">
+                            <td class="param_table_cell">accesskey</td>
+                            <td class="param_table_cell">AWS access key for an Amazon S3 account</td>
+                        </tr>
+                        <tr class="param_table_row">
+                            <td class="param_table_cell">secretkey</td>
+                            <td class="param_table_cell">AWS secret key for an Amazon S3 account.</td>
+                        </tr>
+                        <tr class="param_table_row">
+                            <td class="param_table_cell">sessionkey</td>
+                            <td class="param_table_cell">AWS session token for temporary/session based account credentials.</td>
+                        </tr>
+                    </table>
+                    <p><em> AWS-S3 support for REST webservice is currently in a non stable 
+                            status and may working or not.</em></p>
+
+
+                    <ul>
+                        <c:forEach var="input" items="#{toolBean_<#getToolId/#>_tooldescription.input(fct)}">
+                            <li> #{messages.property(input.id.concat('_name'))} (#{input.id}) of type #{input.type}. </li>
+
+                        </c:forEach>
+                    </ul>
+                </p>
+
+                <h4>Example Usage</h4>
+                We use <a href="http://curl.haxx.se/">cURL</a> on the cmdline for an example usage of the service.
+
+                <ol>
+                    <li> Start a new job using the <em>request</em> method. All necessary data - input(s) and parameter(s) - are packed
+                        into an JSON object.
+
+                        <code>
+                            curl -X POST -d @[[INPUT]] #{toolBean_<#getToolId/#>_tooldescription.protocol}://#{toolBean_<#getToolId/#>_tooldescription.host}:#{toolBean_<#getToolId/#>_tooldescription.port}/rest/<#getToolId/#>/#{fct}/request -H "Content-Type: application/json"<br/>            
+                        </code>
+
+
+                        <h:form>
+                            where [[INPUT]] contains your request data in <a href="http://www.json.org/">JSON format</a>.
+                            
+                            <c:if test="#{toolBean_<#getToolId/#>_tooldescription.hasExample(fct)}">
+                               Use the 
+                               <h:commandLink value="example">
+                                <p:fileDownload value="#{toolBean_<#getToolId/#>_tooldescription.json_example_Download(fct)}"/>
+                               </h:commandLink>
+                               for an easy start.
+                            
+                            </c:if>
+                        
+                            The               
+                            <h:commandLink value="skeleton"> 
+                                <p:fileDownload value="#{toolBean_<#getToolId/#>_tooldescription.json_skeleton_Download(fct)}"/>
+                            </h:commandLink>
+
+                            contains all possible arguments with its constraints and doesn't work out of box but can be used as 
+                            starting point to build you own individual requests.
+
+                               
+                        If the input is valid, a job id returned, otherwise an error/status code is returned (http status != 200). In the case of 
+                        an erroneous request curl per default unfortunately doesn't return any additional information. Using the verbose 
+                        parameter (-v) to get more information is extremely helpful then.
+                        
+                        </h:form>
+                    </li>
+
+
+                    <li> Check status of job using <em>status</em> or <em>statuscode</em> method.
+                        <code>
+                            curl -X POST -d [[ID]] #{toolBean_<#getToolId/#>_tooldescription.protocol}://#{toolBean_<#getToolId/#>_tooldescription.host}:#{toolBean_<#getToolId/#>_tooldescription.port}/rest/<#getToolId/#>/#{fct}/statuscode -H "Content-Type: text/plain"<br/>
+                        </code>
+                        or
+                        <code>
+                            curl -X POST -d [[ID]] #{toolBean_<#getToolId/#>_tooldescription.protocol}://#{toolBean_<#getToolId/#>_tooldescription.host}:#{toolBean_<#getToolId/#>_tooldescription.port}/rest/<#getToolId/#>/#{fct}/status -H "Content-Type: text/plain"<br/>
+                        </code>
+                        
+                        
+                        Replace [[ID]] with the id you got from a previous request.
+                        Both status functions returned current status of job. While 
+                        <em>status</em> is more human readable, <em>statuscode</em> 
+                        returns a machine readable 3 digit number. If the status is 
+                        "600 - finished ok" you can go to the next step. While any 6xx is 
+                        an non-error status that changes while the job is running, any 7xx
+                        state is an (final) error state (see <a href="/statuscodes">list of 
+                            status codes</a>).
+                    </li>
+
+                    <li>
+                        Get the result of your finished job using the <em>response</em> method. 
+                        <code>
+                            &gt;curl -X POST -d [[ID]] #{toolBean_<#getToolId/#>_tooldescription.protocol}://#{toolBean_<#getToolId/#>_tooldescription.host}:#{toolBean_<#getToolId/#>_tooldescription.port}/rest/<#getToolId/#>/#{fct}/response -H "Content-Type: text/plain";echo
+                        </code>
+                        Replace [[ID]] with the id you got from a previous request.
+                        In the case the job isn't finished yet(non-error status &gt; 600 
+                        and &lt; 700 or error status &gt;= 700) the status is coded into 
+                        the http response.
+                    </li>   
+                </ol>
+
+            </div>
+
+        </c:forEach>
+
+
+        <br/><br/>
+        <!-- Custom Content -->
+        <h:outputText escape="false" class="content" value="#{messages.property('<#getToolId/#>_view_webservice_customContent')}"/>
+        
+    </ui:define>
+
+ 
+</ui:composition>

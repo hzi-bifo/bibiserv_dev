@@ -1,0 +1,187 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="masterLayout.xhtml">
+
+    <!--***************JAVASCRIPT***************-->
+    <ui:define name="javascript">
+        <script language="javascript" type="text/javascript">
+                function showDateIndicator(data) {
+                      showIndicatorRegion(data, "indicator");
+                }
+
+                function showIndicatorRegion(data, regionId) {
+                      if (data.status == "begin") {
+                          document.getElementById(regionId).style.display = "inline";
+                          document.getElementById("form:indicatorLabel").style.display = "inline";
+                          document.getElementById("form:contents").disabled = true;
+                          document.getElementById("form:formats").disabled = true;
+                          document.getElementById("form:datastructure").disabled = true;
+                          document.getElementById("form:representation").disabled = true;
+                      } else if (data.status == "success") {
+                          document.getElementById(regionId).style.display = "none";
+                          document.getElementById("form:indicatorLabel").style.display = "none";
+                          document.getElementById("form:contents").disabled = false;
+                          document.getElementById("form:formats").disabled = false;
+                          document.getElementById("form:datastructure").disabled = false;
+                          document.getElementById("form:representation").disabled = false;
+                      }
+                }
+        </script>
+    </ui:define>
+    <!--***************INFOBOX***************-->
+    <ui:define name="infoBox">
+        #{msg.outputInfo}
+    </ui:define>
+    <!--***************HEADER***************-->
+    <ui:define name="header">
+        #{msg.output}
+    </ui:define>
+    <!--***************MAIN***************-->
+    <ui:define name="main">
+        <p:messages id="error"/>
+
+        <h:panelGrid columns="2"  styleClass="top, centered">
+
+            <h:outputLabel value="#{msg.currentlyEditing}:" class="currentPos"/>
+            <h:outputLabel value="#{outputBean.position}" class="currentPos"/>
+            
+            <f:ajax listener="#{outputBean.unsavedChange}" render="@form" execute="@form">
+            
+            <h:outputLabel value="#{msg.loadedFrom}: " title="#{msg.loadedFromTooTip}" rendered="#{outputBean.renderLoadedFrom}"/>
+            <p:outputPanel rendered="#{outputBean.renderLoadedFrom}" >
+                <div class="forceWrap elementWidth">#{outputBean.loadedFrom}</div>
+            </p:outputPanel>
+            <h:outputLabel for="outputName" value="#{msg.name}: *" title="#{msg.outputNameToolTip}"/>
+            <h:inputText id="outputName" value="#{outputBean.name}" title="#{msg.outputNameToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel for="outputShortDescr" value="#{msg.shortDescription}: *" title="#{msg.outputShortDescriptionToolTip}"/>
+            <h:inputTextarea id="outputShortDescr" value="#{outputBean.shortDescrition}" styleClass="inputArea" title="#{msg.outputShortDescriptionToolTip}">
+                <p:resizable  maxWidth="#{masterLayoutBean.standardResizeWidth}" minWidth="#{masterLayoutBean.standardResizeWidth}" for="outputShortDescr"/>
+            </h:inputTextarea>
+
+            <h:outputLabel for="outputNameDescription" value="#{msg.description}: *"  title="#{msg.outputDescriptionToolTip}"/>
+            <p:commandButton ajax="false" id="outputNameDescription" action="#{outputBean.editDescription}" value="#{msg.openEditor}" title="#{msg.outputDescriptionToolTip}"/>
+
+
+            <h:outputLabel value="#{msg.representation}: *" title="#{msg.outputRepresentationToolTip}"/>
+            <h:panelGrid id="filters" columns="1">
+                <h:panelGrid columns="2">
+
+                    <h:outputLabel id="indicatorLabel" value="#{msg.loading}" style="display: none;"/>
+                    <img id="indicator" src="resources/ajax-loader.gif" style="display: none;"/>
+
+                    <h:outputLabel for="contents" value="#{msg.filter}: " />
+                    <h:selectOneMenu id="contents" value="#{outputBean.currentContent}"  styleClass="smallElementWidth">
+
+                        <f:ajax listener="#{outputBean.dropDownValueChangeMethodContent}" render="@form" onevent="showDateIndicator"/>
+                        <f:selectItem itemLabel="#{msg.all}" itemValue="all" />
+                        <f:selectItems value="#{outputBean.contents}" var="name"
+                                       itemLabel="#{name.first}" itemValue="#{name.second}"/>
+                    </h:selectOneMenu>
+
+                    <h:outputLabel for="formats" value="#{msg.filter}: " />
+                    <h:selectOneMenu id="formats" value="#{outputBean.currentFormat}"  styleClass="smallElementWidth">
+
+                        <f:ajax listener="#{outputBean.dropDownValueChangeMethodFormat}" render="@form" onevent="showDateIndicator"/>
+                        <f:selectItem itemLabel="#{msg.all}" itemValue="all" />
+                        <f:selectItems value="#{outputBean.formats}" var="name"
+                                       itemLabel="#{name.first}" itemValue="#{name.second}"/>
+                    </h:selectOneMenu>
+
+                    <h:outputLabel for="datastructure" value="#{msg.filter}: " />
+                    <h:selectOneMenu id="datastructure" value="#{outputBean.currentDatastructure}"  styleClass="smallElementWidth">
+
+                        <f:ajax listener="#{outputBean.dropDownValueChangeMethodDataStructure}" render="@form" onevent="showDateIndicator"/>
+                        <f:selectItem itemLabel="#{msg.all}" itemValue="all" />
+                        <f:selectItems value="#{outputBean.datastructures}" var="name"
+                                       itemLabel="#{name.first}" itemValue="#{name.second}"/>
+                    </h:selectOneMenu>
+                </h:panelGrid>
+                <h:selectOneMenu id="representation" value="#{outputBean.representation}"  styleClass="elementWidth">
+                    <f:selectItems value="#{outputBean.representations}" var="name"
+                                   itemLabel="#{name.first}" itemValue="#{name.second}"/>
+                </h:selectOneMenu>
+            </h:panelGrid>
+
+
+            <h:outputLabel for="outputHandling" value="#{msg.handling}: *"  title="#{msg.outputHandlingToolTip}"/>
+            <h:selectOneMenu id="outputHandling" value="#{outputBean.handling}" styleClass="elementWidth">
+                <f:selectItem itemValue="file" itemLabel="File" />
+                <f:selectItem itemValue="stdout" itemLabel="STDOUT" />
+            </h:selectOneMenu>
+
+            <h:outputLabel for="outputOption" value="#{msg.option}:" title="#{msg.outputOptionToolTip}"/>
+            <h:inputText id="outputOption" value="#{outputBean.option}" styleClass="elementWidth"/>
+
+
+            <h:outputLabel value="#{msg.example}:" title="#{msg.outputExampleToolTip}"/>
+            <h:panelGrid columns="1" styleClass="elementWidth">
+                <h:outputLabel id="fileName" value="#{outputBean.exampleName}"  style="display: block;"/>
+                <p:fileUpload id="exampleUploader" styleClass="uploaderSingle"
+                              fileUploadListener="#{outputBean.handleFileUpload}"
+                              mode="advanced"
+                              update="@form"
+                              auto="true"
+                              sizeLimit="1000000"
+                              multiple="false"
+                              >
+                </p:fileUpload>
+            </h:panelGrid>
+
+         </f:ajax>
+        </h:panelGrid>
+    </ui:define>
+
+    <!--***************BOXES ON SIDE***************-->
+    <ui:define name="box">
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newOutputGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.outputs}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addOutputToolTip}" action="#{outputBean.newOutput()}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noOutputs" value="#{msg.noOutput}" rendered="#{outputBean.outputsEmpty}" />
+            <h:dataTable id="outputBox" var="str" value="#{outputBean.outputNameList}">
+                <h:column>
+                    <div class="forceWrapBox">#{str}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editOutputToolTip}" action="#{outputBean.editOutput(str)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeOutputToolTip}" action="#{outputBean.removeOutput(str)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+    </ui:define>
+
+    <!--***************BUTTONS ON THE BOTTOM***************-->
+    <ui:define name="buttons">
+        
+        <h:outputLabel id="changeLabel" value="#{msg.unsavedChanges} " title="#{msg.unsavedChangesTooltip}" rendered="#{outputBean.renderUnsavedChanges}" class="changeLabel" />
+        
+        <h:panelGrid columns="3" styleClass="centered" border="0">
+            <p:commandButton update="@form" id="saveAndReturn" action="#{outputBean.saveReturn}" value="#{msg.saveReturn}" />
+            <p:commandButton update="@form" id="save" action="#{outputBean.save}" value="#{msg.save}" />
+            <p:commandButton ajax="false" id="cancel" action="#{outputBean.cancel}" value="#{msg.cancel}"  />
+        </h:panelGrid>
+    </ui:define>
+
+
+
+</ui:composition>

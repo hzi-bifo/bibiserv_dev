@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+
+Copyright 2013 BiBiServ Curator Team, http://bibiserv.cebitec.uni-bielefeld.de,
+All rights reserved.
+
+The contents of this file are subject to the terms of the Common
+Development and Distribution License("CDDL") (the "License"). You
+may not use this file except in compliance with the License. You can
+obtain a copy of the License at http://www.sun.com/cddl/cddl.html
+
+See the License for the specific language governing permissions and
+limitations under the License.  When distributing the software, include
+this License Header Notice in each file.  If applicable, add the following
+below the License Header, with the fields enclosed by brackets [] replaced
+ by your own identifying information:
+
+"Portions Copyrighted 2013 BiBiServ Curator Team, http://bibiserv.cebitec.uni-bielefeld.de"
+
+Contributor(s):
+
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:b="http://bibiserv.cebitec.uni-bielefeld.de/facelets"
+                xmlns:c="http://java.sun.com/jsp/jstl/core" 
+                template="/WEB-INF/templates/toolTpl.xhtml">
+
+    <ui:define name="headContentTitle">
+      #{messages.property('<#getToolId/#>_name')}
+    </ui:define>
+
+    <ui:define name="app_title">
+        <h:outputText escape="false" class="title" value="#{messages.property('<#getToolId/#>_name')}"/>
+        <div class="separator app_separator"/>
+    </ui:define>
+    
+    <!--
+    
+    The FAQ page is linked as tool tab if your tool description contains a
+    faq element.
+    
+    
+    i.e.:
+    
+    ...
+      <ns5:faq id="dialign_faq">
+          <ns5:introductoryText>introduction</ns5:introductoryText>
+          <ns5:customContent> Custom ... Content ... YEah </ns5:customContent>
+        <ns5:FAQchapter>
+            <ns5:name>Chapter One</ns5:name>
+            <ns5:FAQitem>
+                <ns5:question>What's your name ?</ns5:question>
+                <ns5:answer>My name is <ns2:em>dialign</ns2:em>... </ns5:answer>
+            </ns5:FAQitem>
+            <ns5:FAQitem>
+                <ns5:question>What's your function ?</ns5:question>
+                <ns5:answer>I don't know. Go to <ns2:a href="/dialign?viewType=manual"> my manual </ns2:a> </ns5:answer>
+            </ns5:FAQitem>
+        </ns5:FAQchapter>
+        <ns5:FAQchapter>
+            <ns5:name>another Chapter</ns5:name>
+            <ns5:FAQitem>
+                <ns5:question>I forgot your name ... what's your name ?</ns5:question>
+                <ns5:answer>GRML ... <ns2:strong>RTFM</ns2:strong>!</ns5:answer>
+            </ns5:FAQitem>
+        </ns5:FAQchapter>
+        
+    </ns5:faq>
+    
+    ...
+    -->
+    
+    <ui:define name="app_content">
+        <h:outputText escape="false" class="content" value="#{messages.property('<#getToolId/#>_faq_introductoryText')}"/>
+        <b:faq toolid="<#getToolId/#>"/>
+        <h:outputText escape="false" class="content" value="#{messages.property('<#getToolId/#>_faq_customContent')}"/>
+    </ui:define>
+   
+</ui:composition>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns4:runnableItem id="genefisher" xmlns:ns2="bibiserv:de.unibi.techfak.bibiserv.cms.microhtml"
+    xmlns:ns4="bibiserv:de.unibi.techfak.bibiserv.cms"
+    xmlns:ns3="bibiserv:de.unibi.techfak.bibiserv.cms.minihtml">
+    <ns4:description xml:lang="en">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
+        &lt;microhtml xmlns:ns2="bibiserv:de.unibi.techfak.bibiserv.cms.minihtml"
+        xmlns="bibiserv:de.unibi.techfak.bibiserv.cms.microhtml"&gt;The Input sequence has to be in
+        GDE-Format. The sequence will be the basis for primer calculation. &lt;/microhtml&gt; </ns4:description>
+    <ns4:customContent xml:lang="en">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
+        &lt;ns2:minihtml xmlns:ns2="bibiserv:de.unibi.techfak.bibiserv.cms.minihtml"
+        xmlns:ns3="bibiserv:de.unibi.techfak.bibiserv.cms.microhtml"&gt;GeneFisher -A tool
+        &lt;ns3:em&gt; for &lt;/ns3:em&gt;the calculation of degenerate primers&lt;/ns2:minihtml&gt; </ns4:customContent>
+    <ns4:view/>
+    <ns4:manual id="genefisher_manual">
+        <ns4:introductoryText xml:lang="en">&lt;?xml version="1.0" encoding="UTF-8"
+            standalone="yes"?&gt; &lt;ns2:minihtml
+            xmlns:ns2="bibiserv:de.unibi.techfak.bibiserv.cms.minihtml"
+            xmlns:ns3="bibiserv:de.unibi.techfak.bibiserv.cms.microhtml"&gt;Genefisher is a tool
+            supporting biologists finding primers for degenerated sequences. Design of degenerated
+            Primers is a feasable task that hardly can be handled manually. &lt;/ns2:minihtml&gt; </ns4:introductoryText>
+        <ns4:customContent xml:lang="en">&lt;?xml version="1.0" encoding="UTF-8"
+            standalone="yes"?&gt; &lt;ns2:minihtml
+            xmlns:ns2="bibiserv:de.unibi.techfak.bibiserv.cms.minihtml"
+            xmlns:ns3="bibiserv:de.unibi.techfak.bibiserv.cms.microhtml"&gt;Genefisher is a
+            Toolchain. At the end of the chain there is the primer calculation process. The chain
+            allows the Lab-Worker to enter a number of different sequence-types like protein or
+            nucleotide, single or multiple sequences. &lt;/ns2:minihtml&gt; </ns4:customContent>
+    </ns4:manual>
+</ns4:runnableItem>

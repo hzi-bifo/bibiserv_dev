@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="masterLayout.xhtml">
+
+    <!--***************JAVASCRIPT***************-->
+    <ui:define name="javascript">
+        <script language="javascript" type="text/javascript">
+                 function disable() {
+                      document.getElementById("form:ret").disabled = true;
+                      document.getElementById("form:indicator").style.display = "inline";
+                 }
+
+                 function enable() {
+                      document.getElementById("form:ret").disabled = false;
+                      document.getElementById("form:indicator").style.display = "none";
+                 }
+        </script>
+    </ui:define>
+    <!--***************INFOBOX***************-->
+    <ui:define name="infoBox">
+        #{msg.loadXMLInfo}"
+    </ui:define>
+    <!--***************HEADER***************-->
+    <ui:define name="header">
+        #{msg.loadXML}
+    </ui:define>
+    <!--***************MAIN***************-->
+    <ui:define name="main">
+        <p:ajaxStatus onstart="disable()" oncomplete="enable()"/>
+        <p:messages id="error"/>
+        <h:panelGrid columns="2"  styleClass="top centered twoColumnTable" style="width:100%">
+         <h:outputLabel value="#{msg.loadXML}: " title="#{msg.loadXMLToolTip}" styleClass="selectionLable" />
+        <p:panel id="uploadedFilesPanel" styleClass="elementWidth">
+            <p:fileUpload fileUploadListener="#{loadXMLBean.handleFileUpload}" styleClass="noCancel"
+                          mode="advanced" multiple="false" auto="true" update="@form" />
+        </p:panel>
+        </h:panelGrid>
+    </ui:define>
+
+    <!--***************BOXES ON SIDE***************-->
+    <ui:define name="box">
+    </ui:define>
+
+    <!--***************BUTTONS ON THE BOTTOM***************-->
+    <ui:define name="buttons">
+        <h:panelGrid id="navigation" columns="1" >
+            <h:panelGrid id="indicator" columns="2" style="display: none;">
+                <h:outputLabel  value="#{msg.loadingBS2}" />
+                <img src="resources/ajax-loader.gif"/>
+            </h:panelGrid>
+            <p:commandButton ajax="false" id="ret" action="#{loadXMLBean.returnToOverview}" value="#{msg.return}" />
+        </h:panelGrid>
+    </ui:define>
+
+</ui:composition>

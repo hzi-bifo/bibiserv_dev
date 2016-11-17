@@ -1,0 +1,1030 @@
+\documentclass[a4paper,10pt]{book}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{verbatim}
+\usepackage{hyperref}
+
+\newcommand{\bigpic}[1]{\includegraphics[width=12cm]{resources/#1.png}}
+\newcommand{\smallpic}[1]{\includegraphics[height=1cm]{#1}}
+
+% Text macros for layout chapter
+
+\newcommand{\infobox}{\paragraph{Infobox:} At the top of the page you can see an information box that contains helpful information about the current page. If you don't need that information you can use the ``close'' button to collapse it.}
+\newcommand{\buttons}{\paragraph{Buttons:} At the bottom of the page there are buttons for saving and page navigation. If you press ``Save'' your current working state is saved and you stay on the page. If you press ``Save and Return'' your current working state is saved and you return to the parent page (e.g. if you press ``Save and return'' at the function page (see section \ref{function}) you go back to the function selection page (see section \ref{functionSelection})). If you press ``Return'' you just return to the parent page without saving your current state of work.}
+
+% Text macros for single pages chapter
+
+% #1 element name #2 mandatory
+\newcommand{\name}[2]{\paragraph{Name #2:} The name of your #1 will be displayed at the submission page and manual to the BiBiServ user. Therefore it should be comprehensible and readable for humans.}
+% #1 element name #2 mandatory
+\newcommand{\shortDescr}[2]{\paragraph{Short Description #2:} The short description of your #1 will be displayed as a mouseover tooltip for this #1 to the BiBiServ user. It should be a short and general description of this #1. For details you should use the ``Description'' field.}
+% #1 element name #2 mandatory
+\newcommand{\descr}[2]{\paragraph{Description #2:} The description of your #1 will be displayed in the manual entry for this #1 to the BiBiServ user. You can edit it by clicking the ``Open Text-Editor'' button. The editor enables you to insert valid microHTML content (see section \ref{microhtml}). The editor is also described in section \ref{layout-editorPages}.}
+% #1 definition  #2 type of custom content #3 mandatory
+\newcommand{\customContent}[3]{\paragraph{#2 #3:} #1 You can edit it by clicking the ``Open Text-Editor'' button. The editor enables you to insert valid miniHTML content (see section \ref{minihtml}). The editor is also described in section \ref{layout-editorPages}.}
+% #1: Parent page
+\newcommand{\buttonsDetail}[1]{
+\paragraph{Return:} Leads back to #1 and deletes your changes made since the last time you saved.
+\paragraph{Save and Return:} Leads back to #1 and saves your current working state.
+\paragraph{Save:} Saves your current working state.
+}
+% #1 Element name #2 element edit page.
+\newcommand{\newElem}[2]{
+\paragraph{#1 element list:} Already created #1s are listed here. You can remove and edit them as well as add new ones. If you edit or create a new #1 you will be redirected to #2. This deletes your changes made since the last time you saved.
+}
+% #1 Element name #2 definition of element #3 element edit page.
+\newcommand{\selectionPage}[3]{
+\paragraph{}This is a general overview of your #1s. #2 The general idea of selection pages is described in section \ref{layout-selectionPages}.
+\newElem{#1}{#3}
+}
+
+\newcommand{\defaultValue}{\textbf{Default value:} If a BiBiServ user does provide input for this parameter at the submission form this default value is used.}
+
+% #1 standard name #2 schema-link
+\newcommand{\htmlstandardI}[2]{
+\paragraph{} #1 is a xhtml-standard that forbids some common features of regular HTML. These restrictions have been made to ensure that your HTML content can be styled according to the usual BiBiServ2 design. BiBiServ users should have a recognizable interface for all different tools. Therefore these restrictions seem necessary. If you are sure you need some features that are not included in #1 you have to include this code manual in the codegen output pages (see section \ref{codegen}).
+\paragraph{} If you are interested in the details of the #1 schema you can have a look at it directly\footnote{.xsd-schema-location: \url{#2}}.
+}
+\newcommand{\htmlstandardII}[1]{
+\paragraph{} The Wizard features a #1 editor (see also \ref{layout-editorPages}) that parses your html input to valid #1 and shows you the result (what-you-see-is-what-you-get).
+}
+% #1 tag
+\newcommand{\htmlTag}[1]{\textless #1\textgreater}
+% #1 comment content
+\newcommand{\xhtmlComment}[1]{\textless\verb+!--+ #1\verb+--+\textgreater}
+
+
+% Header
+
+\title{BiBiServ2 Wizard Manual}
+\author{T. Gatter, B. Paassen}
+\date{14/05/2012}
+
+% Start of actual document
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\chapter{Introduction}
+\paragraph{} This manual describes the Wizard2011 for BiBiServ2 tool descriptions. The purpose of the Wizard 2011 is to enable tool developers to deploy their applicatons onto the BiBiServ without having to understand BiBiServ mechanics all too well.
+\paragraph{} Our motivation for programming a Wizard for BiBiServ 2 is the experience made with tool development processes for the original BiBiServ (BiBiWS architecture by Henning Mersch \footnote{Mersch, 2004}): Tool Developers had to understand the whole WebService Server- and Client-architecture of the BiBiServ and had to code the web user interface for their tool manually based on a template. Integration and deployment of new tools onto the BiBiServ took a long time and was a barrier for tool developers who were not necessarily familiar with web development or server structure.
+\paragraph{} The Wizard does not require developers to have extensive web technology knowledge. Basic html skills in addition to expertise on their own tool should be enough to create a full-blown web user interface that can be directly deployed onto the BiBiServ.
+\paragraph{} In addition to this main target audience the Wizard also enables experienced BiBiServ users to extend existing tool descriptions, validate Dependencies, create valid micro- and miniHTML descriptions, etc.
+
+\paragraph{} This manual starts with a quick guide to create your first tool description (chapter \ref{quickstart}). New users of the wizard should probably start there. In the next chapter we describe the wizards general layout and the purpose of its design (chapter \ref{layout}). In chapter \ref{single-pages} we discuss every page in the Wizard in more detail to answer any specific question you might have while describing your tool using the Wizard. The chapter about formats and standards gives experienced users a more thorough understanding of the tool descriptions they are creating and should enable you to find solutions to any complex problems that might occur (chapter \ref{standards}). After describing a tool you can use the create XML page (section \ref{create-xml}) to export your description as .bs2 or even as source code for a BiBiServ web interface. Those output options are described in the next chapter (chapter \ref{output}). Finally this manual contains additional information for the administration of the Wizard (chapter \ref{admin}).
+
+\chapter{Your first Tool Description Step by Step}
+\label{quickstart}
+\paragraph{} In this chapter we will guide you through the creation of a first rudimentary tool description.
+
+\section{The Overview Page}
+
+\begin{figure}
+ \bigpic{quickstart-overview}
+\caption{Wizard overview page}
+\label{quickstart-overview}
+\end{figure}
+
+\paragraph{} Your first impression of the wizard is the overview page. From here you can access any module of the Wizard (see also: \ref{layout-overview}). You should start your first tool description by providing basic information about your tool by clicking the pen next to the ``Basic Information'' label (see figure \ref{quickstart-overview}).
+\section{Basic Information}
+
+\begin{figure}
+ \bigpic{quickstart-basicInfo}
+\caption{Basic information page}
+\label{quickstart-basicinfo}
+\end{figure}
+
+\paragraph{} You can now type in the most general data about your tool: What is its name (the ``name''-text-field) and what does it do (the ``short description''-text-field). You can see example input in figure \ref{quickstart-basicinfo}.
+
+\begin{figure}
+ \bigpic{quickstart-editor}
+\caption{Text editor page}
+\label{quickstart-editor}
+\end{figure}
+
+\paragraph{} By clicking the ``Open Text Editor''-button next to the ``Description'' label you can access the microHTML-editor (see figure \ref{quickstart-editor}). Here you should describe what your tool does in more detail. You may use rudimentary html here (the permitted parts of html are described in more detail in section \ref{microhtml}). After finishing your description text please confirm your input using the ``Save and return'' button. This should lead you back to the Basic Information page (figure \ref{quickstart-basicinfo}). Please click ``Save and return'' again. Now you should be back at the overview page.
+
+\section{Executable Information}
+
+\begin{figure}
+ \bigpic{quickstart-execInfo}
+\caption{Executable information page}
+\label{quickstart-execinfo}
+\end{figure}
+
+\paragraph{} Next you should click the pen next to the ``Executable Information'' label. At this page (see figure \ref{quickstart-execinfo}) you have to provide information about your tools execution on the BiBiServ.
+\paragraph{} The \textbf{executable type} describes which kind of application you intend to upload onto the BiBiServ (in most cases this is a compiled binary). The \textbf{calling information} is the commandline command for your tool (in most cases this is just the tools name). Finally you have to type in your tools \textbf{version}.
+\paragraph{} Please confirm your input by clicking the ``Save and return''-button.
+
+\section{Authors}
+
+\begin{figure}
+ \bigpic{quickstart-authorSelection1}
+\caption{Author selection page}
+\label{quickstart-authorSelection1}
+\end{figure}
+
+\paragraph{} Now you should go to the ``Author Overview'' page to provide information about your tools author(s). To create a new author description, please click the ``+'' next to the ``Authors'' label on the right side of the screen (see figure \ref{quickstart-authorSelection1}).
+
+\begin{figure}
+ \bigpic{quickstart-author}
+ \caption{Author edit page}
+ \label{quickstart-author}
+\end{figure}
+
+\paragraph{} Please enter the authors first name, last name and e-mail-adress and confirm your input by clicking ``Save and return'' (like in figure \ref{quickstart-author}).
+\paragraph{} You should notice now that the author overview page has changed slightly: At the box of the right side of the screen you can see the author you just described. Please select this author at the dropdown menu at the center of the screen and confirm your input by clicking ``Save and return'' (like in figure \ref{quickstart-authorSelection2}).
+
+\begin{figure}
+ \bigpic{quickstart-authorSelection2}
+\caption{Author selection page}
+\label{quickstart-authorSelection2}
+\end{figure}
+
+\section{Functions}
+
+\begin{figure}
+ \bigpic{quickstart-functionSelection1}
+\caption{Function selection page}
+\label{quickstart-functionSelection1}
+\end{figure}
+
+\paragraph{} The next step is the ``Function Overview'' page. Here you can describe what your tool actually does. A function(ality) is the description for one particular use case of your function. Complex tools might have multiple functionalities (e.g. structure prediction for DNA (function 1) \textit{and} RNA (function 2)). To create a new function description, please click the ``+'' next to the ``Functions'' label on the right side of the screen (see figure \ref{quickstart-functionSelection1}).
+
+\begin{figure}
+ \bigpic{quickstart-function1}
+\caption{Function edit page}
+\label{quickstart-function1}
+\end{figure}
+
+\paragraph{} This new page might seem overwhelming at first, but we will take it step by step. You can find a more thorough explanation of the pages elements in section \ref{function}.
+\paragraph{} At first you should enter a name and a short description of this functionality. Then please click the ``+'' next to the ``Outputs'' label on the right side of the screen (see figure \ref{quickstart-function1}).
+
+\begin{figure}
+ \bigpic{quickstart-output}
+\caption{Output edit page}
+\label{quickstart-output}
+\end{figure}
+
+\paragraph{} Your description of an output should include a name, a short description, a representation and the outputs handling. The outputs \textbf{representation} is the bioinformatics format of your tools output (e.g. FASTA DNA). You can use filters to simplify your search for the right representation. You can find a more thorough explanation of representations in section \ref{representations}. The outputs \textbf{handling} describes how your tool returns its output (your tool could write the output into a file for example, which would be a ``FILE'' handling). If you are finished please confirm your input by clicking ``Save and return'' (like in figure \ref{quickstart-output}).
+
+\begin{figure}
+ \bigpic{quickstart-function2}
+\caption{Function edit page}
+\label{quickstart-function2}
+\end{figure}
+
+\paragraph{} You should now be able to select your newly created output in the respective dropdown menu (like in figure \ref{quickstart-function2}). Please do so and click ``Save and return''.
+
+\begin{figure}
+ \bigpic{quickstart-functionSelection2}
+\caption{Function selection page}
+\label{quickstart-functionSelection2}
+\end{figure}
+
+\paragraph{} Please select your newly created function now in the dropdown menu at the center of the screen (like in figure \ref{quickstart-functionSelection2}) and click ``Save and return''.
+
+\section{Manual}
+
+\begin{figure}
+ \bigpic{quickstart-manual}
+\caption{Manual edit page}
+\label{quickstart-manual}
+\end{figure}
+
+\paragraph{} The last mandatory part of a valid tool description is the manual. Most of the manual is generated automatically out of our functionality description. However you have to provide an introductory text for your manual here (see figure \ref{quickstart-manual}).
+\paragraph{} The introductory text is edited in an editor like the Description content before. You are allowed to use more html tags here though (this is described in more detail in section \ref{minihtml}). As soon as you are finished please confirm your input by clicking the ``Save and return''-button until you are back at the overview page.
+
+\section{Saving your Description}
+
+\begin{figure}
+ \bigpic{quickstart-createXML1}
+\caption{CreateXML page}
+\label{quickstart-createXML1}
+\end{figure}
+
+\begin{figure}
+ \bigpic{quickstart-createXML2}
+\caption{CreateXML page}
+\label{quickstart-createXML2}
+\end{figure}
+
+\paragraph{} The final step is to save your tool description. The description is saved as an XML document in .bs2 format (for a more thorough explanation of this format please read section \ref{bibiservabstraction}). To create such an XML document please click the ``Create XML''-button at the bottom of the overview page.
+\paragraph{} At the ``create XML'' page itself you should now click the ``create XML'' button at the center of the screen (see figure \ref{quickstart-createXML1}). The Wizard will now insert all of your input into a XML document. You can download this document by clicking the ``Download'' button (see figure \ref{quickstart-createXML2}).
+\paragraph{} And there you have it! Your first tool description done in the Wizard 2011. If you want to flesh out your description later you can load your description file again. This is explained in section \ref{load-xml}.
+
+\chapter{Wizard Layout}
+\label{layout}
+\paragraph{} In this chapter we discuss the Wizards general layout. This chapter does not contain information on the \underline{functionality} of any page (the functionality is described in chapter \ref{single-pages}). Here we explain the general idea behind the visual design of the Wizard.
+
+\section{Buttons and Visual Elements}
+
+\label{visual-elements}
+
+\begin{tabularx}{\textwidth}{clX}
+\hline
+\textbf{Figure} & \textbf{Name} & \textbf{Description}\\
+\hline
+\raisebox{-.5\totalheight}{\rule{0pt}{1.1cm} \smallpic{resources/plus.png}} & Add new Element & By clicking this button you can create a new element of a given type, either a dropdown menu or content. If you create new content a new page with all relevant edit options will open.\\ [0.1cm]
+\hline
+\raisebox{-.5\totalheight}{\rule{0pt}{1.1cm} \smallpic{resources/edit.png}} & Edit Element & By clicking this button you can edit the existing element beside the button. A new page with all relevant edit options will open.\\ [0.1cm]
+\hline
+\raisebox{-.5\totalheight}{\rule{0pt}{1.1cm} \smallpic{resources/remove.png}} & Remove Element & By clicking this button you can remove the existing element beside this button, either a dropdown menu or content.\\ [0.1cm]
+\hline
+\raisebox{-.5\totalheight}{\rule{0pt}{1.1cm} \smallpic{resources/copy.png}} & Copy Element & By clicking this button you can copy the existing element beside the button. A new page with all relevant edit options will open.\\ [0.1cm]
+\hline
+\raisebox{-.5\totalheight}{\rule{0pt}{1.1cm} \smallpic{resources/trafficlights.png}} & Traffic lights & Traffic lights visualize the status of a given description. If the light is red your current working state is not valid and you won't be able to export it as a .bs2. If the light is yellow the provided information about your tool is valid but not very detailed. If the traffic light is green your tool description is optimal.\\ [0.1cm]
+\end{tabularx}
+
+\section{Overview Page}
+\label{layout-overview}
+
+\begin{figure}
+ \bigpic{overview}
+ \caption{Overview page}
+\end{figure}
+
+\paragraph{} This is the general overview for the creation of your new tool description.
+You can easily see the current state of creation here. The traffic lights beside the categories represent how close your description is to completion (see section \ref{visual-elements}).
+\paragraph{} To start a tool description you should start from the top to the bottom beginning with ``Basic Information'' (see section \ref{basicInfo}).
+\paragraph{} If you want to load an existing (valid!) tool description, please use the "Load XML"-button (see \ref{load-xml}). If you want to save your current state of work as an xml-tool description please use the "create XML"-button (see \ref{create-xml}; this will not work if there are red traffic lights left!). If you want to delete your current work and start over again please use the "clear"-button.
+
+\section{Selection Pages}
+\label{layout-selectionPages}
+
+\begin{figure}
+ \bigpic{selectionPage}
+ \caption{A typical selection page}
+\label{layout-selectionPage}
+\end{figure}
+
+\paragraph{} Selection pages have the following visual elements (see figure \ref{layout-selectionPage}).
+\paragraph{Dropdown section:} On the left side of the screen you can select created elements in a dropdown menu. If you select them there and save your current state of work these elements will be part of the final tool description. This enables you to easily exclude parts of your description from output generation for testing purposes. You can also decide to include an element multiple times in the final tool description.
+\paragraph{Element list:} On the right side of the screen all elements are shown that may be selected in the dropdown menu.
+\infobox
+\buttons
+
+\section{Edit Pages}
+
+\begin{figure}
+ \bigpic{editPage}
+ \caption{A typical edit page}
+\label{layout-editPage}
+\end{figure}
+
+\paragraph{} Edit pages have the following visual elements (see figure \ref{layout-editPage}):
+\paragraph{Edit section:} On the left side of the screen you can see the main edit section which visualizes all data contained in the current element. You can insert all data for a given element here or access further edit pages/editor pages. Entries markes with a ``*'' are mandatory.
+\paragraph{Element list:} On the right side of the screen all elements that you already created are shown. This does not only include elements of the current type but also all element that are relevant for the current type (for example: functions also contain input objects. Therefore input objects are also shown at the element list of the Function edit page (see also: \ref{function}).
+\infobox
+\buttons
+
+\section{Editor Pages}
+\label{layout-editorPages}
+
+\begin{figure}
+ \bigpic{editorPage}
+ \caption{A typical editor page}
+\label{layout-editorPage}
+\end{figure}
+
+
+\paragraph{} Editor pages have the following visual elements (see figure \ref{layout-editorPage}):
+\paragraph{HTML editor:} At the center of the screen you can see the html rich text editor. If you save your current state of work your html input is validated. Invalid parts of your content are either converted to valid content or removed. You can see the changes done by parsing directly in the editor window. This means that this is a what-you-see-is-what-you-get-editor: The editor window simulates the final output visible for BiBiServ users.
+\paragraph{} Editor pages accept either micro- or miniHTML content. You can find more information on this topic in chapter \ref{standards}.
+\infobox
+\buttons
+
+\chapter{Wizard in Detail}
+\label{single-pages}
+
+\begin{figure}
+ \includegraphics[scale=0.7]{resources/wizard_structure.pdf}
+ \caption{Wizard sitemap; mandatory pages for a tool description are red, optional pages are yellow, supporting pages are blue.}
+ \label{sitemap}
+\end{figure}
+
+\paragraph{} The wizards site structure is similar to the BiBiServAbstraction-schema (see \ref{bibiservabstraction}). The sitemap is visualized in figure \ref{sitemap}.
+
+\section{General Tool Description}
+
+\subsection{Overview page}
+\label{overview}
+
+\begin{figure}
+ \bigpic{overview}
+ \caption{Overview Page}
+\end{figure}
+
+\paragraph{} see also: \ref{layout-overview}.
+\paragraph{Basic Information:} Leads to the basic information page (\ref{basicInfo}).
+\paragraph{Executable Information:} Leads to the executable information page (\ref{execInfo}).
+\paragraph{Author Overview:} Leads to the author selection page (\ref{authorSelection}).
+\paragraph{Function Overview:} Leads to the function selection page (\ref{functionSelection}).
+\paragraph{Manual:} Leads to the manual edit page (\ref{manual}).
+\paragraph{Reference Overview:} Leads to the reference selection page (\ref{referenceSelection}).
+\paragraph{View Overview:} Leads to the view edit page (\ref{view}).
+\paragraph{File Overview:} Leads to the file selection page (\ref{fileSelection}).
+\paragraph{Load XML:} Leads to the load XML page (\ref{load-xml}).
+\paragraph{Create XML:} Leads to the create XML page (\ref{create-xml}).
+\paragraph{Clear:} Deletes the current content. Before doing that you should save your current working state!
+
+\subsection{Basic Information}
+\label{basicInfo}
+
+\begin{figure}
+ \bigpic{basicInfo}
+ \caption{Basic Information Page}
+\end{figure}
+
+\paragraph{} Please describe the basic information about your new tool here.
+\paragraph{Name (mandatory):} This is just the name of your tool. It will be displayed on all pages.
+\shortDescr{tool}{(mandatory)}
+\paragraph{Description (mandatory):} The description should be a short introduction to your tool. It will be displayed on the welcome page for your tool. You can edit it by clicking on the ``Open Text-Editor'' button. The editor enables you to insert valid microHTML content (see section \ref{microhtml}). The editor is also described in section \ref{layout-editorPages}.
+\customContent{The extended content is displayed right below the description content on the welcome page of your tool.}{Extended Content}{}
+\paragraph{ToolTip:} The tooltip is the text any BiBiServ user will see when hovering a link to your 
+tool with her/his mouse. It is in this regard similar to the short description but should be more concise.
+\paragraph{Keywords:} The keywords are similar to tags in blogs: They should describe your tool briefly (e.g.: An alignment tool could have the keywords ``multiple sequence alignment,DNA,DNA sequence alignment,alignment'', etc.). As a separator you can use a ``,''.
+\buttonsDetail{the overview page (\ref{overview})}
+
+\subsection{Executable Information}
+\label{execInfo}
+
+\begin{figure}
+ \bigpic{execInfo}
+ \caption{Executable Information Page}
+\end{figure}
+
+\paragraph{} Add information about the execution of your tool here.
+\paragraph{Executable Type (mandatory):} The executable type describes how your tool will be integrated on the BiBiServ (e.g. as a Java-class or a plain binary).
+\paragraph{Calling Information (mandatory):} The calling information is the ``prefix'' of any command line call of your tool without its path (e.g. in the call ``myTool -e -f inputfile.fas'' where ``-e'' and ``-f'' are optional parameters the calling information would be ``myTool'').
+\paragraph{Version (mandatory):} This is just the current version of your tool (per default you should write ``1.0'' here).
+\buttonsDetail{the overview page (\ref{overview})}
+
+\section{Author Description}
+\label{authorSelection}
+
+\subsection{Author Selection Page}
+\begin{figure}
+ \bigpic{authorSelection}
+ \caption{Author Selection Page}
+\end{figure}
+
+\selectionPage{author}{An author is a responsible person for the creation of your tool.}{the author edit page (\ref{author})}
+\buttonsDetail{the overview page (\ref{overview})}
+
+\subsection{Author Edit Page}
+\label{author}
+
+\begin{figure}
+ \bigpic{author}
+ \caption{Author Edit Page}
+\end{figure}
+
+\paragraph{} An author is a responsible person for the creation of your tool. The fields on this page are basically self-explanatory. An example for ``Organisation'' is ``Bielefeld University''. The mandatory fields are ``Last Name'', ``First Name'' and ``E-Mail''.
+\paragraph{} For at least one author you should provide a valid personal e-mail address. This enables BiBiServ Administrators to contact her/him if there are technical problems with your tool. This e-mail-address will \underline{not} be displayed to BiBiServ users. For all other authors you can insert a general adress like bibi-help@cebitec.uni-bielefeld.de.
+\newElem{author}{another instance of this page}
+\buttonsDetail{the author selection page (\ref{authorSelection})}
+
+\section{Functionality Description}
+
+\subsection{Function Selection Page}
+\label{functionSelection}
+
+\begin{figure}
+ \bigpic{functionSelection}
+ \caption{Function Selection Page}
+\end{figure}
+
+\selectionPage{function}{A function is basically a use case for your tool (e.g. multiple sequence alignment for proteins). If your tool has multiple different application purposes you should create a function for each.}{the function edit page (\ref{function})}
+\buttonsDetail{the overview page (\ref{overview})}
+
+\subsection{Function Edit Page}
+\label{function}
+
+\begin{figure}
+ \bigpic{function}
+ \caption{Function Edit Page}
+\end{figure}
+
+\paragraph{}A function is basically a use case for your tool (e.g. multiple sequence alignment for proteins). If your tool has multiple different application purposes you should create a function for each. If a BiBiServ user clicks on the link to this tools submission page she/he will be able to choose between the different functionalities.
+\name{function}{(mandatory)}
+\shortDescr{function}{(mandatory)}
+\descr{function}{}
+\paragraph{Inputs:} An input is a datastructure representing real biological data. This is the input your tool is actually working on. You can select multiple inputs like in a selection page (see section \ref{layout-selectionPages}). It is also possible to define no input at all.
+\paragraph{Output (mandatory):} The output is a datastructure your tool returns after doing its work. Like an input it is a bioinformatical datastructure. One functionality only has one output. You can select the output in the given dropdown menu.
+\paragraph{Parameter Group:} A parameter group is a wrapper structure referencing parameters or other parameter groups. A function has always one parameter group. However the concept of a parameter group allows to reference as many parameters as you like inside the parameter group. You can select the parameter group in the given dropdown menu.
+\paragraph{Dependencies:} Dependencies are constraints for parameters (e.g. one parameter has to be defined if another one is defined). The dependencies are described in Jan Kruegers DependencyLanguage (see section \ref{dependencyLanguage}). You can select multiple dependencies like in a selection page (see section \ref{layout-selectionPages}). It is also possible to define no dependency at all.
+\paragraph{Order:} Leads to the order edit page (\ref{order}).
+\paragraph{Example:} Leads to the example edit page (\ref{example}). An example is a set of values for the inputs and parameters of this functionality to show the user how to use it.
+\newElem{function}{another instance of this page}
+\newElem{input}{the input edit page (\ref{inputs})}
+\newElem{output}{the output edit page (\ref{outputs})}
+\newElem{parameter group}{the parameter group edit page (\ref{paramGroup})}
+\newElem{dependency}{the dependency edit page (\ref{dependency})}
+\buttonsDetail{the function selection page (\ref{functionSelection})}
+
+\subsection{Input Edit Page}
+\label{inputs}
+
+\begin{figure}
+ \bigpic{input}
+ \caption{Input Edit Page}
+\end{figure}
+
+\paragraph{}An input is a datastructure representing real biological data. This is the input your tool is actually working on. Each input is shown with an own input window at the submission page of this functionality. The input will be automatically validated and converted according to the representation you choose (see below).
+\name{input}{(mandatory)}
+\shortDescr{input}{(mandatory)}
+\descr{input}{(mandatory)}
+\paragraph{Representation (mandatory):} This is the bioinformatics data format your tool accepts as input. Users of the BiBiServ2 will not only be able to use this specific representation but also any other one that can be converted into input for this tool (see section \ref{representations}). Therefore you should \underline{not} add any specific information about the specific representation to your inputs description texts (see above). The build-in filters should make it easy to find the right representation for your input. If you are not able to find the right one, please select ``ToolDependentRepresentation''.
+\paragraph{Handling (mandatory):} This defines how your tool would like to get input. This is a purely technical information and is transparent to the BiBiServ user. If you select ``FILE'' the filename will be inserted into a command line call of your tool. If you select ''STDIN`` the data will be forwarded using pipes. ''ARGUMENT`` file handling means the user input will be provided as a commandline argument. ''NONE`` should only be selected by advanced users: You'll have to program the input handling yourself in the generated classes in the output project (see section \ref{codegen}).
+\paragraph{Option:} This is a commandline prefix for your input data. This is a purely technical information and is transparent to the BiBiServ user. If your tool needs to have a `` -i '' before the input data starts you can write `` -i '' here.
+\paragraph{Example:} You can directly provide an example for your input data here by either uploading it or pasting it into the given text area. BiBiServ users will be able to select an example to see how your tool works. Therefore we strongly recommend providing example data. For more details on examples please see section \ref{example}.
+\newElem{input}{another instance of this page}
+\buttonsDetail{\ref{function}}
+
+\subsection{Output Edit Page}
+\label{outputs}
+
+\begin{figure}
+ \bigpic{output}
+ \caption{Output Edit Page}
+\end{figure}
+
+\paragraph{}The output is a datastructure your tool returns after doing its work. The output will be shown either directly or in converted form to a BiBiServ user after a submission is finished. It depends on the representation you choose how the output is visualized (see below).
+\name{output}{(mandatory)}
+\shortDescr{output}{(mandatory)}
+\descr{output}{(mandatory)}
+\paragraph{Representation (mandatory):} This is the bioinformatics data format your tool returns as output. Users of the BiBiServ2 will not only be able to use this specific representation but also any other one that can be converted from output returned by this tool (see section \ref{representations}). Therefore you should \underline{not} add any specific information about the specific representation to your outputs description texts (see above). The build-in filters should make it easy to find the right representation for your output. If you are not able to find the right one, please select ``ToolDependentRepresentation''.
+\paragraph{Handling (mandatory):} This defines how your tool returns the output. This is a purely technical information and is transparent to the BiBiServ user. If you select ``FILE'' an output file name will be added to the command line call. If you select ``STDOUT'' the output data will be read from the System.out-Stream.
+\paragraph{Option:} This is a commandline prefix for your output data. This is a purely technical information and is transparent to the BiBiServ user. If your tool needs to have a `` -o '' before the output file name starts you can write `` -o '' here.
+\paragraph{Example:} You can directly provide an example for your output data here by either uploading it or pasting it into the given text area. In most cases, however, this is not necessary because your tool will create example output if you define a valid example for your functionality. For more details on examples please see section \ref{example}.
+\newElem{output}{another instance of this page}
+\buttonsDetail{\ref{function}}
+
+\subsection{Parameter Groups Edit Page}
+\label{paramGroup}
+
+\begin{figure}
+ \bigpic{paramGroup}
+ \caption{Parameter Group Edit Page}
+\end{figure}
+
+\paragraph{} A parameter group is a wrapper structure referencing parameters or other parameter groups. Its purpose is to group parameters into one reference to simplify parameter management. If you only have one parameter group for each functionality they are not shown to the BiBiServ user. If you have more than one parameters are grouped together according to their parameter group at the submission page of the respective functionality as well as at the manual page.
+\paragraph{Name (mandatory):} This is the internal id of the parameter group. This id is hidden from the user and thus does not have to be human readable. It must not be ambigous though.
+\paragraph{Displayed Name:} Per default parameter groups are transparent to the BiBiServ user. If you want that a parameter group is shown in the manual and the submission page of your tool you should add a displayed name.
+\shortDescr{parameter group}{}
+\descr{parameter group}{}
+\paragraph{Parameter (mandatory if no Parameter Group is selected):} A parameter manipulates the behaviour of your functionality without being actual input data. You can select multiple parameters like in a selection page (see section \ref{layout-selectionPages}).
+\paragraph{Parameter Groups (mandatory if no Parameter is selected):} Other parameter groups that are wrapped into this one. You can select multiple parameter groups like in a selection page (see section \ref{layout-selectionPages}).
+\newElem{parameter group}{another instance of this page}
+\newElem{parameter}{\ref{parameter}}
+\buttonsDetail{\ref{function}}
+
+\subsection{Parameter Edit Page}
+\label{parameter}
+
+\begin{figure}
+ \bigpic{parameter}
+ \caption{Parameter Edit Page}
+\end{figure}
+
+\paragraph{}A parameter manipulates the behaviour of your functionality without being actual input data. Parameters will be shown to the user at the submission page of this functionality after providing input. How they are visualized depends on the type and the GUI element (see below).
+\name{parameter}{(mandatory)}
+\shortDescr{parameter}{(mandatory)}
+\descr{parameter}{(mandatory)}
+\paragraph{Option (mandatory if type is boolean):} This is a commandline prefix for your parameter. E.g. if your tool needs a `` -p '' before the parameter value begins you can write `` -p '' here. At the bottom of the screen there is a preview of the resulting commandline call.
+\paragraph{GUI Element (mandatory):} This defines which GUI element is displayed to a BiBiServ user for this parameter at the submission form of your tool on the BiBiServ. You should decide about the type of your parameter before editing the GUI element because the type manipulates which GUI elements can be selected.
+\paragraph{Type (mandatory):} The type defines what kind of parameter a BiBiServ user can manipulate to change your tools behaviour. Your choice here manipulates the rest of the description:
+\begin{itemize}
+ \item \textbf{String}
+	\begin{itemize}
+	\item \defaultValue
+	\item \textbf{Minimal length:} A plain integer that defines the minimal length of user input for this parameter.
+	\item \textbf{Maximal length:} A plain integer that defines the maximal length of user input for this parameter.
+	\item \textbf{Regular Expression:} A regular expression used to validate user input for this parameter. Input of a BiBiServ user that can not be matched by this regular expression will lead to an error message at runtime.
+	\end{itemize}
+ \item \textbf{Int}
+	\begin{itemize}
+	\item \defaultValue
+	\item \textbf{Minimum value:} A plain integer that defines the minimum value of this integer.
+	\item \textbf{Minimum included:} If activated the user can use the minimum value. If not the user can only use values larger than the minimum value.
+	\item \textbf{Maximum value:} A plain integer that defines the maximum value of this integer.
+	\item \textbf{Maximum included:} If activated the user can use the maximum value. If not the user can only use values smaller than the minimum value.
+	\end{itemize}
+ \item \textbf{Float}
+	\begin{itemize}
+	\item \defaultValue
+	\item \textbf{Minimum value:} A float value that defines the minimum value of this float.
+	\item \textbf{Minimum included:} If activated the user can use the minimum value. If not the user can only use values larger than the minimum value.
+	\item \textbf{Maximum value:} A float value that defines the maximum value of this float.
+	\item \textbf{Maximum included:} If activated the user can use the maximum value. If not the user can only use values smaller than the minimum value.
+	\end{itemize}
+ \item \textbf{Boolean}
+	A boolean parameter does not transfer the given value by the user to the command line call. Instead it is a switch of the commandline modifier given in the ``Option'' text field above: if the user clicks ``true'' the modifier is written to the commandline call. If not, it is not written to the command line call. Therefore you have to provide an ``Option'' value if you are using boolean parameters.
+	\begin{itemize}
+	\item \defaultValue
+	\end{itemize}
+ \item \textbf{DateTime}
+	\begin{itemize}
+	\item \defaultValue A DateTime value is validated using a DateTime regular expression.
+	\end{itemize}
+ \item \textbf{Enum}
+	An enum parameter is the most flexible type of parameter. A BiBiServ user has the choice between different values. If she/he chooses one the internal value of this enum instance is written to the command line. However this internal process is transparent to the user. E.g. if you use large matrices as parameter for your tool you can just show the user the names of those matrices while the management of the matrix itself happens internally.
+	\begin{itemize}
+	\item \textbf{Enum type:} Type of each enum instance.
+	\item \textbf{Prefix:} The prefix that is written to the command line before the actual enum instance value.
+	\item \textbf{Suffix:} The suffix that is written to the command line after the actual enum instance value.
+	\item \textbf{Separator (mandatory):} The separator between enum instances. This is a purely technical value and is transparent to the BiBiServ user. Per default you should just enter ``,'' here.
+	\item \textbf{Minimum Selection:} The smallest possible amount of instances a BiBiServ user may select at this parameter.
+	\item \textbf{Maximum Selection:} The largest possible amount of instances a BiBiServ user may select at this parameter.
+	\item \textbf{Enumerations:}
+		\begin{itemize}
+		\item \textbf{Name:} This is the name displayed to BiBiServ users of this enumeration instance.
+		\item \textbf{Key:} This is the internal id identifying this enumeration instance. This is hidden from BiBiServ users.
+		\item \textbf{Value:} This is the actual value of this enum instance written to the command line if the user selects it.
+		\item \textbf{Default value:} If the user does not select a value, this one is used. You may only select one default value.
+		\end{itemize}
+	\end{itemize}
+\end{itemize}
+
+\paragraph{Example result:} Preview of a command line call for this parameter.
+\newElem{parameter}{another instance of this page}
+\buttonsDetail{\ref{paramGroup}}
+
+\subsection{Dependency Edit Page}
+\label{dependency}
+
+\begin{figure}
+ \bigpic{dependency}
+ \caption{Dependency Edit Page}
+\end{figure}
+
+\paragraph{}This page enables you to define Dependencies between different parameters in your tool. Dependencies are constraints for parameters (e.g. one parameter has to be defined if another one is defined). The dependencies are described in Jan Kruegers DependencyLanguage (see section \ref{dependencyLanguage}). Dependencies are not directly shown to the BiBiServ user at the submission page, they are just used to validate her/his input. Every dependencies description text is displayed at the manual page though.
+\name{dependency}{(mandatory)}
+\shortDescr{dependency}{(mandatory)}
+\descr{dependency}{}
+\paragraph{Definition (mandatory):} The definition of a dependency is the actual description of the dependency itself. It is written in Jan Kruegers DependencyLanguarge (see section \ref{dependencyLanguage}). Beneath the text area there is a board with parameters that can be referenced. Just click one of those buttons to insert the parameter reference in the definition text area.
+\paragraph{Test function:} If you want to know if a given function with its examples and default values satisfies your current dependency you can test it here by selecting the function in the dropdown menu and clicking the ``Test function'' button. The text area beneath will show the tests result.
+\newElem{dependency}{another instance of this page}
+\buttonsDetail{\ref{function}}
+
+\subsection{Order Edit Page}
+\label{order}
+
+\begin{figure}
+ \bigpic{order}
+ \caption{Order Edit Page}
+\end{figure}
+
+\paragraph{}You can edit the order of the arguments in an command line call of this functionality here.
+\paragraph{}The order is not shown to the BiBiServ user. You won't even need to edit it if your tool does not depend on a specific order of arguments (parameters + inputs + output). However if your functionality does need a specific order (e.g. all parameters have to be used before the input) you can sort the arguments here using the arrow buttons.
+\paragraph{}At the bottom of the page you can see a preview of the resulting command line call. Please note that per default whitespaces between arguments are \underline{not} included in a command line call. If this functionality depends on a certain order of arguments  please edit the order using the arrow buttons.
+\paragraph{}You can also insert additional strings for calling the tool (like whitespaces) using the "+" button.
+
+\buttonsDetail{\ref{function}}
+
+\subsection{Example Edit Page}
+\label{example}
+
+\begin{figure}
+ \bigpic{example}
+ \caption{Example Edit Page}
+\end{figure}
+
+\paragraph{} An example is a set of values for the inputs and parameters of this functionality to show the user how to use it. The examples will be displayed at the submission page of your tool. Users can click an example button that activates a given example.
+\name{example}{(mandatory)}
+\shortDescr{example}{}
+\paragraph{Input examples using files:} You can upload example input for the inputs of your function that have file handling here. If you already did upload an example at the respective Input Edit Page (see section \ref{inputs}) this will be displayed here. You can also directly manipulate the file content by using the text area beneath the uploader.
+\paragraph{Input examples using strings:} You can type in example input for the inputs of your function that have string handling here using the text area. If you already did provide an example at the respective Input Edit Page (see section \ref{inputs}) this will be displayed here.
+\paragraph{Parameter examples:} This is a list of all parameters of this function. You can provide input for each of them in the text field beside it. If your parameter data does not satisfy the dependencies you selected for this function an error message will be displayed (see \ref{dependency} and \ref{dependencyLanguage}).
+\paragraph{enum Parameter examples:} This is a list of all enumeration parameters of this functions. You can choose which enumeration instances shall be activated here. If your parameter data does not satisfy the dependencies you selected for this function an error message will be displayed (see \ref{dependency} and \ref{dependencyLanguage}).
+\newElem{example}{another instance of this page}
+\buttonsDetail{\ref{function}}
+
+\section{Manual Edit Page}
+\label{manual}
+
+\begin{figure}
+ \bigpic{manual}
+ \caption{Manual Edit Page}
+\end{figure}
+
+\paragraph{} The largest part of your manual will be autogenerated using the descriptions your provided for functionalities, parameters, inputs and so on. This site enables you to add additional data to the manual.
+\customContent{ The introductory text is displayed first on the manual page for your tool. It should contain some general remarks about your tool and how it works. The auto-generated content follows afterwards.}{introductory text}{(mandatory)}
+\customContent{The custom content is displayed after the auto-generated manual content. You can add some supplementary information about your tool here (e.g. how your algorithms work).}{custom content}{}
+\buttonsDetail{\ref{overview}}
+
+\section{Supplementary Information}
+
+\subsection{Reference Selection Page}
+\label{referenceSelection}
+
+\begin{figure}
+ \bigpic{referenceSelection}
+ \caption{Reference Selection Page}
+\end{figure}
+
+\selectionPage{reference}{A reference is described here according to the BibTex standard (see section \ref{bibTex}).}{\ref{reference}}
+\buttonsDetail{\ref{overview}}
+
+\subsection{Reference Edit Page}
+\label{reference}
+
+\begin{figure}
+ \bigpic{reference}
+ \caption{Reference Edit Page}
+\end{figure}
+
+\paragraph{} A reference is described here according to the BibTex standard. The entries are pretty self-explanatory. The URL should be a link to the reference and the DOI is the ``digital object identifier'' of your reference. In the BibTex-section (\ref{bibTex}) we discuss in detail, which fields are mandatory for which BibTex-type.
+\paragraph{} References are shown to the user on an extra page calles ``references''. The first reference you provide is shown on the welcome page for your tool with a plea to reference it if your tool is used. Thus the first reference you create should be your own thesis/article on the tool.
+\paragraph{} Please note: A reference is identified by the first three letters of the author(s) name(s) and the year. You can not save multiple reference with the exact same author(s) and year of publishing.
+\newElem{reference}{another instance of this page}
+\buttonsDetail{\ref{referenceSelection}}
+
+\subsection{View Edit Page}
+\label{view}
+
+\begin{figure}
+ \bigpic{view}
+ \caption{View Edit Page}
+\end{figure}
+
+\paragraph{}A view is an additional HTML page for your tools site on the BiBiServ.
+\paragraph{}You have the choice between different types of additional pages that are contained in the BiBiServAbstraction schema (see section \ref{bibiservabstraction}). Please note that you can only create \underline{one} view for each type. Saving multiple views with the same type will result in an error message.
+\paragraph{Title:} The title of your page. If you don't enter a title it will be auto-generated.
+\customContent{The custom content is the actual content of the HTML page.}{custom content}{(mandatory)}
+\paragraph{View Type:} There are several different types of views defined in the BiBiServAbstraction schema. They define different types of pages that have been part of BiBiServ tool web interfaces over the years (as ``submission'' page ``download'' page and so on). If you want to add a page that is not part of this list you have to do it manually after calling codegen (see section \ref{create-xml} and \ref{codegen}).
+\newElem{view}{another instance of this page}
+\buttonsDetail{\ref{overview}}
+
+\subsection{File Selection Page}
+\label{fileSelection}
+
+\begin{figure}
+ \bigpic{fileSelection}
+ \caption{File Selection Page}
+\end{figure}
+
+\selectionPage{file}{These are either files the user can download or image files you want to use in one of your tools HTML pages (e.g. in the manual).}{\ref{file}}
+\newElem{image file}{\ref{imageFile}}
+\buttonsDetail{\ref{overview}}
+
+\subsection{File Edit Page}
+\label{file}
+
+\begin{figure}
+ \bigpic{file}
+ \caption{File Edit Page}
+\end{figure}
+
+\paragraph{}A file can be downloaded by BiBiServ users. These files are shown on an extra page called ``Downloads''.
+\paragraph{File (mandatory):} This is the actual file name. It will be changed according to your upload. If you don't directly upload the file to the wizard (see below) you have to add the file to your tool project after using codegen (see section \ref{create-xml} and \ref{codegen}) and before deploying it on the BiBiServ (see also section \ref{downloadables}).
+\name{file}{(mandatory)}
+\paragraph{Version:} If you add a binary of your file here you should include its version.
+\shortDescr{file}{(mandatory)}
+\descr{file}{}
+\paragraph{Platform:} If you add a file that only works on certain platforms (like compiled binaries) you should include that information here.
+\paragraph{File uploaded:} You can upload the file itself here. The file name (see above) will change accordingly.
+\newElem{file}{another instance of this page}
+\buttonsDetail{\ref{fileSelection}}
+
+\subsection{Image File Edit Page}
+\label{imageFile}
+
+\begin{figure}
+ \bigpic{imageFile}
+ \caption{Image File Edit Page}
+\end{figure}
+
+\paragraph{}You can upload image files here. Image files are not part of the tool description itself but will be stored in an image folder on the server and inserted into the codegen directories if you use codegen (see section \ref{create-xml} and \ref{codegen}). An image file has the sole purpose of being referenced by the html-pages generated for this tool description and it is not shown to a BiBiServ user if you don't reference it in an \htmlTag{img}-tag somewhere in your tool description.
+\paragraph{File Name (mandatory):} The actual file name on the server. It will be changed according to your upload.
+\paragraph{File uploaded:} You can upload the file itself here. The file name (see above) will change accordingly.
+\newElem{image file}{another instance of this page}
+\buttonsDetail{\ref{fileSelection}}
+
+\section{Import and Export}
+
+\subsection{Load XML}
+\label{load-xml}
+
+\begin{figure}
+ \bigpic{loadXML}
+ \caption{Load XML Page}
+\end{figure}
+
+\paragraph{}You can upload an existing XML tool description here (XML according to the BiBiServAbstraction schema / .bs2 file; see section \ref{bibiservabstraction} and \ref{bs2}). Just click the "choose" button and select your description file.
+\paragraph{}After unmarshalling the tool description content will be loaded into the Wizard and you can proceed editing your tool.
+\paragraph{Return:} Leads back to \ref{overview}.
+
+\subsection{Create XML}
+\label{create-xml}
+
+\begin{figure}
+ \bigpic{createXML}
+ \caption{Create XML Page}
+\end{figure}
+
+\paragraph{}This site provides functions for generating output for your tool (see also chapter \ref{output}).
+\paragraph{Create XML:} This button will start the xml generation (see section \ref{bs2}). After successfully generating a .bs2 file for your tool according to the BiBiServ abstraction schema (see section \ref{bibiservabstraction}) you can download it by clicking ``Download'' next to the ``.bs2-file'' label. Please note that changes to your tool description are \underline{not} automatically transfered to the .bs2. Every time you made changes you have to use the ``Create XML'' button again. This is a way to save a copy of your current working state as a file. You can load it back into the wizard later by using the load xml functionality (see \ref{load-xml}).
+\paragraph{Options:} This is only displayed after finishing xml creation once. These are your options to manipulate the codegen process. This is explained in detail in section \ref{codegen}. If you are new to the wizard you probably should not use these options.
+\paragraph{Create Code:} This button starts the codegen process. It creates a full-blown project directory for your tools web interface including HTML pages and Java Beans that can be directly deployed onto the BiBiServ (see section \ref{instantbibi}). The large text box beneath will show you the current state of the codegen process. This might take several minutes to finish.
+\paragraph{} You can download the finished project by clicking on the ``Download'' button next to the ``.zip-file'' label.
+\paragraph{Return:} Leads back to \ref{overview}.
+
+\chapter{Formats and Standards}
+\label{standards}
+\paragraph{} In this chapter we will discuss several different standards and formats that are used in the Wizard. If you generate a tool description using the Wizard your description will automatically satisfy all of these standards. Therefore this chapter is designated for advanced users that want to have a more thorough understanding of the Wizard.
+
+\section{BiBiServ Abstraction Schema}
+\label{bibiservabstraction}
+\paragraph{} The BiBiServ abstraction schema was developed by Daniel Hagemeier for his master thesis\footnote{Hagemeier, 2008}.
+It is an xml schema (.xsd) that is meant to be an interface for xml tool descriptions for the BiBiServ2. The BiBiServ code generation tools (see \ref{create-xml} and \ref{output}) will use the properties defined in the schema to generate a full blown project folder that can be deployed on BiBiServ2. This is a huge improvement for developers and administrators: Both just have to program against the interface (BiBiServ abstraction schema). Developers don't have to know the BiBiServ2 server structure and administrators don't need to know how the tools work exactly.
+\paragraph{} If you generate an output xml with this Wizard it will automatically be a valid xml document according to this schema. If you are interested in the details you can have alook at the schema directly\footnote{.xsd-schema-location: \url{http://bibiserv.techfak.uni-bielefeld.de/xsd/bibiserv2/BiBiServAbstraction.xsd}}.
+
+\section{BiBiServ Ontology Representations}
+\label{representations}
+\paragraph{} A representation is a bioinformatics dataformat that represents any kind of biological data. Because there are lots of different dataformats for the same biological data bioinformatics users often have to implement converters to use a tool that relies on another kind of representation for the same data.
+\paragraph{} The BiBiServ Ontology by Sven Hartmeier\footnote{Hartmeier, 2012}
+recognizes this fact and serves as an interface between tools, converters and visualizers. By providing a representation of your tools input and output you enable the ontology to find a converter in the BiBiServ libraries from your representation to the one the BiBiServ user needs or even a converter chain that enables your tool to understand the user input.
+\paragraph{} Utilizing this ontoogy BiBiServ users can not only use the native representation of your tool but also every representation that can be converted from or to your tools native ones. Ideally it should be possible for BiBiServ users to insert any kind of representation and your tool will understand it as long as the biological data that is modelled makes sense.
+\subsection{Three axis principle}
+\paragraph{} Representations are classified in three different categories:
+\paragraph{Content:} The content of a representation is the actual biological data it models. This could be Amino Acid data or more specific contents like Ribonucleic acids.
+\paragraph{Datastructure:} The datastructure is the structural form of the biological data a given representation models. Examples would be plain sequence data, alignment data, structure data (like secondary structures) and so on.
+\paragraph{Format:} This is the specific bioinformatics format family this representation belongs to, for example FASTA, GDE or Alignment-ML.
+\subsection{Filters}
+\paragraph{} Inside the wizard these axis are represented by filters that help you to choose the right representation for your tools input or output (see section \ref{inputs} and \ref{outputs}).
+
+\section{MicroHTML}
+\label{microhtml}
+\htmlstandardI{MicroHTML}{http://bibiserv.techfak.uni-bielefeld.de/xsd/bibiserv2/microhtml.xsd}
+\subsection{MicroHTML Editor}
+\htmlstandardII{MicroHTML}
+\subsection{MicroHTML tags}
+\paragraph{} The following tags are available in MicroHTML:
+
+\paragraph{}
+\begin{tabularx}{\textwidth}{lX}
+\hline
+\textbf{tag} & \textbf{description}\\
+\hline
+\htmlTag{a}& Tag for starting a link. Allowed attributes are: href, hreflang and name\\ [0.1cm]
+\hline
+\htmlTag{cite} & Tag for starting a quote.\\ [0.1cm]
+\hline
+\htmlTag{q} & Tag for starting an inline quote.\\ [0.1cm]
+\hline
+\htmlTag{em} & Tag for starting emphasized text (italic text format). i- und u-tags are \underline{not} allowed in MicroHTML. They are replaced by em-tags.\\ [0.1cm]
+\hline
+\htmlTag{strong} & Tag for starting strong text (bold text format). b-tags are \underline{not} allowed in MicroHTML. They are replaced by strong-tags.\\ [0.1cm]
+\hline
+\htmlTag{sample} & Tag for starting a sample.\\ [0.1cm]
+\hline
+\htmlTag{sub} & Tag for starting subscript text.\\ [0.1cm]
+\hline
+\htmlTag{sup} & Tag for starting superscript text.\\ [0.1cm]
+\hline
+\htmlTag{img} & Image-tag. Allowed attributes are: src, alt, name and longdesc. Please note that src and alt are \underline{mandatory} attributes. If you want to include an image the smartest way of doing to is to reference the picture manually with the relative path resources/images/mypicture.png and uploading the image itself as an ImageFile (see section \ref{imageFile})\\ [0.1cm]
+\hline
+\htmlTag{ol} & Tag for starting an ordered list. This tag may only contain li-tags.\\ [0.1cm]
+\hline
+\htmlTag{ul} & Tag for starting an unordered list. This tag may only contain li-tags.\\ [0.1cm]
+\hline
+\htmlTag{li} & Tag for a list entry. Is only allowed if included in a ol- or ul- tag. The only allowed attribute is value.\\ [0.1cm]
+\hline
+\htmlTag{br/} & Tag for a line break. If you type in this tag directly it will be replaced by a paragraph structure (p-tags) because that is what you'll want normally. If you really need line breaks you can force a br-tag by including a \xhtmlComment{br} comment tag in the source code.\\ [0.1cm]
+\hline
+\htmlTag{p} & Tag for starting a new paragraph.\\ [0.1cm]
+\hline
+\htmlTag{hr/} & Tag for a vertical line. If you type in this tag directly will be deleted. If you really need it you can force a hr-tag by including a \xhtmlComment{hr} comment tag in the source code.\\ [0.1cm]
+\end{tabularx}
+
+\section{MiniHTML}
+\label{minihtml}
+\htmlstandardI{MiniHTML}{http://bibiserv.techfak.uni-bielefeld.de/xsd/bibiserv2/minihtml.xsd}
+\subsection{MiniHTML Editor}
+\htmlstandardII{MiniHTML}
+\subsection{MiniHTML tags}
+\paragraph{} In addition to the MicroHTML tags the following tags are available in MiniHTML:
+\paragraph{}
+\begin{tabularx}{\textwidth}{lX}
+\hline
+\textbf{tag} & \textbf{description}\\
+\hline
+\htmlTag{table}& Tag for starting a table. This tag may only contain caption-. tfoot-, thead-, tbody- or tr-tags. The only allowed attribute is summary.\\ [0.1cm]
+\hline
+\htmlTag{caption} & Tag for starting table caption.\\ [0.1cm]
+\hline
+\htmlTag{thead} & Tag for starting the head section of a table. This tag may only contain tr-tags.\\ [0.1cm]
+\hline
+\htmlTag{tfoot} & Tag for starting the foot section of a table. This tag may only contain tr-tags.\\ [0.1cm]
+\hline
+\htmlTag{tbody} & Tag for starting the main content section of a table. This tag may only contain tr-tags.\\ [0.1cm]
+\hline
+\htmlTag{tr} & Tag for starting a table row. This may only contain td- or th-tags.\\ [0.1cm]
+\hline
+\htmlTag{td} & Tag for starting a cell in a table. Allowed attributes are abbr, axis, headers, scope, rowspan, colspan and nowrap.\\ [0.1cm]
+\hline
+\htmlTag{th} & Tag for starting a header cell in a table. Allowed attributes are abbr, axis, headers, scope, rowspan, colspan and nowrap.\\ [0.1cm]
+\hline
+\htmlTag{h4} & Tag for starting a heading.\\ [0.1cm]
+\hline
+\htmlTag{h5} & Tag for starting a heading (smaller than h4).\\ [0.1cm]
+\hline
+\htmlTag{h6} & Tag for starting a heading (smaller than h5).\\ [0.1cm]
+\end{tabularx}
+
+\section{BibTex}
+\label{bibTex}
+\paragraph{} BibTex is a format to describe references. It is described in detail on the BibTex-homepage\footnote{\url{http://www.bibtex.org/}}.
+\paragraph{} Each reference has a certain type (see below). The following fields are required and optional for each type:
+\paragraph{}
+\begin{tabularx}{\textwidth}{llX}
+\hline
+\textbf{Type} & \textbf{Required} & \textbf{Optional}\\ [0.1cm]
+\hline
+article & authors, title, journal, year & note, doi, url\\ [0.1cm]
+\hline
+book & authors, title, publisher, year & note, doi, url\\ [0.1cm]
+\hline
+inproceedings & authors, title, year & note, publisher, doi, url\\ [0.1cm]
+\hline
+manual & authors, title, year & note, doi, url\\ [0.1cm]
+\hline
+masterthesis & authors, title, school, year & note, doi, url\\ [0.1cm]
+\hline
+phdthesis & authors, title, school, year & note, doi, url\\ [0.1cm]
+\hline
+proceedings & authors, title, year & note, publisher, doi, url\\ [0.1cm]
+\hline
+techreport & authors, title, institution, year & note, doi, url\\ [0.1cm]
+\end{tabularx}
+
+\section{Dependency Language}
+\label{dependencyLanguage}
+\paragraph{} The BiBiServ Dependency Language was developed by Jan Krueger to have a common formal description for dependencies between parameters in BiBiServ tools. A typical example for such a dependency is that one parameter has to be defined if another one is defined and may not be defined if the other one is not defined. This is - in terms of formal logic - the equivalence of two parameters. In Jan Kruegers DependencyLanguage this would be described as
+\begin{verbatim}
+ or(
+   and(
+     def(parameter A),
+     def(parameter B)
+   ),
+   and(
+     not(def(parameter A)),
+     not(def(parameter B))
+   )
+ )
+\end{verbatim}
+\paragraph{} You can find a detailed description in the TechFak wiki\footnote{\url{http://wiki.techfak.uni-bielefeld.de/bibiserv/BiBiServ_V2_XMLSServerDescription} (german)}.
+
+\subsection{BNF definition}
+\paragraph{} The Backus Naur-Form of the Dependency-Language is:
+
+\paragraph{}
+\begin{tabularx}{\textwidth}{lcX}
+\htmlTag{Function} (root Element) & ::= & \htmlTag{AND} $\vert$ \htmlTag{OR} $\vert$ \htmlTag{XOR}$\vert$ \htmlTag{NOT} $\vert$ \htmlTag{IMPL} $\vert$ \htmlTag{LOGEQ} $\vert$ def(\htmlTag{id}) $\vert$ \htmlTag{EQUALS} $\vert$ \htmlTag{GREATER} $\vert$ \htmlTag{GREATEREQUALS} $\vert$ \htmlTag{LESSER} $\vert$ \htmlTag{LESSEREQUALS} \\ [0.1cm]
+
+\htmlTag{AND}          & ::= & and(\htmlTag{Function},\htmlTag{Function})\\ [0.1cm]
+
+\htmlTag{OR}           & ::= & or(\htmlTag{Function},\htmlTag{Function})\\ [0.1cm]
+
+\htmlTag{XOR}          & ::= & xor(\htmlTag{Function},\htmlTag{Function})\\ [0.1cm]
+
+\htmlTag{NOT}          & ::= & not(\htmlTag{Function})\\ [0.1cm]
+
+\htmlTag{IMPL}         & ::= & impl(\htmlTag{Function},\htmlTag{Function})\\ [0.1cm]
+
+\htmlTag{LOGEQ}        & ::= & logeq(\htmlTag{Function},\htmlTag{Function})\\ [0.1cm]
+
+\htmlTag{EQUALS}       & ::= & eq(\htmlTag{id},\htmlTag{id} $\vert$ \htmlTag{value})\\ [0.1cm]
+
+\htmlTag{GREATER}      & ::= & gt(\htmlTag{id},\htmlTag{id} $\vert$\htmlTag{value})\\ [0.1cm]
+
+\htmlTag{GREATEREQUALS}& ::= & ge(\htmlTag{id},\htmlTag{id} $\vert$\htmlTag{value})\\ [0.1cm]
+
+\htmlTag{LESSER}       & ::= & lt(\htmlTag{id},\htmlTag{id} $\vert$\htmlTag{value})\\ [0.1cm]
+
+\htmlTag{LESSEREQUALS} & ::= & le(\htmlTag{id},\htmlTag{id} $\vert$\htmlTag{value})\\ [0.1cm]
+
+\htmlTag{id}           & ::= & @[A-Z,a-z,0-9]+\\ [0.1cm]
+
+\htmlTag{value}        & ::= & [0-9]+[.]?[0-9]*$\vert$[A-Z,a-z,0-9,...]\\ [0.1cm]
+\end{tabularx}
+
+\chapter{Output}
+\label{output}
+\paragraph{} In this chapter the Wizards output is described in detail. The Wizards createXML page (see section \ref{create-xml}) enables you to generate a xml tool description file (section \ref{bs2}) as well as a full-blown netbeans project (section \ref{codegen}) that can be deployed on the BiBiServ (section \ref{instantbibi}).
+
+\section{XML Tool Description}
+\label{bs2}
+\paragraph{} The first output format is a .bs2-file for your tool. ``.bs2'' means ``BiBiServ2'' and indicates that this xml file satisfies all necessary standards (see chapter \ref{standards}) for using it in the BiBiServ 2 system.
+This file is plain xml and can be opened in any text editor. You can also use this file to save your current state of work and load it back into the wizard later because it will contain any saved information (see section \ref{load-xml}; please note: Created functions, authors, outputs, inputs, parameters, etc. which are not selected in the respective dropdown menus are \underline{not} saved; also image Files are not saved).
+\paragraph{} .bs2 files are the basis for BiBiServ code generation using base and codegen (see section \ref{codegen}).
+
+\section{Codegen Output}
+\label{codegen}
+\paragraph{} As soon as you generated a valid xml using the Wizard you can start the code generation process (see section \ref{create-xml}). If you do so the Wizard calls sub-programs called ``base'' and ``codegen''. These will generate an HTML frontend in the BiBiServ2 design as well as backend java bean classes to transform user input to a valid input for your tool and your tools output to displayable content for the HTML pages. In fact a full-blown netbeans project will be generated.
+\paragraph{} This process will also copy all image files you have inserted (see section \ref{imageFile}) to the path ``resources/images'' and all downloadable files (see section \ref{file} and \ref{downloadables}) to the path ``resources/downloads'' of the output project.
+\paragraph{} You can download the finished project as a .zip file.
+
+\subsection{Codegen Output Options}
+\paragraph{} There are several options for codegen that manipulate the programs behaviour.
+
+\paragraph{}
+\begin{tabularx}{\textwidth}{lX}
+\hline
+\textbf{Option} & \textbf{Description}\\
+\hline
+withoutWS & If activated codegen will \textbf{not} generate a WebService Interface for your tool. Only a regular submission  page will be generated.\\ [0.1cm]
+\hline
+withoutMoby & If activated codegen will \textbf{not} generate a BioMoby Interface for your tool.\\ [0.1cm]
+\hline
+withoutVB & If activated codegen will \textbf{not} generate a VirtualBiBiServ Interface for your tool.\\ [0.1cm]
+\hline
+withoutSSWAP & If activated codegen will \textbf{not} generate a Simple Semantic Web Architecture and Protocol (SSWAP) description for your tool.\\ [0.1cm]
+\end{tabularx}
+
+\section{Deployment on BiBiServ}
+\label{instantbibi}
+\paragraph{} If you want to test what your tools user interface will look like on the BiBiServ, you can set up an instantbibi-instace (this is not documented here, please ask the BiBiServ administration for detailed information on this topic) and deploy the Wizard generated project there.
+\paragraph{} Just unzip the project folder (see section \ref{codegen}) and run the command ``ant deploy'' on the commandline in your project folder after setting up instantbibi. Your tool interface will be deployed and can now be seen at the url \verb+http://localhost:<bibiservport>/<toolname>+.
+
+\section{Downloadable Files}
+\label{downloadables}
+\paragraph{} Downloadable files like binary distributions of your tool will be referenced in the xml tool description. Therefore the output project will generate a download page for them. If you forget to upload the actual file while using the wizard you have to include it in the ``resources/downloads'' folder of your finished project (see section \ref{codegen}). Otherwise you won't be able to deploy your tool (see section \ref{instantbibi}).
+
+\chapter{Wizard Administration}
+\label{admin}
+\paragraph{} This chapter contains information for administrators of the Wizard. We discuss necessary temporary directories the Wizard will use (see section \ref{temp}) as well as dependencies (see section \ref{wizard-dependencies}).
+
+\section{Temporary Directories}
+\label{temp}
+\paragraph{} The wizard has two different temporal storage locations. One for each session and a general, short-term one.
+\subsection{Primefaces short term upload storage}
+\paragraph{} The Wizard uses primefaces fileUpload-tags that stores uploaded files either in working memory or at hard disk until the fileUploadEvent is handled by the java-backing-beans.
+\paragraph{} Files that are smaller than 51,2 Kilobytes are stored in working memory. Larger files are stored in ``/tmp/wizard2011/''. Primefaces will automatically generate an unambigous name for each file that does not correspond with the actual filename. Because these uploads are only stored until the Wizards Java beans handled the respective events these files can be deleted regularly. Administrators could use a CronJob for that.
+\paragraph{} If you want to change the temporary directories path you have to change the entry
+\begin{verbatim}
+private static final String primefacesUploadTmpDir = "/tmp/wizard2011";
+\end{verbatim}
+in the FileUploadIDGenerator.java as well as the entry
+\begin{verbatim}
+<init-param>
+       <!-- This entry defines where uploaded files
+       that are larger than 51,2 kb are stored.-->
+       <param-name>uploadDirectory</param-name>
+       <param-value>/tmp/wizard2011/</param-value>
+</init-param>
+\end{verbatim}
+in the web.xml.
+
+\subsection{Session based temporary file storage}
+\begin{figure}
+ \includegraphics[scale=0.6]{resources/tempFileManagement.pdf}
+\caption{Session based temporary folder structure (directories are blue, files are yellow)}
+\end{figure}
+
+\paragraph{} The Wizard itself uses a file management system based on sessions and timestamps. For each session of each user a temporary directory is created to store all necessary files. The name of the directory is ``upload\_'' plus a timestamp (precise to the millisecond). If the user starts a new session (by loading an existing xml [see section \ref{load-xml}] or clearing all current data) new temporary directories are created.
+\paragraph{} if the user uploads downloadable files they are stored in the ``resources/downloads'' subdirectory. Image Files are stored in ``resources/images''. An output .bs2 description is stored in the main folder as well as the created tool project and its zipped version.
+\paragraph{} These temporary folders are \underline{not} deleted by the wizard. To delete them is a task for the administration (e.g. CronJob).
+\paragraph{} If you want to change the temporary directories path you have to change the entry
+\begin{verbatim}
+private static final String baseUploadDirectoryPath = "";
+\end{verbatim}
+in the FileUploadIDGenerator.java.
+
+\section{Dependencies}
+\label{wizard-dependencies}
+\paragraph{} Most of the dependencies are stored in the ivy.xml. The following table shows which dependency is used for what purpose.
+
+\begin{tabularx}{\textwidth}{lX}
+\hline
+\textbf{Dependency} & \textbf{Description}\\ [0.1cm]
+\hline
+BiBiServAbstraction & Contains jaxb-classes for building a bs2-tool-description. Is used primarily in builder-classes, CreateXML.java and LoadXML.java.\\ [0.1cm]
+\hline
+Base & Is not part of the ivy-file. Base is downloaded (including codegen) in the antCodegenScript.xml on demand. Base is used to generate a deployable output project (see section \ref{codegen}). \\ [0.1cm]
+\hline
+Codegen & see above \\ [0.1cm]
+\hline
+OntoAccess & The API for Sven Hartmeiers Ontology. OntoAccess is called for accessing bioinformatic representations and filtering them (see section \ref{representations})  \\ [0.1cm]
+\hline
+unserhtml & Contains MicroHTML and MiniHTML jaxb classes for descriptions and custom content (see section \ref{microhtml} and \ref{minihtml}). \\ [0.1cm]
+\hline
+primefaces & Main visualizing package for wizard frontend. \\ [0.1cm]
+\hline
+Saxon & XSLT-engine to do MicroHTML and MiniHTML conversions. \\ [0.1cm]
+\hline
+DependencyParser & Validates Dependency descriptions (see section \ref{dependency} and \ref{dependencyLanguage}) \\ [0.1cm]
+\hline
+commons-io & Dependency of primefaces fileUpload \\ [0.1cm]
+\hline
+commons-fileupload & Dependency of primefaces fileUpload \\ [0.1cm]
+\hline
+commons-codec & Dependency of primefaces fileUpload \\ [0.1cm]
+\end{tabularx}
+\end{document}

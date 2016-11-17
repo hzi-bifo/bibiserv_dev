@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="masterLayout.xhtml">
+
+
+    <!--***************INFOBOX***************-->
+    <ui:define name="infoBox">
+        #{msg.webstartDescription}
+    </ui:define>
+    <!--***************HEADER***************-->
+    <ui:define name="header">
+        #{msg.webstartHeader}
+    </ui:define>
+    <!--***************MAIN***************-->
+    <ui:define name="main">
+        <p:messages id="error"/>
+        <h:panelGrid columns="2"  styleClass="top centered twoColumnTable">
+
+            <f:ajax listener="#{webstartBean.unsavedChange}" render="@form" execute="@form">
+           
+            <h:outputLabel value="#{msg.loadedFrom}: " title="#{msg.loadedFromTooTip}" rendered="#{webstartBean.renderLoadedFrom}"/>
+            <p:outputPanel rendered="#{webstartBean.renderLoadedFrom}" >
+                <div class="forceWrap elementWidth">#{webstartBean.loadedFrom}</div>
+            </p:outputPanel>    
+                
+            <h:outputLabel for="title" value="#{msg.webstartTitle}: *" title="#{msg.webstartTitleToolTip}" />
+            <h:inputText id="title" value="#{webstartBean.title}" title="#{msg.webstartTitleToolTip}" styleClass="elementWidth" />
+            
+            <h:outputLabel  value="#{msg.webstartIntro}: *" title="#{msg.webstartIntroToolTip}" />
+            <p:commandButton ajax="false"  title="#{msg.webstartIntroToolTip}" value="#{msg.openEditor}" action="#{webstartBean.introDescription}"/>
+
+            <h:outputLabel  value="#{msg.webstartContent}:" title="#{msg.webstartContentToolTip}" />
+            <p:commandButton ajax="false"  action="#{webstartBean.editCustomContent}" value="#{msg.openEditor}" title="#{msg.webstartContentToolTip}" />
+
+            <h:outputLabel for="jnlpString" value="#{msg.jnlpXml}: *" title="#{msg.jnlpXmlToolTip}" />
+            <h:inputTextarea id="jnlpString" value="#{webstartBean.jnlpString}" styleClass="inputArea">
+                <p:resizable  maxWidth="#{masterLayoutBean.standardResizeWidth}" minWidth="#{masterLayoutBean.standardResizeWidth}" for="jnlpString"/>
+            </h:inputTextarea>
+
+            </f:ajax>
+            
+        </h:panelGrid>
+    </ui:define>
+
+    <!--***************BOXES ON SIDE***************-->
+    <ui:define name="box">
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newWebstartGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.webstarts}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addWebstartToolTip}" action="#{webstartBean.newWebstart()}"/>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noWebstarts" value="#{msg.noWebstart}" rendered="#{webstartBean.webstartsEmpty}" />
+            <h:dataTable id="webstartBox" var="str" value="#{webstartBean.webstartNamesList}">
+                <h:column>
+                    <div class="forceWrapBox">#{str}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editWebstartToolTip}" action="#{webstartBean.loadWebstart(str)}"/>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeWebstartToolTip}" action="#{webstartBean.removeWebstart(str)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+    </ui:define>
+
+    <!--***************BUTTONS ON THE BOTTOM***************-->
+    <ui:define name="buttons">
+        
+        <h:outputLabel id="changeLabel" value="#{msg.unsavedChanges} " title="#{msg.unsavedChangesTooltip}" rendered="#{webstartBean.renderUnsavedChanges}" class="changeLabel" />
+        
+        <h:panelGrid id="navigation" styleClass="navigation" columns="3" >
+            <p:commandButton id="saveAndReturn" value="#{msg.saveReturn}" update="@form" actionListener="#{webstartBean.saveReturn}"/>
+            <p:commandButton id="save" value="#{msg.save}" update="@form" actionListener="#{webstartBean.save}"/>
+            <p:commandButton id="cancel" action="#{webstartBean.cancel}" ajax="false" value="#{msg.cancel}"  />
+        </h:panelGrid>
+    </ui:define>
+
+
+</ui:composition>

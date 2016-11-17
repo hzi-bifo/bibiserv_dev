@@ -1,0 +1,360 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="masterLayout.xhtml">
+
+    <!--***************JAVASCRIPT***************-->
+    <ui:define name="javascript">
+        <script language="javascript" type="text/javascript">
+
+    function handleWindow(xhr, status, args) {
+
+        if(!args.validationFailed) {
+
+            if(args.show){
+                if(args.returns) {
+                    document.getElementById("form:OKredirect").style.display = "inline";
+                    document.getElementById("form:abort").style.display = "inline";
+                    document.getElementById("form:OK").style.display = "none";
+                    document.getElementById("form:errorMassage").style.display = "inline";
+                    document.getElementById("form:errorMassage2").style.display = "none";
+                } else {
+                    document.getElementById("form:OKredirect").style.display = "none";
+                    document.getElementById("form:abort").style.display = "none";
+                    document.getElementById("form:OK").style.display = "inline";
+                    if(args.errors){
+
+                        if(args.saved){
+                            document.getElementById("form:errorMassage").style.display = "inline";
+                            document.getElementById("form:errorMassage2").style.display = "none";
+                        } else {
+                            document.getElementById("form:errorMassage2").style.display = "inline";
+                            document.getElementById("form:errorMassage").style.display = "none";
+                        }
+                    } else {
+                        document.getElementById("form:errorMassage").style.display = "none";
+                        document.getElementById("form:errorMassage2").style.display = "none";
+                    }
+                }
+                confirmation.show()
+            }
+        }
+    }
+        </script>
+    </ui:define>
+    <!--***************INFOBOX***************-->
+    <ui:define name="infoBox">
+        #{msg.functionInfo}
+    </ui:define>
+    <!--***************HEADER***************-->
+    <ui:define name="header">
+        #{msg.function}
+    </ui:define>
+    <!--***************MAIN***************-->
+    <ui:define name="main">
+        <h:panelGrid columns="2"  styleClass="top centered twoColumnTable">
+
+            <f:ajax listener="#{functionBean.unsavedChange}" render="@form" execute="@form">
+            
+            <h:outputLabel value="#{msg.loadedFrom}: " title="#{msg.loadedFromTooTip}" rendered="#{functionBean.renderLoadedFrom}"/>
+            <p:outputPanel rendered="#{functionBean.renderLoadedFrom}" >
+                <div class="forceWrap elementWidth">#{functionBean.loadedFrom}</div>
+            </p:outputPanel>
+
+            <h:outputLabel for="functionName" value="#{msg.name}: *" title="#{msg.functionNameToolTip}"/>
+            <h:inputText id="functionName" value="#{functionBean.name}" title="#{msg.functionNameToolTip}" styleClass="elementWidth" />
+
+            <h:outputLabel for="functionShortDescr" value="#{msg.shortDescription}: *" title="#{msg.functionShortDescriptionToolTip}" />
+
+            <h:inputTextarea id="functionShortDescr" value="#{functionBean.shortDescription}" title="#{msg.functionShortDescriptionToolTip}" styleClass="inputArea" >
+                <p:resizable  maxWidth="#{masterLayoutBean.standardResizeWidth}" minWidth="#{masterLayoutBean.standardResizeWidth}" for="functionShortDescr"/>
+            </h:inputTextarea>
+
+            <h:outputLabel  value="#{msg.description}:" title="#{msg.functionDescriptionToolTip}" />
+            <p:commandButton ajax="false"  action="#{functionBean.editDescription}" value="#{msg.openEditor}" title="#{msg.functionDescriptionToolTip}" />
+
+            <h:outputLabel value="#{msg.inputs}: " title="#{msg.inputsToolTip}"/>
+            <h:dataTable id="usedInputs"  var="inputs" value="#{functionBean.selectedInputsWithId}">
+                <h:column>
+                    <h:panelGrid columns="4" styleClass="selectionTable">
+                        <h:selectOneMenu  value="#{inputs.second}" styleClass="elementWidth"
+                                          valueChangeListener="#{functionBean.dropDownValueInputChangeMethod}">
+                            <f:ajax render="@form" />
+                            <f:selectItem itemLabel="#{msg.chooseInput}" itemValue=""/>
+                            <f:selectItems value="#{functionBean.inputNameList}" var="name"
+                                           itemLabel="#{name}" itemValue="#{name}"/>
+                        </h:selectOneMenu>
+                        <h:commandButton image="resources/plus.gif" title="#{msg.addInputDropdownToolTip}" action="#{functionBean.addInputDropdown(inputs.first)}">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+                        <h:commandButton image="resources/remove.gif" title="#{msg.removeInputDropdownToolTip}"  action="#{functionBean.removeInputDropdown(inputs.first)}" rendered="#{functionBean.showInputRemove}" styleClass="removeButton">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+                        <p:panel styleClass="removeButton" rendered="#{!functionBean.showInputRemove}"/>
+                    </h:panelGrid>
+                </h:column>
+            </h:dataTable>
+
+            <h:outputLabel for="functionOutput" value="#{msg.output}: *" title="#{msg.outputToolTip}" />
+            <h:selectOneMenu id="functionOutput"  value="#{functionBean.output}" styleClass="elementWidth">
+
+                <f:selectItem itemLabel="#{msg.chooseOutput}" itemValue=""/>
+                <f:selectItems value="#{functionBean.outputNameList}" var="name"
+                               itemLabel="#{name}" itemValue="#{name}"/>
+            </h:selectOneMenu>
+
+            <h:outputLabel value="#{msg.additionalOutputs}: " title="#{msg.additionalOutputsToolTip}"/>
+            <h:dataTable id="usedAdditionalOutputs"  var="inputs" value="#{functionBean.selectedOutputFilesWithId}">
+                <h:column>
+                    <h:panelGrid columns="4" styleClass="selectionTable">
+                        <h:selectOneMenu  value="#{inputs.second}" styleClass="elementWidth"
+                                          valueChangeListener="#{functionBean.dropDownValueOutputFileChangeMethod}">
+                            <f:ajax render="@form" />
+                            <f:selectItem itemLabel="#{msg.chooseAdditionalOutput}" itemValue=""/>
+                            <f:selectItems value="#{functionBean.outputFileNameList}" var="name"
+                                           itemLabel="#{name}" itemValue="#{name}"/>
+                        </h:selectOneMenu>
+                        <h:commandButton image="resources/plus.gif" title="#{msg.addOutputFilesDropdownToolTip}" action="#{functionBean.addOutputFileDropdown(inputs.first)}">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+                        <h:commandButton image="resources/remove.gif" title="#{msg.removeOutputFilesDropdownToolTip}"  action="#{functionBean.removeOutputFileDropdown(inputs.first)}" rendered="#{functionBean.showOutputFileRemove}" styleClass="removeButton">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+                        <p:panel styleClass="removeButton" rendered="#{!functionBean.showOutputFileRemove}"/>
+                    </h:panelGrid>
+                </h:column>
+            </h:dataTable>
+            
+            <h:outputLabel for="functionParamGroup" value="#{msg.paramGroup}:" title="#{msg.functionParamGroupToolTip}" />
+            <h:selectOneMenu id="functionParamGroup"  value="#{functionBean.paramGroup}" styleClass="elementWidth" >
+                <f:selectItem itemLabel="#{msg.chooseParamGroup}" itemValue=""/>
+                <f:selectItems value="#{functionBean.parameterGroupNameList}" var="name"
+                               itemLabel="#{name}" itemValue="#{name}"/>
+            </h:selectOneMenu>
+
+            <h:outputLabel  value="#{msg.dependencies}:" title="#{msg.dependenciesToolTip}" />
+            <h:dataTable id="usedDependencies"  var="dependencies" value="#{functionBean.selectedDependenciesWithId}">
+                <h:column>
+                    <h:panelGrid columns="4" styleClass="selectionTable">
+                        <h:selectOneMenu  value="#{dependencies.second}" styleClass="elementWidth"
+                                          valueChangeListener="#{functionBean.dropDownValueDependencyChangeMethod}">
+                            <f:ajax render="@form" />
+                            <f:selectItem itemLabel="#{msg.chooseDependency}" itemValue=""/>
+                            <f:selectItems value="#{functionBean.dependencyNamesList}" var="name"
+                                           itemLabel="#{name}" itemValue="#{name}"/>
+                        </h:selectOneMenu>
+                        <h:commandButton image="resources/plus.gif" title="#{msg.addDependencyDropdownToolTip}" action="#{functionBean.addDependencyDropdown(dependencies.first)}">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+                        <h:commandButton image="resources/remove.gif" title="#{msg.removeDependencyDropdownToolTip}"  action="#{functionBean.removeDependencyDropdown(dependencies.first)}" rendered="#{functionBean.showDependencyRemove}" styleClass="removeButton">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+                        <p:panel styleClass="removeButton" rendered="#{!functionBean.showDependencyRemove}"/>
+                    </h:panelGrid>
+                </h:column>
+            </h:dataTable>
+        
+            <h:outputLabel  value="#{msg.order}:" title="#{msg.editOrderToolTip}" />
+            <p:commandButton ajax="false"  action="#{functionBean.editOrder}" value="#{msg.editOder}" title="#{msg.editOrderToolTip}" />
+
+            <h:outputLabel  value="#{msg.examples}:" title="#{msg.editExamplesToolTip}" />
+            <p:commandButton ajax="false"  action="#{functionBean.editExample}" value="#{msg.editExamples}" title="#{msg.editExamplesToolTip}" />
+            </f:ajax>
+        </h:panelGrid>
+    </ui:define>
+
+    <!--***************BOXES ON SIDE***************-->
+    <ui:define name="box">
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newFunctionGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.functions}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addFunctionToolTip}" action="#{functionBean.newFunction()}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noFunctions" value="#{msg.noFunction}" rendered="#{functionBean.functionsEmpty}" />
+            <h:dataTable id="functionBox" var="str" value="#{functionBean.functionNameList}">
+                <h:column>
+                    <h:graphicImage value="resources/redlight.gif" rendered="#{!str.second}"/>
+                    <h:graphicImage value="resources/greenlight.gif" rendered="#{str.second}"/>
+                </h:column>
+                <h:column>
+                    <div class="forceWrapBoxExtraIcon">#{str.first}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editFunctionToolTip}" action="#{functionBean.editFunction(str.first)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeFunctionToolTip}" action="#{functionBean.removeFunction(str.first)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newInputGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.inputs}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addInputToolTip}" action="#{functionBean.newInput()}"/>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noInputs" value="#{msg.noInput}" rendered="#{functionBean.inputsEmpty}" />
+            <h:dataTable id="inputBox" var="str" value="#{functionBean.inputNameList}">
+                <h:column>
+                    <div class="forceWrapBox">#{str}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editInputToolTip}" action="#{functionBean.editInput(str)}"/>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeInputToolTip}" action="#{functionBean.removeInput(str)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newOutputGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.outputs}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addOutputToolTip}" action="#{functionBean.newOutput()}"/>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noOutputs" value="#{msg.noOutput}" rendered="#{functionBean.outputsEmpty}" />
+            <h:dataTable id="outputBox" var="str" value="#{functionBean.outputNameList}">
+                <h:column>
+                    <div class="forceWrapBox">#{str}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editOutputToolTip}" action="#{functionBean.editOutput(str)}"/>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeOutputToolTip}" action="#{functionBean.removeOutput(str)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+       <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newOutputFileGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.additionalOutputs}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addAdditionalOutputToolTip}" action="#{functionBean.newOutputFile()}"/>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noOutputFiless" value="#{msg.noAdditionalOutput}" rendered="#{functionBean.outputFilesEmpty}" />
+            <h:dataTable id="outputFileBox" var="str" value="#{functionBean.outputFileNameList}">
+                <h:column>
+                    <div class="forceWrapBox">#{str}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editAdditionalOutputToolTip}" action="#{functionBean.editOutputFile(str)}"/>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeAdditionalOutputToolTip}" action="#{functionBean.removeOutputFile(str)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newParameterGroupGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.paramGroups}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addParamGroupToolTip}" action="#{functionBean.newParameterGroup()}"/>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noParameterGroupL" value="#{msg.noParamGroup}" rendered="#{functionBean.parameterGroupsEmpty}" />
+            <h:dataTable id="parameterGroupBox" var="str" value="#{functionBean.parameterGroupNameList}">
+                <h:column>
+                    <div class="forceWrapBox">#{str}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editParamGroupToolTip}" action="#{functionBean.editParameterGroup(str)}"/>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeParamGroupToolTip}" action="#{functionBean.removeParameterGroup(str)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newViewGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.dependencies}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addDependencyToolTip}" action="#{functionBean.newDependency()}" />
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noViews" value="#{msg.noDependency}" rendered="#{functionBean.dependenciesEmpty}" />
+            <h:dataTable id="ViewBox" var="str" value="#{functionBean.dependencyNamesList}">
+                <h:column>
+                    <div class="forceWrapBox">#{str}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editDependencyToolTip}" action="#{functionBean.editDependency(str)}"/>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeDependencyToolTip}" action="#{functionBean.removeDependency(str)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+    </ui:define>
+
+    <!--***************BUTTONS ON THE BOTTOM***************-->
+    <ui:define name="buttons">
+        
+        <h:outputLabel id="changeLabel" value="#{msg.unsavedChanges} " title="#{msg.unsavedChangesTooltip}" rendered="#{functionBean.renderUnsavedChanges}" class="changeLabel" />
+        
+        <h:panelGrid columns="3" styleClass="centered" border="0">
+            <p:commandButton id="saveRetButton" value="#{msg.saveReturn}" update="@form" actionListener="#{functionBean.saveReturn}" oncomplete="handleWindow(xhr, status, args)"/>
+            <p:commandButton id="saveButton"  value="#{msg.save}" update="@form" actionListener="#{functionBean.save}" oncomplete="handleWindow(xhr, status, args)"/>
+            <p:commandButton ajax="false" id="cancel" action="#{functionBean.cancel}" value="#{msg.cancel}"  />
+        </h:panelGrid>
+    </ui:define>
+
+
+    <!--***************POPUP***************-->
+    <ui:define name="popup">
+        <p:confirmDialog header="#{msg.info}" severity="info" widgetVar="confirmation" styleClass="dialog">
+            <f:facet name="message">
+                <h:outputLabel id="errorMassage"  value="#{msg.savedWithErrors}" />
+                <h:outputLabel id="errorMassage2"  value="#{msg.notSavedWithErrors}" />
+                <p:messages id="error"/>
+            </f:facet>
+
+            <p:commandButton id="OKredirect" value="#{msg.ok}" ajax="false" oncomplete="confirmation.hide()"
+                             action="#{functionBean.returnToPrev}"/>
+            <p:commandButton id="abort" value="#{msg.stay}" onclick="confirmation.hide()" type="button" />
+            <p:commandButton id="OK" value="#{msg.ok}" onclick="confirmation.hide()" type="button" />
+        </p:confirmDialog>
+    </ui:define>
+
+    <!--***************ACTION ON ONLOAD***************-->
+    <ui:param name="onLoadFunction" value="#{functionBean.preRender()}" />
+
+</ui:composition>

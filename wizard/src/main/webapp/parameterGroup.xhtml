@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="masterLayout.xhtml">
+
+    <!--***************JAVASCRIPT***************-->
+    <ui:define name="javascript">
+    </ui:define>
+    <!--***************INFOBOX***************-->
+    <ui:define name="infoBox">
+        #{msg.paramGroupInfo}
+    </ui:define>
+    <!--***************HEADER***************-->
+    <ui:define name="header">
+        #{msg.paramGroups}
+    </ui:define>
+    <!--***************MAIN***************-->
+    <ui:define name="main">
+        <p:messages id="error"/>
+        <h:panelGrid columns="2"  styleClass="top centered twoColumnTable">
+
+            <h:outputLabel value="#{msg.currentlyEditing}:" class="currentPos"/>
+            <h:outputLabel value="#{parameterGroupBean.position}" class="currentPos"/>
+            
+            <f:ajax listener="#{parameterGroupBean.unsavedChange}" render="@form" execute="@form">
+            
+            <h:outputLabel value="#{msg.loadedFrom}: " title="#{msg.loadedFromTooTip}" rendered="#{parameterGroupBean.renderLoadedFrom}"/>
+            <p:outputPanel rendered="#{parameterGroupBean.renderLoadedFrom}" >
+                <div class="forceWrap elementWidth">#{parameterGroupBean.loadedFrom}</div>
+            </p:outputPanel>
+
+            <h:outputLabel for="parameterGroupName" value="#{msg.name}: *" title="#{msg.paramGroupNameToolTip}"/>
+            <h:inputText id="parameterGroupName" value="#{parameterGroupBean.name}" title="#{msg.paramGroupNameToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel for="parameterGroupNameDisplay" value="#{msg.nameDisplay}:" title="#{msg.paramGroupNameDisplayToolTip}"/>
+            <h:inputText id="parameterGroupNameDisplay" value="#{parameterGroupBean.nameDisplay}" title="#{msg.paramGroupNameDisplayToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel for="parameterGroupShortDescr" value="#{msg.shortDescription}:" title="#{msg.paramGroupShortDescriptionToolTip}" />
+            <h:inputTextarea id="parameterGroupShortDescr" value="#{parameterGroupBean.shortDescription}" title="#{msg.paramGroupShortDescriptionToolTip}"  styleClass="inputArea">
+                <p:resizable  maxWidth="#{masterLayoutBean.standardResizeWidth}" minWidth="#{masterLayoutBean.standardResizeWidth}" for="parameterGroupShortDescr"/>
+            </h:inputTextarea>
+
+            <h:outputLabel  value="#{msg.description}:" title="#{msg.paramGroupDescriptionToolTip}" />
+            <p:commandButton ajax="false"  action="#{parameterGroupBean.editDescription}" value="#{msg.openEditor}" title="#{msg.paramGroupDescriptionToolTip}" />
+
+            <h:outputLabel value="#{msg.parameter}:" title="#{msg.paramGroupParameterToolTip}"/>
+            <h:dataTable id="usedParameters"  var="parameters" value="#{parameterGroupBean.selectedParametersWithId}">
+                <h:column>
+                    <h:panelGrid columns="4" styleClass="selectionTable">
+
+                        <h:selectOneMenu  value="#{parameters.second}" styleClass="elementWidth"
+                                          valueChangeListener="#{parameterGroupBean.dropDownValueParameterChangeMethod}">
+                            <f:ajax render="@form" />
+                            <f:selectItem itemLabel="#{msg.chooseParameter}" itemValue=""/>
+                            <f:selectItems value="#{parameterGroupBean.parameterNameList}" var="name"
+                                           itemLabel="#{name}" itemValue="#{name}"/>
+                        </h:selectOneMenu>
+
+                        <h:commandButton image="resources/plus.gif" title="#{msg.addParameterDropdownToolTip}" action="#{parameterGroupBean.addParamDropdown(parameters.first)}">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+                        <h:commandButton image="resources/remove.gif" title="#{msg.removeParameterDropdownToolTip}"  action="#{parameterGroupBean.removeParamDropdown(parameters.first)}" rendered="#{parameterGroupBean.showParameterRemove}">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+                         <p:panel styleClass="removeButton" rendered="#{!parameterGroupBean.showParameterRemove}"/>
+                    </h:panelGrid>
+                </h:column>
+            </h:dataTable>
+
+            <h:outputLabel value="#{msg.paramGroups}:" title="#{msg.paramGroupParamGroupToolTip}"/>
+            <h:dataTable id="usedParameterGroups"  var="parameterGroups" value="#{parameterGroupBean.selectedParameterGroupsWithId}">
+                <h:column>
+                    <h:panelGrid columns="4" styleClass="selectionTable">
+
+                        <h:selectOneMenu  value="#{parameterGroups.second}" styleClass="elementWidth"
+                                          valueChangeListener="#{parameterGroupBean.dropDownValueParameterGroupChangeMethod}">
+                            <f:ajax render="@form" />
+                            <f:selectItem itemLabel="#{msg.chooseParamGroup}" itemValue=""/>
+                            <f:selectItems value="#{parameterGroupBean.parameterGroupNameList}" var="name"
+                                           itemLabel="#{name}" itemValue="#{name}"/>
+                        </h:selectOneMenu>
+
+
+                        <h:commandButton image="resources/plus.gif" title="#{msg.addParamGroupDropdownToolTip}" action="#{parameterGroupBean.addGroupDropdown(parameterGroups.first)}">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+                        <h:commandButton image="resources/remove.gif" title="#{msg.removeParamGroupDropdownToolTip}"  action="#{parameterGroupBean.removeGroupDropdown(parameterGroups.first)}" rendered="#{parameterGroupBean.showParameterGroupRemove}">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+                        <p:panel styleClass="removeButton" rendered="#{!parameterGroupBean.showParameterGroupRemove}"/>
+                    </h:panelGrid>
+                </h:column>
+            </h:dataTable>
+        </f:ajax>
+        </h:panelGrid>
+    </ui:define>
+
+    <!--***************BOXES ON SIDE***************-->
+    <ui:define name="box">
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newParameterGroupGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.paramGroups}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addParamGroupToolTip}" action="#{parameterGroupBean.newParameterGroup()}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noParameterGroupL" value="#{msg.noParamGroup}" rendered="#{parameterGroupBean.parameterGroupsEmpty}" />
+            <h:dataTable id="parameterGroupBox" var="str" value="#{parameterGroupBean.parameterGroupNameListFull}">
+                <h:column>
+                    <div class="forceWrapBox">#{str}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editParamGroupToolTip}" action="#{parameterGroupBean.editParameterGroup(str)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeParamGroupToolTip}" action="#{parameterGroupBean.removeParameterGroup(str)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newParameterGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.parameter}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addParameterToolTip}" action="#{parameterGroupBean.newParameter()}"/>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noParameterL" value="#{msg.noParameter}" rendered="#{parameterGroupBean.parametersEmpty}" />
+            <h:dataTable id="parameterBox" var="str" value="#{parameterGroupBean.parameterNameList}">
+                <h:column>
+                    <div class="forceWrapBox">#{str}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editParameterToolTip}" action="#{parameterGroupBean.editParameter(str)}"/>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeParameterToolTip}" action="#{parameterGroupBean.removeParameter(str)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+    </ui:define>
+
+    <!--***************BUTTONS ON THE BOTTOM***************-->
+    <ui:define name="buttons">
+        
+        <h:outputLabel id="changeLabel" value="#{msg.unsavedChanges} " title="#{msg.unsavedChangesTooltip}" rendered="#{parameterGroupBean.renderUnsavedChanges}" class="changeLabel" />
+        
+        <h:panelGrid columns="3" styleClass="centered" border="0">
+            <p:commandButton update="@form" id="saveAndReturn" action="#{parameterGroupBean.saveReturn}" value="#{msg.saveReturn}" />
+            <p:commandButton update="@form" id="save" action="#{parameterGroupBean.save}" value="#{msg.save}" />
+            <p:commandButton ajax="false" id="cancel" action="#{parameterGroupBean.cancel}" value="#{msg.cancel}"  />
+        </h:panelGrid>
+    </ui:define>
+
+
+    <!--***************ACTION ON ONLOAD***************-->
+    <ui:param name="onLoadFunction" value="#{parameterGroupBean.preRender()}" />
+
+
+</ui:composition>

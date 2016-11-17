@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+
+Copyright 2010 BiBiServ Curator Team, http://bibiserv.cebitec.uni-bielefeld.de,
+All rights reserved.
+
+The contents of this file are subject to the terms of the Common
+Development and Distribution License("CDDL") (the "License"). You
+may not use this file except in compliance with the License. You can
+obtain a copy of the License at http://www.sun.com/cddl/cddl.html
+
+See the License for the specific language governing permissions and
+limitations under the License.  When distributing the software, include
+this License Header Notice in each file.  If applicable, add the following
+below the License Header, with the fields enclosed by brackets [] replaced
+ by your own identifying information:
+
+"Portions Copyrighted [year] [name of copyright owner]"
+
+Contributor(s):
+
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/WEB-INF/templates/toolsubmissionTpl.xhtml">
+
+
+    <!-- for each start :: input create a file upload and a textarea box -->
+    <ui:define name="app_title">
+        <h:outputText styleClass="title"
+                      escape="false"
+                      value="#{messages.property('<#getToolId/#>_name')}[<#getFunctionId/#>]"/>
+        <h:outputText styleClass="title"
+                      escape="false"
+                      value=" - #{toolChainingBean.getChainItem('<#getFunctionId/#>').chaintitle}" rendered="#{toolChainingBean.isChaining('<#getFunctionId/#>')}"/>
+        <div class="separator app_separator"/>
+    </ui:define>
+    
+     <ui:define name="scripts">
+         <script type="text/javascript"  src="/resources/scripts/submission.js"/> 
+    </ui:define>
+    
+    <ui:define name="app_page_counter">
+        <#more_than_one_function#>3/4<#/more_than_one_function#><#one_function#>2/3<#/one_function#>
+    </ui:define>
+    
+    <ui:define name="app_content">
+       
+        <h:form>
+        <h:panelGroup id="paramGroup" styleClass="paramBox" layout="block">
+            
+               
+                <#generateParameters/#>
+                
+        </h:panelGroup>
+
+            <br/>
+            
+                
+            <!-- Submission Navigation -->
+            <table id="toolnavi" class="tool_navi">
+                <tr>
+                    <!-- back navigation -->
+                    <td id="toolback" class="tool_back" title="#{messages.property('de.unibi.techfak.bibiserv.bibimainapp.BACK_TITLE','input')}"
+                        onclick="window.location='/<#getToolId/#>?viewType=submission&amp;subType=<#getFunctionId/#>_p_1'"
+                        onmouseover="setCSSclass('toolback','tool_back tool_back_highlighted')" 
+                        onmouseout="setCSSclass('toolback','tool_back')">
+                        
+                        &#x25C4; #{messages.property('de.unibi.techfak.bibiserv.bibimainapp.BACK')}
+                      
+                    </td>
+                    
+                    <!-- example button  -->
+                    <c:if test="#{<#getFunctionId/#>_controller.exampleCount == 0}">
+                        <td  id="toolexample" class="tool_example tool_example_inactive">#{messages.property('de.unibi.techfak.bibiserv.bibimainapp.EXAMPLE_NO')}</td>    
+                    </c:if>
+                
+                    <c:if test="#{<#getFunctionId/#>_controller.exampleCount >= 1}">
+                        <td id="toolexample" class="tool_example tool_example_inactive">#{messages.property('de.unibi.techfak.bibiserv.bibimainapp.EXAMPLE')}</td>
+                    </c:if>    
+                  
+                
+                    <!-- reset button -->
+                    <td id="toolreset" class="tool_reset" onclick="toolreset()" title="#{messages.property('de.unibi.techfak.bibiserv.bibimainapp.RESET_TITLE','param')}"
+                        onmouseover="setCSSclass('toolreset','tool_reset tool_reset_highlighted')" 
+                        onmouseout="setCSSclass('toolreset','tool_reset')">
+                        #{messages.property('de.unibi.techfak.bibiserv.bibimainapp.RESET')}
+                        <p:remoteCommand name="toolreset" actionListener="#{<#getFunctionId/#>_param.reset}" 
+                                         update="paramGroup"/>
+                    </td>
+                    
+                    <!-- next (calculate) button -->
+                    <td id="toolnext" class="tool_next" onclick="toolnext()" title="#{messages.property('de.unibi.techfak.bibiserv.bibimainapp.CALCULATE_TITLE')}"
+                        onmouseover="setCSSclass('toolnext','tool_next tool_next_highlighted')" 
+                        onmouseout="setCSSclass('toolnext','tool_next')">
+                        #{messages.property('de.unibi.techfak.bibiserv.bibimainapp.NEXT')}&#x25BA;
+                        <p:remoteCommand name="toolnext" actionListener="#{<#getFunctionId/#>_controller.paramSet}" update="paramGroup"/>
+                    </td> 
+                </tr>
+            </table>
+
+            
+               
+            </h:form>
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="masterLayout.xhtml">
+
+
+    <!--***************INFOBOX***************-->
+    <ui:define name="infoBox">
+        #{msg.fileInfo}
+    </ui:define>
+    <!--***************HEADER***************-->
+    <ui:define name="header">
+        #{msg.file}
+    </ui:define>
+    <!--***************MAIN***************-->
+    <ui:define name="main">
+        <p:messages id="error"/>
+        <h:panelGrid columns="2"  styleClass="top centered twoColumnTable">
+
+            <f:ajax listener="#{editFileBean.unsavedChange}" render="@form" execute="@form">
+            
+            <h:outputLabel value="#{msg.loadedFrom}: " title="#{msg.loadedFromTooTip}" rendered="#{editFileBean.renderLoadedFrom}"/>
+            <p:outputPanel rendered="#{editFileBean.renderLoadedFrom}" >
+                <div class="forceWrap elementWidth">#{editFileBean.loadedFrom}</div>
+            </p:outputPanel>
+
+            <h:outputLabel for="file" value="#{msg.file}: *" title="#{msg.fileToolTip}"/>
+            <h:inputText id="file" value="#{editFileBean.file}" title="#{msg.fileToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel for="fileName" value="#{msg.name}: *" title="#{msg.fileNameToolTip}"/>
+            <h:inputText id="fileName" value="#{editFileBean.name}" title="#{msg.fileNameToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel for="fileVersion" value="#{msg.version}:" title="#{msg.fileVersionToolTip}"/>
+            <h:inputText id="fileVersion" value="#{editFileBean.version}" title="#{msg.fileVersionToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel for="fileShortDescr" value="#{msg.shortDescription}: *" title="#{msg.fileShortDescriptionToolTip}" />
+            <h:inputTextarea id="fileShortDescr" value="#{editFileBean.shortDescription}" title="#{msg.fileShortDescriptionToolTip}" styleClass="inputArea" >
+                <p:resizable  maxWidth="#{masterLayoutBean.standardResizeWidth}" minWidth="#{masterLayoutBean.standardResizeWidth}" for="fileShortDescr"/>
+            </h:inputTextarea>
+
+            <h:outputLabel  value="#{msg.description}:" title="#{msg.fileDescriptionToolTip}" />
+            <p:commandButton ajax="false"  action="#{editFileBean.editDescription}" value="#{msg.openEditor}" title="#{msg.fileDescriptionToolTip}" />
+
+            <h:outputLabel for="filePlatform" value="#{msg.platform}:" title="#{msg.platformToolTip}"/>
+            <h:inputText id="filePlatform" value="#{editFileBean.platform}" title="#{msg.platformToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel value="#{msg.isFileUploaded}:" title="#{msg.isFileUploadedToolTip}"/>
+            <h:panelGrid columns="1" styleClass="elementWidth">
+                <h:panelGrid columns ="2" id="uploadedTable">
+                    <h:outputLabel value="#{editFileBean.yesno}"  styleClass="smallElementWidth"/>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeUploadedFileToolTip}" action="#{editFileBean.removeFileFromServerForCurrent()}" rendered="#{editFileBean.state=='correctFile'}">
+                        <f:ajax listener="#{editFileBean.unsavedChange}" render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:panelGrid>
+                <p:fileUpload id="exampleUploader" styleClass="uploaderSingle elementWidth"
+                              fileUploadListener="#{editFileBean.handleFileUpload}"
+                              mode="advanced"
+                              update="@form"
+                              auto="true"
+                              multiple="false">
+                </p:fileUpload>
+            </h:panelGrid>
+
+            </f:ajax>
+        </h:panelGrid>
+    </ui:define>
+
+    <!--***************BOXES ON SIDE***************-->
+    <ui:define name="box">
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newfileGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.files}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addFileToolTip}" action="#{editFileBean.newFile()}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noFunctions" value="#{msg.noFile}" rendered="#{editFileBean.filesEmpty}" />
+            <h:dataTable id="fileBox" var="str" value="#{editFileBean.fileList}">
+                <h:column>
+                    <h:graphicImage value="#{str.getSecond().getTrafficLight().getPath()}"/>
+                </h:column>
+                <h:column>
+                    <div class="forceWrapBoxExtraIcon">#{str.first}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editFileToolTip}" action="#{editFileBean.editFile(str.first)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeFileToolTip}" action="#{editFileBean.removeFile(str.first)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+    </ui:define>
+
+    <!--***************BUTTONS ON THE BOTTOM***************-->
+    <ui:define name="buttons">
+        
+        <h:outputLabel id="changeLabel" value="#{msg.unsavedChanges} " title="#{msg.unsavedChangesTooltip}" rendered="#{editFileBean.renderUnsavedChanges}" class="changeLabel" />
+        
+        <h:panelGrid columns="3" styleClass="centered" border="0">
+            <p:commandButton id="saveRetButton" value="#{msg.saveReturn}" update="@form" actionListener="#{editFileBean.saveAndReturn}"/>
+            <p:commandButton id="saveButton"  value="#{msg.save}" update="@form" actionListener="#{editFileBean.save}"/>
+            <p:commandButton ajax="false" id="cancel" action="#{editFileBean.cancel}" value="#{msg.cancel}"  />
+        </h:panelGrid>
+    </ui:define>
+
+
+    <!--***************ACTION ON ONLOAD***************-->
+    <ui:param name="onLoadFunction" value="#{editFileBean.preRender()}" />
+
+</ui:composition>

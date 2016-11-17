@@ -1,0 +1,243 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="masterLayout.xhtml">
+
+    <!--***************JAVASCRIPT***************-->
+    <ui:define name="javascript">
+        <script language="javascript" type="text/javascript">
+
+       function handleWindow(xhr, status, args) {
+
+            if(!args.validationFailed) {
+
+              if(args.show){
+                   if(args.returns) {
+                       document.getElementById("form:OKredirect").style.display = "inline";
+                       document.getElementById("form:abort").style.display = "inline";
+                       document.getElementById("form:OK").style.display = "none";
+                       document.getElementById("form:errorMassage").style.display = "inline";
+                       document.getElementById("form:errorMassage2").style.display = "none";
+                   } else {
+                       document.getElementById("form:OKredirect").style.display = "none";
+                       document.getElementById("form:abort").style.display = "none";
+                       document.getElementById("form:OK").style.display = "inline";
+                       if(args.errors){
+
+                          if(args.saved){
+                              document.getElementById("form:errorMassage").style.display = "inline";
+                              document.getElementById("form:errorMassage2").style.display = "none";
+                          } else {
+                              document.getElementById("form:errorMassage2").style.display = "inline";
+                              document.getElementById("form:errorMassage").style.display = "none";
+                          }
+                       } else {
+                           document.getElementById("form:errorMassage").style.display = "none";
+                           document.getElementById("form:errorMassage2").style.display = "none";
+                       }
+                   }
+                   confirmation.show()
+              }
+           }
+       }
+        </script>
+    </ui:define>
+    <!--***************INFOBOX***************-->
+    <ui:define name="infoBox">
+        #{msg.exampleInfo}
+    </ui:define>
+    <!--***************HEADER***************-->
+    <ui:define name="header">
+        #{msg.example}
+    </ui:define>
+    <!--***************MAIN***************-->
+    <ui:define name="main">
+        
+        <f:ajax listener="#{exampleBean.unsavedChange}" render="@form" execute="@form">
+        
+        <h:panelGrid columns="2"  styleClass="top centered twoColumnTable">
+
+            <h:outputLabel value="#{msg.currentlyEditing}:" class="currentPos"/>
+            <h:outputLabel value="#{exampleBean.position}" class="currentPos"/>
+            
+            <h:outputLabel value="#{msg.loadedFrom}: " title="#{msg.loadedFromTooTip}" rendered="#{exampleBean.renderLoadedFrom}" />
+            <p:outputPanel rendered="#{exampleBean.renderLoadedFrom}" >
+                <div class="forceWrap elementWidth">#{exampleBean.loadedFrom}</div>
+            </p:outputPanel>
+
+            <h:outputLabel for="exampleName" value="#{msg.name}: *" title="#{msg.exampleNameToolTip}"/>
+            <h:inputText id="exampleName" value="#{exampleBean.name}" title="#{msg.exampleNameToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel for="exampleShortDescr" value="#{msg.shortDescription}:" title="#{msg.exampleShortDescriptionToolTip}" />
+            <h:inputTextarea id="exampleShortDescr" value="#{exampleBean.shortDescription}" title="#{msg.exampleShortDescriptionToolTip}" styleClass="inputArea">
+                <p:resizable  maxWidth="#{masterLayoutBean.standardResizeWidth}" minWidth="#{masterLayoutBean.standardResizeWidth}" for="exampleShortDescr"/>
+            </h:inputTextarea>
+        </h:panelGrid>
+
+        <h:outputLabel value="#{msg.inputFileExamples}:" title="#{msg.inputFileExamplesToolTip}" rendered="#{exampleBean.exampleInputFileListNotEmpty}"/>
+        <p:dataTable id="exmapleTableInput1" var="example" value="#{exampleBean.exampleInputFileList}" rowKey="#{example}"
+                     selection="#{exampleBean.selectedInput}" selectionMode="single" styleClass="exampleTable" rendered="#{exampleBean.exampleInputFileListNotEmpty}">
+            <p:ajax event="rowSelect" listener="#{exampleBean.onRowSelect}" update="@form"/>
+            <p:column headerText="#{msg.name}" styleClass="forceWrapBox">
+                <p:outputPanel >
+                    #{example.getName()}
+                </p:outputPanel>
+            </p:column>
+            <p:column headerText="#{msg.value}">
+                <p:outputPanel >
+                    #{example.getNonbase64()}
+                </p:outputPanel>
+            </p:column>
+            <f:facet name="footer">
+                <p:fileUpload id="exampleUploader" styleClass="uploaderSingle"
+                              fileUploadListener="#{exampleBean.handleFileUpload}"
+                              mode="advanced"
+                              update="@form"
+                              auto="true"
+                              sizeLimit="1000000"
+                              multiple="false"
+                              rendered="#{exampleBean.renderUploader}"
+                              >
+                </p:fileUpload>
+                <h:panelGrid columns="1">
+                    <h:inputTextarea id="fileContent" value="#{exampleBean.fileContent}" title="#{msg.exampleFileContentToolTip}" styleClass="exampleInputArea"><p:resizable  maxWidth="#{masterLayoutBean.exampleInputArea}" minWidth="#{masterLayoutBean.exampleInputArea}" for="fileContent"/></h:inputTextarea>
+                    <p:commandButton id="updateFileContent" value="#{msg.updateFileContent}" update="@form" actionListener="#{exampleBean.updateFileContent}" />
+                </h:panelGrid>
+            </f:facet>
+        </p:dataTable>
+
+        <h:outputLabel value="#{msg.inputStringExamples}:" title="#{msg.inputStringExamplesToolTip}" rendered="#{exampleBean.exampleInputStringListNotEmpty}"/>
+        <p:dataTable id="exampleTableInput2" var="example" value="#{exampleBean.exampleInputStringListDataModel}" styleClass="exampleTable" rendered="#{exampleBean.exampleInputStringListNotEmpty}">
+            <p:column headerText="#{msg.name}" styleClass="forceWrapBox">
+                <p:outputPanel>
+                    #{example.getName()}
+                </p:outputPanel>
+            </p:column>
+            <p:column headerText="#{msg.value}">
+                <h:inputTextarea id="exampleStringInputText" value="#{example.nonbase64}" styleClass="exampleInputArea2">
+                    <p:resizable  maxWidth="#{masterLayoutBean.exampleInputArea2}" minWidth="#{masterLayoutBean.exampleInputArea2}" for="exampleStringInputText"/>
+                </h:inputTextarea>
+            </p:column>
+        </p:dataTable>
+
+        <h:outputLabel value="#{msg.parameterExamples}:" title="#{msg.parameterExamplesToolTip}" rendered="#{exampleBean.exampleParameterListNotEmpty}"/>
+        <p:dataTable id="exmapleTableParameter1" var="example" value="#{exampleBean.exampleParameterListDataModel}" styleClass="exampleTable" rendered="#{exampleBean.exampleParameterListNotEmpty}">
+            <p:column headerText="#{msg.name}" styleClass="forceWrapBox">
+                <p:outputPanel >
+                    #{example.getName()}
+                    #{example.getPrimitive().getLabel()}
+                </p:outputPanel>
+                <p:outputPanel rendered="#{!example.getDefaultValue().isEmpty()}"> -</p:outputPanel>
+            </p:column>
+            <p:column headerText="#{msg.value}" styleClass="forceWrap exampleInput">
+                <h:inputText value="#{example.value}" style="width:100%"/>
+            </p:column>
+        </p:dataTable>
+
+        <h:outputLabel value="#{msg.parameterEnumExamples}:" title="#{msg.parameterEnumExamplesToolTip}" rendered="#{exampleBean.exampleParameterEnumListNotEmpty}"/>
+        <p:dataTable id="exmapleTableParameter2" var="example" value="#{exampleBean.exampleParameterEnumList}" styleClass="exampleTable" rendered="#{exampleBean.exampleParameterEnumListNotEmpty}">
+            <p:column headerText="#{msg.name}" styleClass="forceWrapBox">
+                <p:outputPanel >
+                    #{example.getName()}
+                </p:outputPanel>
+                <p:outputPanel rendered="#{!example.getDefaultValue().isEmpty()}"> -</p:outputPanel>
+            </p:column>
+            <p:column headerText="#{msg.value}">
+                <p:selectManyCheckbox value="#{example.selected}"  layout="pageDirection" styleClass="manyCheckBox">
+                    <f:selectItems value="#{example.getEnumValues()}" var="item"
+                                   itemValue="#{item.getFirst()}" itemLabel="#{item.getSecond()}"/>
+                </p:selectManyCheckbox>
+            </p:column>
+        </p:dataTable>
+        </f:ajax>
+    </ui:define>
+
+    <!--***************BOXES ON SIDE***************-->
+    <ui:define name="box">
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid columns="1" style="display: inline">
+                    <h:panelGrid id="newExampleGrid" columns="3" border="0" width="100%" style="display: inline">
+                        #{msg.examples}
+                        &nbsp;
+                        <h:commandButton image="resources/plus.gif" title="#{msg.addExampleToolTip}" action="#{exampleBean.newExample()}">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" style="display: inline">
+                        <p:outputPanel rendered="#{exampleBean.getFunctionName()!=null and !exampleBean.getFunctionName().isEmpty()}">
+                            #{msg.of}
+                        </p:outputPanel>
+                        <p:outputPanel>
+                            <div class="forceWrapBox">#{exampleBean.functionName}</div>
+                        </p:outputPanel>
+                    </h:panelGrid>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noExampleL" value="#{msg.noExample}" rendered="#{exampleBean.examplesEmpty}" />
+            <h:dataTable id="exampleBox" var="str" value="#{exampleBean.exampleNameList}">
+                <h:column>
+                    <h:graphicImage value="resources/redlight.gif" rendered="#{!str.second}"/>
+                    <h:graphicImage value="resources/greenlight.gif" rendered="#{str.second}"/>
+                </h:column>
+                <h:column>
+                    <div class="forceWrapBox" style="width: 100px;">#{str.first}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editExampleToolTip}" action="#{exampleBean.editExample(str.first)}" >
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/copy.png" title="#{msg.copyExampleToolTip}" action="#{exampleBean.copyExample(str.first)}" >
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeExampleToolTip}" action="#{exampleBean.removeExample(str.first)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+
+
+    </ui:define>
+
+    <!--***************BUTTONS ON THE BOTTOM***************-->
+    <ui:define name="buttons">
+        
+        <h:outputLabel id="changeLabel" value="#{msg.unsavedChanges} " title="#{msg.unsavedChangesTooltip}" rendered="#{exampleBean.renderUnsavedChanges}" class="changeLabel" />
+        
+        <h:panelGrid columns="3" styleClass="centered" border="0">
+            <p:commandButton id="saveRetButton" value="#{msg.saveReturn}" update="@form" actionListener="#{exampleBean.saveReturn}" oncomplete="handleWindow(xhr, status, args)"/>
+            <p:commandButton id="saveButton"  value="#{msg.save}" update="@form" actionListener="#{exampleBean.save}" oncomplete="handleWindow(xhr, status, args)"/>
+            <p:commandButton ajax="false" id="cancel" action="#{exampleBean.cancel}" value="#{msg.cancel}"  />
+        </h:panelGrid>
+    </ui:define>
+
+
+    <!--***************POPUP***************-->
+    <ui:define name="popup">
+        <p:confirmDialog header="#{msg.info}" severity="info" widgetVar="confirmation" width="600">
+            <f:facet name="message">
+                <h:outputLabel id="errorMassage"  value="#{msg.savedWithErrors}" />
+                <h:outputLabel id="errorMassage2"  value="#{msg.notSavedWithErrors}" />
+                <p:messages id="error"/>
+            </f:facet>
+
+            <p:commandButton id="OKredirect" value="#{msg.ok}" ajax="false" oncomplete="confirmation.hide()"
+                             action="#{exampleBean.returnToPrev}"/>
+            <p:commandButton id="abort" value="#{msg.stay}" onclick="confirmation.hide()" type="button" />
+            <p:commandButton id="OK" value="#{msg.ok}" onclick="confirmation.hide()" type="button" />
+        </p:confirmDialog>
+    </ui:define>
+
+
+</ui:composition>

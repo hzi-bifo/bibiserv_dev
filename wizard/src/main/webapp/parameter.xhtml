@@ -1,0 +1,255 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="masterLayout.xhtml">
+
+    <!--***************JAVASCRIPT***************-->
+    <ui:define name="javascript">
+    </ui:define>
+    <!--***************INFOBOX***************-->
+    <ui:define name="infoBox">
+        #{msg.parameterInfo}
+    </ui:define>
+    <!--***************HEADER***************-->
+    <ui:define name="header">
+        #{msg.parameter}
+    </ui:define>
+    <!--***************MAIN***************-->
+    <ui:define name="main">
+        
+        <p:messages id="error"/>
+        <h:panelGrid columns="2"  styleClass="top centered twoColumnTable">
+
+            <h:outputLabel value="#{msg.currentlyEditing}:" class="currentPos"/>
+            <h:outputLabel value="#{parameterBean.position}" class="currentPos"/>
+            
+            <f:ajax listener="#{parameterBean.unsavedChange}" render="@form" execute="@form">
+              
+            <h:outputLabel value="#{msg.loadedFrom}: " title="#{msg.loadedFromTooTip}" rendered="#{parameterBean.renderLoadedFrom}" />
+            <p:outputPanel rendered="#{parameterBean.renderLoadedFrom}" >
+                <div class="forceWrap elementWidth">#{parameterBean.loadedFrom}</div>
+            </p:outputPanel>
+
+            <h:outputLabel for="parameterName" value="#{msg.name}: *" title="#{msg.parameterNameToolTip}"/>
+            <h:inputText id="parameterName" value="#{parameterBean.name}" title="#{msg.parameterNameToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel for="parameterShortDescr" value="#{msg.shortDescription}: *" title="#{msg.parameterShortDescriptionToolTip}" />
+            <h:inputTextarea id="parameterShortDescr" value="#{parameterBean.shortDescription}" title="#{msg.parameterShortDescriptionToolTip}" styleClass="inputArea">
+                <p:resizable  maxWidth="#{masterLayoutBean.standardResizeWidth}" minWidth="#{masterLayoutBean.standardResizeWidth}" for="parameterShortDescr"/>
+            </h:inputTextarea>
+
+            <h:outputLabel  value="#{msg.description}: *" title="#{msg.parameterDescriptionToolTip}" />
+            <p:commandButton ajax="false"  action="#{parameterBean.editDescription}" value="#{msg.openEditor}" title="#{msg.parameterDescriptionToolTip}" />
+
+
+            <h:outputLabel for="parameterOption" value="#{msg.option}:"  title="#{msg.parameterOptionToolTip}"/>
+            <h:inputText id="parameterOption" value="#{parameterBean.option}" title="#{msg.parameterOptionToolTip}" styleClass="elementWidth">
+                <f:ajax listener="#{parameterBean.calculateExample}" render="@form" execute="@form"/>
+            </h:inputText>
+
+
+            <h:outputLabel for="guiElem" value="#{msg.parameterGuiElement}: *" title="#{msg.parameterGuiElementToolTip}" />
+            <h:selectOneMenu id="guiElem" value="#{parameterBean.guiString}" title="#{msg.parameterGuiElementToolTip}" styleClass="elementWidth">
+                <f:selectItems value="#{parameterBean.compatibleGuiElements}"/>
+                <f:ajax listener="#{parameterBean.unsavedChange}" render="@form" execute="@form"/>
+            </h:selectOneMenu>
+
+            <h:outputLabel for="parameterType" value="#{msg.parameterType}: *" title="#{msg.parameterTypeToolTip}" />
+            <h:selectOneMenu id="parameterType" value="#{parameterBean.typeString}" title="#{msg.parameterTypeToolTip}" valueChangeListener="#{parameterBean.typeChanged}" styleClass="elementWidth">
+                <f:selectItem itemValue="string" itemLabel="String" />
+                <f:selectItem itemValue="int" itemLabel="Int" />
+                <f:selectItem itemValue="float" itemLabel="Float" />
+                <f:selectItem itemValue="boolean" itemLabel="Boolean" />
+                <f:selectItem itemValue="dateTime" itemLabel="DateTime" />
+                <f:selectItem itemValue="enum" itemLabel="Enum" />
+                <f:ajax listener="#{parameterBean.calculateExample}" render="@form" execute="@form"/>
+            </h:selectOneMenu>
+
+            <h:panelGroup rendered="#{parameterBean.renderTypeIntFloat}"  />
+            <h:panelGrid id="int" columns="2" rendered="#{parameterBean.renderTypeIntFloat}" >
+
+                <h:outputLabel for="parameterDefValueInt" value="#{msg.defaultValue}:" title="#{msg.defaultValueToolTip}"  />
+                <h:inputText id="parameterDefValueInt" value="#{parameterBean.defaultValue}" title="#{msg.defaultValueToolTip}" >
+                    <f:ajax listener="#{parameterBean.calculateExample}" render="@form" execute="@form"/>
+                </h:inputText>
+
+                <h:outputLabel for="parameterMinValueInt" value="#{msg.minValue}:" title="#{msg.minValueToolTip}" />
+                <h:inputText id="parameterMinValueInt" value="#{parameterBean.min}"  title="#{msg.minValueToolTip}" >
+                    <f:ajax listener="#{parameterBean.calculateExample}" render="@form" execute="@form"/>
+                </h:inputText>
+
+                <h:outputLabel for="parameterIncludeMinValueInt" value="#{msg.includedInInterval}:" title="#{msg.includedInIntervalToolTip}" />
+                <h:selectBooleanCheckbox id="parameterIncludeMinValueInt" value="#{parameterBean.intervalMin}" title="#{msg.includedInIntervalToolTip}"/>
+
+                <h:outputLabel for="parameterMaxValueInt" value="#{msg.maxValue}:" title="#{msg.maxValueToolTip}"  />
+                <h:inputText id="parameterMaxValueInt" value="#{parameterBean.max}"  title="#{msg.maxValueToolTip}">
+                    <f:ajax listener="#{parameterBean.calculateExample}" render="@form" execute="@form"/>
+                </h:inputText>
+
+                <h:outputLabel for="parameterIncludeMinValueInt" value="#{msg.includedInInterval}:" title="#{msg.includedInIntervalToolTip}" />
+                <h:selectBooleanCheckbox value="#{parameterBean.intervalMax}" label="#{msg.includedInInterval}" title="#{msg.includedInIntervalToolTip}"/>
+            </h:panelGrid>
+
+            <h:panelGroup rendered="#{parameterBean.renderTypeString}" />
+            <h:panelGrid id="String" columns="2" rendered="#{parameterBean.renderTypeString}">
+                <h:outputLabel for="parameterDefValueString" value="#{msg.defaultValue}:" title="#{msg.defaultValueToolTip}"  />
+                <h:inputText id="parameterDefValueString" value="#{parameterBean.defaultValue}" title="#{msg.defaultValueToolTip}" >
+                    <f:ajax listener="#{parameterBean.calculateExample}" render="@form" execute="@form"/>
+                </h:inputText>
+
+                <h:outputLabel for="parameterMinLength" value="#{msg.minLength}:" title="#{msg.minLengthToolTip}" />
+                <h:inputText id="parameterMinLength" value="#{parameterBean.minLength}" title="#{msg.minLengthToolTip}" />
+
+                <h:outputLabel for="parameterMaxLength" value="#{msg.maxLength}:" title="#{msg.maxLengthToolTip}" />
+                <h:inputText id="parameterMaxLength" value="#{parameterBean.maxLength}" title="#{msg.maxLengthToolTip}" />
+
+                <h:outputLabel for="parameterRegExp" value="#{msg.regExp}:" title="#{msg.regExpToolTip}" />
+                <h:inputText id="parameterRegExp" value="#{parameterBean.regexp}"  title="#{msg.regExpToolTip}" />
+            </h:panelGrid>
+
+            <h:panelGroup rendered="#{parameterBean.renderTypeDateTime}" />
+            <h:panelGrid id="DateTime" columns="2" rendered="#{parameterBean.renderTypeDateTime}">
+                <h:outputLabel for="parameterDefValueDateTime" value="#{msg.defaultValue}:" title="#{msg.defaultValueToolTip}"  />
+                <h:inputText id="parameterDefValueDateTime" value="#{parameterBean.defaultValue}"  title="#{msg.defaultValueToolTip}" >
+                    <f:ajax listener="#{parameterBean.calculateExample}" render="@form" execute="@form"/>
+                </h:inputText>
+            </h:panelGrid>
+
+            <h:panelGroup rendered="#{parameterBean.renderTypeBoolean}" />
+            <h:panelGrid id="Boolean" columns="2" rendered="#{parameterBean.renderTypeBoolean}">
+                <h:outputLabel for="parameterDefValueEnum" value="#{msg.defaultValue}:" title="#{msg.defaultValueToolTip}"  />
+                <h:selectOneMenu id="parameterDefValueEnum" title="#{msg.defaultValueToolTip}" value="#{parameterBean.defaultValue}">
+                    <f:ajax listener="#{parameterBean.calculateExample}" render="@form" execute="@form"/>
+                    <f:selectItem itemValue="true" itemLabel="true" />
+                    <f:selectItem itemValue="false" itemLabel="false" />
+                </h:selectOneMenu>
+            </h:panelGrid>
+
+            <h:panelGroup rendered="#{parameterBean.renderTypeEnum}" />
+            <h:panelGrid columns="2" id="enum" rendered="#{parameterBean.renderTypeEnum}">
+                <h:outputLabel for="enumType" value="#{msg.enumType}:" title="#{msg.enumTypeToolTip}" />
+                <h:selectOneMenu id="enumType" value="#{parameterBean.enumType}"  title="#{msg.enumTypeToolTip}" >
+                    <f:selectItem itemValue="string" itemLabel="String" />
+                    <f:selectItem itemValue="float" itemLabel="Float" />
+                    <f:selectItem itemValue="int" itemLabel="Int" />
+                    <f:selectItem itemValue="boolean" itemLabel="Boolean" />
+                    <f:selectItem itemValue="dateTime" itemLabel="DateTime" />
+                    <f:ajax listener="#{parameterBean.calculateExample}" render="@form" execute="@form"/>
+                </h:selectOneMenu>
+                <h:outputLabel for="enumParamPrefix" value="#{msg.enumPrefix}:"  title="#{msg.enumPrefixToolTip}" />
+                <h:inputText id="enumParamPrefix" value="#{parameterBean.prefix}"  title="#{msg.enumPrefixToolTip}" >
+                    <f:ajax listener="#{parameterBean.calculateExample}" render="@form" execute="@form"/>
+                </h:inputText>
+                <h:outputLabel for="enumParamSuffix" value="#{msg.enumSuffix}:"  title="#{msg.enumSuffixToolTip}" />
+                <h:inputText id="enumParamSuffix" value="#{parameterBean.suffix}"   title="#{msg.enumSuffixToolTip}" >
+                    <f:ajax listener="#{parameterBean.calculateExample}" render="@form" execute="@form"/>
+                </h:inputText>
+                <h:outputLabel for="enumParamSeparator" value="#{msg.enumSeparator}:*"  title="#{msg.enumSeparatorToolTip}" />
+                <h:inputText id="enumParamSeparator" value="#{parameterBean.separator}"  title="#{msg.enumSeparatorToolTip}"/>
+                <h:outputLabel for="minOccur" value="#{msg.enumMinOccur}:"  title="#{msg.enumMinOccurToolTip}" />
+                <h:inputText id="minOccur" value="#{parameterBean.minOccur}"   title="#{msg.enumMinOccurToolTip}" />
+                <h:outputLabel for="maxOccur" value="#{msg.enumMaxOccur}:"  title="#{msg.enumMaxOccurToolTip}" />
+                <h:inputText id="maxOccur" value="#{parameterBean.maxOccur}"   title="#{msg.enumMaxOccurToolTip}" >
+                    <f:ajax listener="#{parameterBean.calculateCompatibleGuiElements}" render="@form" execute="@form"/>
+                </h:inputText>
+            </h:panelGrid>
+
+            <h:outputLabel for="enumerationsTable"  value="#{msg.enumerations}:"  title="#{msg.enumerationsTooltip}" rendered="#{parameterBean.renderTypeEnum}"/>
+            <h:dataTable id="enumerationsTable" var="enumValue" value="#{parameterBean.enumList}" rendered="#{parameterBean.renderTypeEnum}">
+                <h:column>
+
+                    <h:panelGrid columns="2"  style="#{(enumValue.index>0) ? 'border-top: 1px solid black;':''}">
+
+                        <h:outputLabel for="enumName" value="#{msg.name}:"  title="#{msg.enumNameToolTip}" />
+                        <h:inputText id="enumName" value="#{enumValue.name}"   title="#{msg.enumNameToolTip}" />
+
+                        <h:outputLabel for="enumKey" value="#{msg.enumKey}:"  title="#{msg.enumKeyToolTip}" />
+                        <h:inputText id="enumKey" value="#{enumValue.key}"   title="#{msg.enumKeyToolTip}" />
+
+                        <h:outputLabel for="enumValuet" value="#{msg.enumValue}:"  title="#{msg.enumValueToolTip}" />
+                        <h:inputText id="enumValuet" value="#{enumValue.value}"   title="#{msg.enumValueToolTip}" rendered="#{parameterBean.enumType!='boolean'}">
+                            <f:ajax listener="#{parameterBean.calculateExample}" render="@form" execute="@form"/>
+                        </h:inputText>
+                        <h:selectOneMenu id="enumValuetEnum" title="#{msg.enumBooleanValueToolTip}" value="#{enumValue.value}" rendered="#{parameterBean.enumType=='boolean'}">
+                            <f:ajax listener="#{parameterBean.calculateExample}" render="@form" execute="@form"/>
+                            <f:selectItem itemValue="true" itemLabel="true" />
+                            <f:selectItem itemValue="false" itemLabel="false" />
+                        </h:selectOneMenu>
+
+                        <h:outputLabel for="enumDefaultValue" value="#{msg.enumIsDefaultValue}:" title="#{msg.enumIsDefaultValueToolTip}" />
+                        <h:selectBooleanCheckbox id="enumDefaultValue" value="#{enumValue.defaultValue}" title="#{msg.enumIsDefaultValueToolTip}"/>
+                    </h:panelGrid>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/plus.gif" title="#{msg.enumAddElementToolTip}" action="#{parameterBean.newEnum(enumValue.index)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+                <h:column>
+                    <h:commandButton  image="resources/remove.gif" title="#{msg.enumRemoveElementToolTip}" action="#{parameterBean.removeEnum(enumValue.index)}" rendered="#{parameterBean.showRemoveEnum}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+
+            <h:outputLabel  value="#{msg.exampleResult}:"  title="#{msg.exampleResultToolTip}"/>
+            <p:outputPanel  id="exampleLabel">
+                <div class="forceWrap">#{parameterBean.exampleLabel}</div>
+            </p:outputPanel>
+            
+        </f:ajax>
+            
+        </h:panelGrid>
+    </ui:define>
+
+    <!--***************BOXES ON SIDE***************-->
+    <ui:define name="box">
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newParameterGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.parameter}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addParameterToolTip}" action="#{parameterBean.newParameter()}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noParameterL" value="#{msg.noParameter}" rendered="#{parameterBean.parametersEmpty}" />
+            <h:dataTable id="parameterBox" var="str" value="#{parameterBean.parameterNameList}">
+                <h:column>
+                    <div class="forceWrapBox">#{str}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editParameterToolTip}" action="#{parameterBean.editParameter(str)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeParameterToolTip}" action="#{parameterBean.removeParameter(str)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+    </ui:define>
+
+    <!--***************BUTTONS ON THE BOTTOM***************-->
+    <ui:define name="buttons">
+        
+        <h:outputLabel id="changeLabel" value="#{msg.unsavedChanges} " title="#{msg.unsavedChangesTooltip}" rendered="#{parameterBean.renderUnsavedChanges}" class="changeLabel" />
+                    
+        <h:panelGrid columns="3" styleClass="centered" border="0">
+            <p:commandButton update="@form" id="saveAndReturn" action="#{parameterBean.saveReturn}" value="#{msg.saveReturn}" />
+            <p:commandButton update="@form" id="save" action="#{parameterBean.save}" value="#{msg.save}" />
+            <p:commandButton ajax="false" id="cancel" action="#{parameterBean.cancel}" value="#{msg.cancel}"  />
+        </h:panelGrid>
+    </ui:define>
+
+
+</ui:composition>

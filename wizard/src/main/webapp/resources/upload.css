@@ -1,0 +1,22 @@
+
+.uploaderSingle .preview {display: none !important;}
+.uploaderSingle .files .name{display: none !important;}
+.uploaderSingle .fileupload-content .fileupload-progressbar{width:100px !important;margin:10px 0!important;}
+.uploaderSingle .fileupload-content .ui-progressbar{width:100px!important;height:20px!important;}
+.uploaderSingle .ui-button-text {display:block !important}
+
+.noCancel .preview {display: none !important;}
+.noCancel .files .name{display: none !important;}
+.noCancel .fileupload-content .fileupload-progressbar{width:100px !important;margin:10px 0!important;}
+.noCancel .fileupload-content .ui-progressbar{width:100px!important;height:20px!important;}
+.noCancel .ui-button-text {display:block !important}
+.noCancel .cancel {display: none !important;}
+.noCancel .start {display: none !important;}
+
+.uploaderMulti .preview {display: none !important;}
+.uploaderMulti .files  .name{display:block !important; width: 300px !important; word-wrap: break-word !important; }
+.uploaderMulti .fileupload-content .fileupload-progressbar{width:100px !important;margin:10px 0!important;}
+.uploaderMulti .fileupload-content .ui-progressbar{width:100px!important;height:20px!important;}
+.uploaderMulti .fileupload-content {width: 650px !important}
+.uploaderMulti .ui-button-text {display:block !important}
+

@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="masterLayout.xhtml">
+
+
+    <!--***************INFOBOX***************-->
+    <ui:define name="infoBox">
+        #{msg.authorInfo}
+    </ui:define>
+    <!--***************HEADER***************-->
+    <ui:define name="header">
+        #{msg.author}
+    </ui:define>
+    <!--***************MAIN***************-->
+    <ui:define name="main">
+        <p:messages id="error"/>
+
+        <h:panelGrid columns="2"  styleClass="top centered  twoColumnTable">
+
+            <f:ajax listener="#{authorBean.unsavedChange}" render="@form" execute="@form">
+            
+            <h:outputLabel value="#{msg.loadedFrom}: " title="#{msg.loadedFromTooTip}" rendered="#{authorBean.renderLoadedFrom}"/>
+            <p:outputPanel rendered="#{authorBean.renderLoadedFrom}" >
+                <div class="forceWrap elementWidth">#{authorBean.loadedfrom}</div>
+            </p:outputPanel>
+
+            <h:outputLabel for="lastName" value="#{msg.lastName}: *" title="#{msg.lastNameToolTip}"/>
+            <h:inputText id="lastName" value="#{authorBean.name}" title="#{msg.lastNameToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel for="firstName" value="#{msg.firstName}: *" title="#{msg.firstNameToolTip}"/>
+            <h:inputText id="firstName" value="#{authorBean.firstName}" title="#{msg.firstNameToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel for="email" value="#{msg.email}: *" title="#{msg.emailToolTip}"/>
+            <h:inputText id="email" value="#{authorBean.email}" title="#{msg.emailToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel for="organisation" value="#{msg.organisation}:" title="#{msg.organisationToolTip}"/>
+            <h:inputText id="organisation" value="#{authorBean.organisation}" title="#{msg.organisationToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel for="phone" value="#{msg.phone}:" title="#{msg.phoneToolTip}"/>
+            <h:inputText id="phone" value="#{authorBean.phone}" title="#{msg.phoneToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel for="adress" value="#{msg.adress}:" title="#{msg.adressToolTip}"/>
+            <h:inputTextarea id="adress" value="#{authorBean.adress}" title="#{msg.adressToolTip}" styleClass="inputArea" >
+                <p:resizable  maxWidth="#{masterLayoutBean.standardResizeWidth}" minWidth="#{masterLayoutBean.standardResizeWidth}" for="adress"/>
+            </h:inputTextarea>
+
+            </f:ajax>
+            
+        </h:panelGrid>
+    </ui:define>
+
+    <!--***************BOXES ON SIDE***************-->
+    <ui:define name="box">
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newAuthorGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.authors}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addAuthorToolTip}" action="#{authorBean.newAuthor()}"/>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noAuthors" value="#{msg.noAuthor}" rendered="#{authorBean.authorsEmpty}" />
+            <h:dataTable id="authorBox" var="str" value="#{authorBean.authorNamesList}">
+                <h:column>
+                    <div class="forceWrapBox">#{str}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editAuthorToolTip}" action="#{authorBean.editAuthor(str)}"/>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeAuthorToolTip}" action="#{authorBean.removeAuthor(str)}"/>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+    </ui:define>
+
+    <!--***************BUTTONS ON THE BOTTOM***************-->
+    <ui:define name="buttons">
+        
+        <h:outputLabel id="changeLabel" value="#{msg.unsavedChanges} " title="#{msg.unsavedChangesTooltip}" rendered="#{authorBean.renderUnsavedChanges}" class="changeLabel" />
+        
+        <h:panelGrid columns="3" styleClass="centered" border="0">
+            
+            <p:commandButton update="@form" id="saveAndReturn" action="#{authorBean.saveReturn}" value="#{msg.saveReturn}" />
+            <p:commandButton update="@form" id="save" action="#{authorBean.save}" value="#{msg.save}" />
+            <p:commandButton ajax="false" id="cancel" action="#{authorBean.cancel}" value="#{msg.cancel}"  />
+
+        </h:panelGrid>
+    </ui:define>
+
+
+    <!--***************POPUP***************-->
+    <ui:define name="popup">
+    </ui:define>
+
+    <!--***************ACTION ON ONLOAD***************-->
+    <ui:param name="onLoadFunction" value="#{authorBean.preRender()}" />
+
+</ui:composition>

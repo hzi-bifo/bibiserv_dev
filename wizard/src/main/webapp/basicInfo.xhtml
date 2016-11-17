@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="masterLayout.xhtml">
+
+
+    <!--***************INFOBOX***************-->
+    <ui:define name="infoBox">
+        #{msg.basicInfoInfo}
+    </ui:define>
+    <!--***************HEADER***************-->
+    <ui:define name="header">
+        #{msg.basicInfo}
+    </ui:define>
+    <!--***************MAIN***************-->
+    <ui:define name="main">
+        <p:messages id="error"/>
+        <h:panelGrid columns="2"  styleClass="top centered twoColumnTable">
+
+            <f:ajax listener="#{basicInfoBean.unsavedChange}" render="@form" execute="@form">
+            
+            <h:outputLabel for="name" value="#{msg.name}: *" title="#{msg.basicInfoNameToolTip}" />
+            <h:inputText id="name" value="#{basicInfoBean.toolName}" title="#{msg.basicInfoNameToolTip}" styleClass="elementWidth" />
+
+            <h:outputLabel for="shortDescription" value="#{msg.shortDescription}: *" title="#{msg.basicInfoShortDescriptionToolTip}" />
+            <h:inputTextarea id="shortDescription" value="#{basicInfoBean.shortDescription}" styleClass="inputArea">
+                <p:resizable  maxWidth="#{masterLayoutBean.standardResizeWidth}" minWidth="#{masterLayoutBean.standardResizeWidth}" for="shortDescription"/>
+            </h:inputTextarea>
+
+            <h:outputLabel  value="#{msg.description}: *" title="#{msg.basicInfoDescriptionToolTip}" />
+            <p:commandButton ajax="false"  title="#{msg.basicInfoDescriptionToolTip}" value="#{msg.openEditor}" action="#{basicInfoBean.editDescription}"/>
+
+            <h:outputLabel  value="#{msg.extendedContent}:" title="#{msg.basicInfoCustomContentToolTip}" />
+            <p:commandButton ajax="false"  action="#{basicInfoBean.editCustomContent}" value="#{msg.openEditor}" title="#{msg.basicInfoCustomContentToolTip}" />
+
+            <h:outputLabel for="ToolTipText" value="#{msg.toolTip}:" title="#{msg.toolTipToolTip}" />
+            <h:inputText id="ToolTipText" value="#{basicInfoBean.toolTipText}" title="#{msg.toolTipToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel for="Keywords" value="#{msg.keywords}:" title="#{msg.keywordsToolTip}"/>
+            <h:inputText id="Keywords" value="#{basicInfoBean.keywords}" title="#{msg.keywordsToolTip}" styleClass="elementWidth"/>
+
+            </f:ajax>
+            
+        </h:panelGrid>
+    </ui:define>
+
+    <!--***************BOXES ON SIDE***************-->
+    <ui:define name="box"> 
+    </ui:define>
+
+    <!--***************BUTTONS ON THE BOTTOM***************-->
+    <ui:define name="buttons">
+        
+         <h:outputLabel id="changeLabel" value="#{msg.unsavedChanges} " title="#{msg.unsavedChangesTooltip}" rendered="#{basicInfoBean.renderUnsavedChanges}" class="changeLabel" />
+        
+        <h:panelGrid id="navigation" styleClass="navigation" columns="3" >
+            <p:commandButton id="saveAndReturn" value="#{msg.saveReturn}" update="@form" actionListener="#{basicInfoBean.saveReturn}"/>
+            <p:commandButton id="save" value="#{msg.save}" update="@form" actionListener="#{basicInfoBean.save}"/>
+            <p:commandButton id="cancel" action="#{basicInfoBean.cancel}" ajax="false" value="#{msg.cancel}"  />
+        </h:panelGrid>
+    </ui:define>
+
+
+</ui:composition>

@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="masterLayout.xhtml">
+
+    <!--***************JAVASCRIPT***************-->
+    <ui:define name="javascript">
+        <script language="javascript" type="text/javascript">
+
+            function scrollToBottom(xhr, status, args) {
+                button=document.getElementById('form:codegenOutputTextArea');
+                button.scrollTop = button.scrollHeight;
+                
+                if(!args.validationFailed) {
+                    if(args.stopPoll){
+                        codegenPoll.stop();
+                    }
+                }
+            }
+            
+            function startPoll(xhr, status, args) {
+                
+                if(!codegenPoll.isActive()){
+                    codegenPoll.start();
+                }
+            }
+        </script>
+    </ui:define>
+    <!--***************INFOBOX***************-->
+    <ui:define name="infoBox">
+        #{msg.createXMLInfo}
+    </ui:define>
+    <!--***************HEADER***************-->
+    <ui:define name="header">
+        #{msg.createXML}
+    </ui:define>
+    <!--***************MAIN***************-->
+    <ui:define name="main">
+        <p:messages id="error"/>
+        <h:panelGrid id="optionpanel" columns="2"  styleClass="top centered twoColumnTable" >
+            <h:outputLabel value="#{msg.startXMLFileCreation}: " title="#{msg.startXMLFileCreationToolTip}"/>
+            <p:commandButton id="createXML" actionListener="#{createXML.createXmlFile}" value="#{msg.createBs2}" title="#{msg.startXMLFileCreationToolTip}" update="buttons, error, optionpanel, codegenOutput" disabled="#{createXML.codegenButtonDisabled}"/>
+            <h:outputLabel id="downloadBS2Label" value="#{msg.bs2file}: " title="#{msg.bs2fileToolTip}" rendered="#{createXML.renderLinks}" />
+            <p:commandButton id="downloadBS2" value="#{msg.download}" title="#{msg.bs2fileToolTip}" ajax="false" rendered="#{createXML.renderLinks}" disabled="#{createXML.codegenButtonDisabled}" >
+                <p:fileDownload value="#{createXML.bs2File}"/>
+            </p:commandButton>
+
+            <h:outputLabel id="downloadCodegenLabel" value="#{msg.zip}: " title="#{msg.zipToolTip}" rendered="#{createXML.renderCodegenLink}" />
+            <p:commandButton id="downloadCodegen" value="#{msg.download}" title="#{msg.zipToolTip}" ajax="false" rendered="#{createXML.renderCodegenLink}" disabled="#{createXML.codegenButtonDisabled}">
+                <p:fileDownload value="#{createXML.codegenFile}"/>
+            </p:commandButton>
+
+            <h:outputLabel id="options" value="#{msg.optionsCreateXml}: " title="#{msg.optionsCreateXmlToolTip}" rendered="#{createXML.renderLinks}" />
+            <h:panelGrid id="codegenOptions" columns="2"  styleClass="top twoColumnTable">
+                <h:outputLabel value="#{msg.codegenWithoutWS}: " title="#{msg.codegenWithoutWSToolTip}" rendered="#{createXML.renderLinks}"/>
+                <h:selectBooleanCheckbox title="#{msg.codegenWithoutWSToolTip}" value="#{createXML.withoutWS}" rendered="#{createXML.renderLinks}"/>
+
+                <h:outputLabel value="#{msg.codegenWithoutMoby}: " title="#{msg.codegenWithoutMobyToolTip}" rendered="#{createXML.renderLinks}"/>
+                <h:selectBooleanCheckbox title="#{msg.codegenWithoutMobyToolTip}" value="#{createXML.withoutMoby}" rendered="#{createXML.renderLinks}"/>
+
+                <h:outputLabel value="#{msg.codegenWithoutVB}: " title="#{msg.codegenWithoutVBToolTip}" rendered="#{createXML.renderLinks}"/>
+                <h:selectBooleanCheckbox title="#{msg.codegenWithoutVBToolTip}" value="#{createXML.withoutVB}" rendered="#{createXML.renderLinks}"/>
+
+                <h:outputLabel value="#{msg.codegenWithoutSSWAP}: " title="#{msg.codegenWithoutSSWAPToolTip}" rendered="#{createXML.renderLinks}"/>
+                <h:selectBooleanCheckbox title="#{msg.codegenWithoutSSWAPToolTip}" value="#{createXML.withoutSSWAP}" rendered="#{createXML.renderLinks}"/>
+            </h:panelGrid>
+
+            <h:outputLabel id="startCodegenLabel"  value="#{msg.startCodegen}: " title="#{msg.startCodegenToolTip}" rendered="#{createXML.renderLinks}" style="padding-right:10pt"/>
+            <p:commandButton id="codegen" actionListener="#{createXML.startCodegen}" value="#{msg.startCodegen}" update="@form"
+                             rendered="#{createXML.renderLinks}" title="#{msg.startCodegenToolTip}" disabled="#{createXML.codegenButtonDisabled}"
+                             oncomplete="startPoll(xhr, status, args);"/>
+        </h:panelGrid>
+
+        <h:panelGrid id="codegenOutput" columns="1" styleClass="centered">
+            <h:inputTextarea id="codegenOutputTextArea" value="#{createXML.codegenOutput}"
+                             readonly="true" rendered="#{createXML.renderLinks}"
+                             styleClass="codegeninputArea"><p:resizable  maxWidth="#{masterLayoutBean.codegenResize}" minWidth="#{masterLayoutBean.codegenResize}" for="codegenOutputTextArea"/></h:inputTextarea>
+        </h:panelGrid>
+        <p:poll widgetVar="codegenPoll" autoStart="false" interval="1" update="optionpanel, codegenOutput"
+                oncomplete="scrollToBottom(xhr, status, args);" listener="#{createXML.stopPolling()}"/> 
+    </ui:define>
+
+    <!--***************BOXES ON SIDE***************-->
+    <ui:define name="box">
+    </ui:define>
+
+    <!--***************BUTTONS ON THE BOTTOM***************-->
+    <ui:define name="buttons">
+        <h:panelGrid id="buttons" columns="3" styleClass="centered" border="0">
+            <p:commandButton ajax="false" id="cancel" action="#{createXML.returnToOverview}" value="#{msg.return}"  />
+        </h:panelGrid>
+    </ui:define>
+
+
+</ui:composition>

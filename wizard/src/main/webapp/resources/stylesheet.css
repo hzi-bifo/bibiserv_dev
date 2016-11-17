@@ -1,0 +1,252 @@
+
+root {
+    display: block;
+}
+
+.centered {
+    margin: 0px auto;
+}
+
+.bottom {
+
+}
+
+.mainpanel {
+    width: 1000px;
+}
+
+.infoBox {
+    width: 970px;
+}
+
+.infoBox div {
+    font-size: 10pt !important;
+    font-weight: normal;
+}
+
+.infoBox .ui-widget-header {
+    font-size: 11pt !important;
+    font-weight: bold;
+}
+
+.changeLabel {
+    font-weight: bold;
+}
+
+.currentPos {
+    font-weight: bold;
+}
+
+.mainCenter {
+    min-width:700px;
+    max-width:970px;
+}
+
+.minHeight {
+    height: 400px;
+}
+
+.mainCenter tbody, tr, td
+{
+    vertical-align: top;
+}
+
+.returnbutton{
+    position:relative;
+    bottom:10px;
+}
+
+.boxes
+{
+    font-size:10pt;
+}
+
+.boxWidth
+{
+    width:250px;
+}
+
+.top tbody, tr, td
+{
+    vertical-align: top;
+}
+
+.exampleTable {
+    min-width:650px; max-width: 650px;
+}
+
+.exampleInputArea {
+    min-width: 600px;
+    max-width: 600px;
+    height: 150px;
+}
+
+.exampleInputArea2 {
+    min-width: 400px;
+    max-width: 400px;
+    height: 100px;
+}
+
+.exampleInput {
+    min-width: 400px;
+    max-width: 400px;
+}
+
+.forceWrap {
+    word-wrap: break-word;
+}
+
+.forceWrapBox {
+    word-wrap: break-word;
+    width:190px;
+}
+
+.forceWrapBoxExtraIcon {
+    word-wrap: break-word;
+    width:171px;
+}
+
+.manyCheckBox {
+    border-style: none !important;
+}
+
+.manyCheckBox td {
+    border-style: none !important;
+}
+
+/* Button styling to something normal */
+.ui-button-text {
+    display:inline !important;
+}
+
+.ui-state-default, .ui-state-hover, .ui-state-active {
+    color: #000000 !important;
+    font-weight: normal !important;
+}
+
+.ui-datatable .ui-datatable-data .noborder td{
+    border-width: 0px;
+}
+
+.elementWidth {
+    min-width:450px;
+    max-width:450px;
+}
+
+.inputArea {
+    min-width: 450px;
+    max-width: 450px;
+    height: 150px;
+}
+
+.codegeninputArea {
+min-width:700px;
+max-width:700px;
+height: 400px;
+}
+
+.dialog {
+    width: 600px;
+}
+
+.twoColumnTable td {
+    border-collapse: collapse;
+    border-width: 0px;
+    padding-top: 2pt;
+    padding-bottom: 2pt;
+    padding-right: 2pt;
+    padding-left: 0pt;
+    vertical-align: top;
+}
+
+.twoColumnTable table, .twoColumnTable tr, .twoColumnTable tbody {
+    border-collapse: collapse;
+    border-width: 0px;
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    padding-right: 0pt;
+    padding-left: 0pt;
+    vertical-align: top;
+}
+
+.selectionTable table, .selectionTable tr, .selectionTable tbody, .selectionTable td  {
+    border-collapse: collapse;
+    border-width: 0px;
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    padding-right: 2pt;
+    padding-left: 0pt;
+    vertical-align: middle;
+}
+
+.removeButton {
+    width: 16px;
+    height: 16px;
+    border: none;
+    padding: 0px;
+}
+
+.selectionLable {
+    padding-right: 40pt;
+}
+
+.dependencyParameter {
+    word-wrap: break-word;
+    width:140px;
+    white-space: normal;
+}
+
+.smallElementWidth {
+        min-width:300px;
+        max-width:300px;
+}
+
+
+.ui-messages-error-summary {
+    word-wrap: break-word;
+}
+
+.ui-messages-info-summary {
+    word-wrap: break-word;
+    display: inline-block;
+    width: 600px;
+}
+
+.ui-messages-warn-summary {
+    word-wrap: break-word;
+    display: inline-block;
+    width: 600px;
+}
+
+.editor .ui-editor{
+    width:600px !important;
+    height:400px !important;
+}
+
+.editor .ui-editor iframe, .editor .ui-editor textarea{
+    height:373px !important;
+}
+
+.orderWidth {
+    width:700px;
+}
+
+.referenceNameWidth {
+    width: 175px;
+}
+
+
+
+.referenceInput{
+    width:450px;
+    display:inline-block;
+}
+
+.referenceInput .ui-inputfield {
+    width:395px;
+    display:inline-block;
+}
+
+.noBorder div {
+    border: none;
+}

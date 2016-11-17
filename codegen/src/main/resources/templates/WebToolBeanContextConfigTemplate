@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!--
+DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+
+Copyright 2010-2014 BiBiServ Curator Team, http://bibiserv.cebitec.uni-bielefeld.de,
+All rights reserved.
+
+The contents of this file are subject to the terms of the Common
+Development and Distribution License("CDDL") (the "License"). You
+may not use this file except in compliance with the License. You can
+obtain a copy of the License at http://www.sun.com/cddl/cddl.html
+
+See the License for the specific language governing permissions and
+limitations under the License.  When distributing the software, include
+this License Header Notice in each file.  If applicable, add the following
+below the License Header, with the fields enclosed by brackets [] replaced
+ by your own identifying information:
+
+"Portions Copyrighted  2010-2014 BiBiServ Curator Team, http://bibiserv.cebitec.uni-bielefeld.de"
+
+Contributor(s):
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
+       xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+       http://www.directwebremoting.org/schema/spring-dwr http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd">
+
+
+       <!-- Backing Bean for the download page -->
+       <bean id="toolBean_<#getToolId/#>_download" class="de.unibi.techfak.bibiserv.tools.<#getToolId/#>.DownloadList" scope="session"  lazy-init="true">
+            <property name="messages" ref="messages"/>
+            <property name="tooldescription" ref="toolBean_<#getToolId/#>_tooldescription"/>
+       </bean>
+       
+       
+       <#generateIfExecuteableExists#>
+       <bean id="<#getToolId/#>_function" class="de.unibi.techfak.bibiserv.tools.<#getToolId/#>.web.<#getToolId/#>_function" scope="session"/>
+        
+        <!-- Backing Bean for the reset page -->
+       <bean id="toolBean_<#getToolId/#>_reset" class="de.unibi.techfak.bibiserv.tools.<#getToolId/#>.<#getToolId/#>_reset" scope="session"  lazy-init="true"/>
+       <#/generateIfExecuteableExists#>
+       
+
+       <!-- Backing Bean for tooldescription -->
+       <bean id="toolBean_<#getToolId/#>_tooldescription" class="de.unibi.techfak.bibiserv.tools.<#getToolId/#>.Tooldescription"  lazy-init="true"/>
+
+        <!-- Backing Bean for parameterdependecies -->
+       <bean id="toolBean_<#getToolId/#>_parameterdependencies" class="de.unibi.techfak.bibiserv.tools.<#getToolId/#>.ParameterDependencies" lazy-init="true">
+           <property name="tooldesription" ref="toolBean_<#getToolId/#>_tooldescription"/>
+       </bean>
+
+   <!-- Backing Beans for the submission page -->
+
+    <#for_all_inputs#>
+    <bean id="___INPUTID___" class="de.unibi.techfak.bibiserv.tools.<#getToolId/#>.web.___INPUTID___" scope="session">
+        <property name="messages" ref="messages"/> <!-- defined in bibimainapp context -->
+        <property name="awsbean" ref="awsBean"/>   <!-- defined in bibimainapp context -->
+        <property name="illuminaBean" ref="illuminaBean"/>   <!-- defined in bibimainapp context -->
+    </bean>
+    
+    <#/for_all_inputs#>
+
+    
+    <#generateBeansForFunctions#>
+    
+    
+
+    <bean id="###FUNCTIONID###_param" class="de.unibi.techfak.bibiserv.tools.###TOOLID###.web.###FUNCTIONID###_param" scope="session">
+        <property name="messages" ref="messages"/> <!-- defined in bibimainapp context -->
+    </bean>
+
+    <bean id="###FUNCTIONID###_result" class="de.unibi.techfak.bibiserv.tools.###TOOLID###.web.###FUNCTIONID###_result" scope="session">
+        <property name="execfunction" ref="###FUNCTIONID###_execfunction"/>
+        <property name="messages" ref="messages"/> <!-- defined in bibimainapp context -->
+        <property name="toolChainBean" ref="toolChainingBean"/> <!-- defined in bibimainapp context -->
+    </bean>
+    
+    <bean id="###FUNCTIONID###_resulthandler" class="de.unibi.techfak.bibiserv.tools.###TOOLID###.web.###FUNCTIONID###_resulthandler" scope="session">
+        <property name="messages" ref="messages"/> <!-- defined in bibimainapp context -->
+        <property name="awsbean" ref="awsBean"/>   <!-- defined in bibimainapp context -->
+    </bean>
+
+
+    <bean id="###FUNCTIONID###_threadworker" class="de.unibi.techfak.bibiserv.tools.###TOOLID###.###FUNCTIONID###_threadworker" lazy-init="true"/>
+
+    <bean id="###FUNCTIONID###_execfunction" class="de.unibi.techfak.bibiserv.tools.###TOOLID###.###FUNCTIONID###" scope="session">
+        <property name="threadworker" ref="###FUNCTIONID###_threadworker"/> 
+        <property name="user" ref="user"/> <!-- defined in bibimainapp context -->
+    </bean>
+
+    <bean id="###FUNCTIONID###_controller" class="de.unibi.techfak.bibiserv.tools.###TOOLID###.web.###FUNCTIONID###_controller" scope="session">
+        <property name="execfunction" ref="###FUNCTIONID###_execfunction"/>
+        <property name="function" ref="<#getToolId/#>_function"/>
+        ###INPUTBEANDECLARATION###
+        <property name="param" ref="###FUNCTIONID###_param"/>
+        <property name="result" ref="###FUNCTIONID###_result"/>
+        <property name="resulthandler" ref="###FUNCTIONID###_resulthandler"/>
+       
+        <property name="tooldescription" ref="toolBean_<#getToolId/#>_tooldescription"/>
+        <property name="messages" ref="messages"/>              <!-- defined in bibimainapp context -->
+        <property name="statsLogger" ref="statsLogger"/>        <!-- defined in bibimainapp context -->
+        <property name="urlQueueBean" ref="urlQueueBean"/>        <!-- defined in bibimainapp context -->
+        <property name="parameterDependencies" ref="toolBean_<#getToolId/#>_parameterdependencies"/>
+       
+        <property name="toolChainBean" ref="toolChainingBean"/> <!-- defined in bibimainapp context -->
+    </bean>
+    <#/generateBeansForFunctions#>
+
+</beans>

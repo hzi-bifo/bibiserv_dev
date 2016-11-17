@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="masterLayout.xhtml">
+
+    <!--***************JAVASCRIPT***************-->
+    <ui:define name="javascript">
+    </ui:define>
+    <!--***************INFOBOX***************-->
+    <ui:define name="infoBox">
+        #{msg.viewInfo}
+    </ui:define>
+    <!--***************HEADER***************-->
+    <ui:define name="header">
+        #{msg.views}
+    </ui:define>
+    <!--***************MAIN***************-->
+    <ui:define name="main">
+        <p:messages id="error"/>
+        <h:panelGrid columns="2"  styleClass="top centered twoColumnTable">
+
+            <f:ajax listener="#{viewBean.unsavedChange}" render="@form" execute="@form">
+            
+            <h:outputLabel value="#{msg.loadedFrom}: " title="#{msg.loadedFromTooTip}" rendered="#{viewBean.renderLoadedFrom}" />
+            <p:outputPanel rendered="#{viewBean.renderLoadedFrom}" >
+                <div class="forceWrap elementWidth">#{viewBean.loadedFrom}</div>
+            </p:outputPanel>
+
+            <h:outputLabel for="viewTitle" value="#{msg.viewTitle}: " title="#{msg.viewTitleToolTip}"/>
+            <h:inputText id="viewTitle" value="#{viewBean.title}" title="#{msg.viewTitleToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel  value="#{msg.customContent}: *" title="#{msg.viewCustomContentToolTip}" />
+            <p:commandButton ajax="false"  action="#{viewBean.editCustomContent}" value="#{msg.openEditor}" title="#{msg.viewCustomContentToolTip}" />
+
+            <h:outputLabel for="viewTypeChooser" value="#{msg.viewType}: *" title="#{msg.viewTypeToolTip}" />
+            <h:selectOneMenu id="viewType" value="#{viewBean.viewType}" title="#{msg.viewTypeToolTip}" styleClass="elementWidth">
+                <f:selectItems value="#{viewBean.viewTypes}" />
+            </h:selectOneMenu>
+            
+            </f:ajax>
+        </h:panelGrid>
+    </ui:define>
+
+    <!--***************BOXES ON SIDE***************-->
+    <ui:define name="box">
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newViewGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.views}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addViewToolTip}" action="#{viewBean.newView()}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noViews" value="#{msg.noView}" rendered="#{viewBean.viewsEmpty}" />
+            <h:dataTable id="ViewBox" var="str" value="#{viewBean.viewNamesList}">
+                <h:column>
+                    <div class="forceWrapBox">#{str}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editViewToolTip}" action="#{viewBean.editView(str)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeViewToolTip}" action="#{viewBean.removeView(str)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+    </ui:define>
+
+    <!--***************BUTTONS ON THE BOTTOM***************-->
+    <ui:define name="buttons">
+        
+        <h:outputLabel id="changeLabel" value="#{msg.unsavedChanges} " title="#{msg.unsavedChangesTooltip}" rendered="#{viewBean.renderUnsavedChanges}" class="changeLabel" />
+        
+        <h:panelGrid columns="3" styleClass="centered" border="0">
+            <p:commandButton update="@form" id="saveAndReturn" action="#{viewBean.saveAndReturn}" value="#{msg.saveReturn}" />
+            <p:commandButton update="@form" id="save" action="#{viewBean.save}" value="#{msg.save}" />
+            <p:commandButton ajax="false" id="cancel" action="#{viewBean.cancel}" value="#{msg.cancel}"  />
+        </h:panelGrid>
+    </ui:define>
+
+
+
+
+</ui:composition>

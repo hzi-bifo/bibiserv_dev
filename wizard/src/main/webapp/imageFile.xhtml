@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="masterLayout.xhtml">
+
+
+    <!--***************INFOBOX***************-->
+    <ui:define name="infoBox">
+        #{msg.imageFileInfo}
+    </ui:define>
+    <!--***************HEADER***************-->
+    <ui:define name="header">
+        #{msg.imageFile}
+    </ui:define>
+    <!--***************MAIN***************-->
+    <ui:define name="main">
+        <p:messages id="error"/>
+        <h:panelGrid columns="2"  styleClass="top centered twoColumnTable">
+
+            <f:ajax listener="#{imageFileBean.unsavedChange}" render="@form" execute="@form">
+            
+            <h:outputLabel value="#{msg.loadedFrom}: " title="#{msg.loadedFromTooTip}" rendered="#{imageFileBean.renderLoadedFrom}"/>
+            <p:outputPanel rendered="#{imageFileBean.renderLoadedFrom}" >
+                <div class="forceWrap elementWidth">#{imageFileBean.loadedFrom}</div>
+            </p:outputPanel>
+
+            <h:outputLabel for="file" value="#{msg.imageFilename}: *" title="#{msg.imageFilenameToolTip}"/>
+            <h:inputText id="file" value="#{imageFileBean.filename}" title="#{msg.imageFilenameToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel value="#{msg.isFileUploaded}:" title="#{msg.isFileUploadedToolTip}"/>
+            <h:panelGrid columns="1" styleClass="elementWidth">
+                <h:panelGrid columns ="2" id="uploadedTable">
+                    <h:outputLabel value="#{imageFileBean.yesno}"  styleClass="smallElementWidth"/>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeUploadedFileToolTip}" action="#{imageFileBean.removeFileFromServerForCurrent()}" rendered="#{imageFileBean.state=='correctFile'}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:panelGrid>
+                <p:fileUpload id="exampleUploader" styleClass="uploaderSingle elementWidth"
+                              fileUploadListener="#{imageFileBean.handleFileUpload}"
+                              mode="advanced"
+                              update="@form"
+                              auto="true"
+                              multiple="false">
+                </p:fileUpload>
+            </h:panelGrid>
+            
+            </f:ajax>
+        </h:panelGrid>
+    </ui:define>
+
+    <!--***************BOXES ON SIDE***************-->
+    <ui:define name="box">
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newfileGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.files}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addImageFileToolTip}" action="#{imageFileBean.newImageFile()}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noFunctions" value="#{msg.noImageFile}" rendered="#{imageFileBean.imageFilesEmpty}" />
+            <h:dataTable id="fileBox" var="str" value="#{imageFileBean.imageFileList}">
+                <h:column>
+                    <h:graphicImage value="#{str.getCurrentState().getTrafficLight().getPath()}"/>
+                </h:column>
+                <h:column>
+                    <div class="forceWrapBoxExtraIcon">#{str.getName()}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editFileToolTip}" action="#{imageFileBean.editImageFile(str.getName())}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeFileToolTip}" action="#{imageFileBean.removeImageFile(str.getName())}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+    </ui:define>
+
+    <!--***************BUTTONS ON THE BOTTOM***************-->
+    <ui:define name="buttons">
+        
+        <h:outputLabel id="changeLabel" value="#{msg.unsavedChanges} " title="#{msg.unsavedChangesTooltip}" rendered="#{imageFileBean.renderUnsavedChanges}" class="changeLabel" />
+        
+        <h:panelGrid columns="3" styleClass="centered" border="0">
+            <p:commandButton id="saveRetButton" value="#{msg.saveReturn}" update="@form" actionListener="#{imageFileBean.saveAndReturn}"/>
+            <p:commandButton id="saveButton"  value="#{msg.save}" update="@form" actionListener="#{imageFileBean.save}"/>
+            <p:commandButton ajax="false" id="cancel" action="#{imageFileBean.cancel}" value="#{msg.cancel}"  />
+        </h:panelGrid>
+    </ui:define>
+
+    <!--***************ACTION ON ONLOAD***************-->
+    <ui:param name="onLoadFunction" value="#{imageFileBean.preRender()}" />
+
+</ui:composition>

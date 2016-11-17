@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>de.unibi.cebitec.jkrueger</groupId>
+    <artifactId>TEMPLATE_ID</artifactId>
+    <name>TEMPLATE_NAME</name>
+    <version>TEMPLATE_VERSION</version>
+    <packaging>jar</packaging>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <tooldescription>src/main/config/runnableitem.xml</tooldescription>
+        <config.dir>src/main/config</config.dir>
+        <downloads.dir>src/main/downloads</downloads.dir>
+        <resources.dir>src/main/resources</resources.dir>
+        <pages.dir>src/main/pages</pages.dir>
+        <libs.dir>src/main/libs</libs.dir> <!-- own libs, copied into archive -->
+        <gen.config.dir>target/gen.src</gen.config.dir>
+    </properties>
+    
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+        
+    <dependencies>
+        
+        <!-- runtime dependencies -->
+        <dependency>
+            <groupId>com.github.BiBiServ.bibiserv</groupId>
+            <artifactId>managerclient</artifactId>
+            <version>development-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency> 
+        <!-- needed to avoid class not found exception, when using above managerclient -->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4</version>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <!-- compiletime dependencies  -->
+        <dependency>
+            <groupId>com.github.BiBiServ.bibiserv</groupId>
+            <artifactId>bibimaininterfaces</artifactId>
+            <version>development-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency> 
+        <dependency>
+            <groupId>com.github.BiBiServ.bibiserv</groupId>
+            <artifactId>bibitools</artifactId>
+            <version>development-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency> 
+        <dependency>
+            <groupId>com.github.BiBiServ.bibiserv</groupId>
+            <artifactId>converter</artifactId>
+            <version>development-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency> 
+        <dependency>
+            <groupId>com.github.BiBiServ.bibiserv</groupId>
+            <artifactId>dependencyparser</artifactId>
+            <version>development-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency> 
+        
+        
+        <dependency>
+            <groupId>com.github.BiBiServ.bibiserv</groupId>
+            <artifactId>validator</artifactId>
+            <version>development-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency> 
+        <dependency>
+            <groupId>com.github.BiBiServ.bibiserv</groupId>
+            <artifactId>deploytools</artifactId>
+            <version>development-SNAPSHOT</version>
+        </dependency>
+        
+        
+        <!-- HOBIT XML types -->
+        
+        <dependency>
+            <groupId>com.github.BiBiServ.bibiserv</groupId>
+            <artifactId>rnastructml</artifactId>
+            <version>development-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency> 
+        
+        <dependency>
+            <groupId>com.github.BiBiServ.bibiserv</groupId>
+            <artifactId>alignmentml</artifactId>
+            <version>development-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency> 
+        <dependency>
+            <groupId>com.github.BiBiServ.bibiserv</groupId>
+            <artifactId>sequenceml</artifactId>
+            <version>development-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency> 
+        <dependency>
+            <groupId>com.github.BiBiServ.bibiserv</groupId>
+            <artifactId>rnastructalignmentml</artifactId>
+            <version>development-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency> 
+    </dependencies>
+        
+        
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <configuration>
+                            <target>
+                                
+                                
+                                
+                                <echo>Validate ${project.name} data</echo>
+                                <xmlvalidate file="${tooldescription}">
+                                    <attribute name="http://apache.org/xml/features/validation/schema" value="true"/>
+                                    <attribute name="http://xml.org/sax/features/namespaces" value="true"/>
+                                    <property name="http://apache.org/xml/properties/schema/external-schemaLocation" 
+                                              value="http://bibiserv.techfak.uni-bielefeld.de/xsd/bibiserv2/BiBiServAbstraction.xsd"/>
+                                </xmlvalidate>
+                                <!-- check if the download resources fits the downloadable items in the tool description -->
+                                <taskdef name="verifydownload" classpathref="maven.compile.classpath" classname="de.unibi.techfak.bibiserv.deploy.tools.VerifyDownload"/>
+                                <verifydownload downloaddir="${downloads.dir}" runnableitemfile="${tooldescription}"/>
+                                <!-- check if the image resources fits the image tags in the tool description -->
+                                <mkdir dir="${gen.config.dir}"/>
+                                <taskdef name="verifylinks" classpathref="maven.compile.classpath"
+                                         classname="de.unibi.techfak.bibiserv.deploy.tools.VerifyLinks"/>
+                                <verifylinks resourcedir="${resources.dir}"
+                                             runnableitemfile="${tooldescription}" ignorepattern="^(http|file|\/|#|${ant.project.name}\?).*$"
+                                             out="${gen.config.dir}/runnableitem.xml"/>
+                                <!-- check if functions parameter, input and output refs are considered by ParamAndInputOutputOrder tags -->
+                                <taskdef name="verifyfunction" classpathref="maven.compile.classpath" classname="de.unibi.techfak.bibiserv.deploy.tools.VerifyFunction"/>
+                                <verifyfunction runnableitemfile="${tooldescription}"/>
+                                
+                                <!-- possibility to copy all files from a path (e.g. runtime.classpath) to a directory  -->
+                                
+                                <!-- <copy todir="${libs.dir}" flatten="true">
+                                    <path refid="maven.runtime.classpath"/>                                 
+                                </copy> -->
+                                
+                                <!-- <property name="runtimepath" refid="maven.runtime.classpath"/>
+                                <echo>${runtimepath}</echo> -->
+                                
+                                
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        
+                    </execution>
+                    
+                    <execution>
+                        <id>package</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <zip file="target/${project.artifactId}-${project.version}.bar">
+                                    <!-- java classes -->
+                                    <zipfileset dir="target/classes" prefix="classes"/>
+                                    <!-- config dir(s) -->
+                                    <zipfileset dir="${config.dir}" prefix="config">
+                                        <exclude name="runnableitem.xml"/>
+                                    </zipfileset>
+                                    <zipfileset dir="${gen.config.dir}" prefix="config"/>
+                                    <zipfileset dir="${pages.dir}" prefix="pages"/>
+                                    <!-- resources must also be part of the bibimainapp - classloader, even it is empty -->
+                                    <zipfileset dir="${downloads.dir}" prefix="resources/downloads"/>
+                                    <zipfileset dir="${resources.dir}" prefix="resources"/>
+                                    
+                                    <!-- lib must also be part of the bibimainapp - classloader, even it is empty-->
+                                    <zipfileset dir="${libs.dir}" prefix="lib"/>        
+                                </zip>
+                            </target>
+                            
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>deploy</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <java classname="de.unibi.cebitec.bibiserv.client.manager.ManagerClient" fork="true" classpathref="maven.runtime.classpath"> 
+                                    <arg value="deploy"/>
+                                    <arg value="target/${project.artifactId}-${project.version}.bar"/>
+                                </java>
+                       
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build> 
+    
+    
+</project>

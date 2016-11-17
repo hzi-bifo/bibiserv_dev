@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="masterLayout.xhtml">
+
+    <!--***************JAVASCRIPT***************-->
+    <ui:define name="javascript">
+    </ui:define>
+    <!--***************INFOBOX***************-->
+    <ui:define name="infoBox">
+        #{msg.overviewInfo}
+    </ui:define>
+    <!--***************HEADER***************-->
+    <ui:define name="header">
+        #{msg.overview}
+    </ui:define>
+    <!--***************MAIN***************-->
+    <ui:define name="main">
+        <h:panelGrid cellpadding="40" styleClass="top centered">
+            <h:panelGrid columns="3" >
+
+                <h:graphicImage id="basicInfoStatus" value="#{basicInfoBean.basicInfoStatus}"/>
+                <h:outputText  value="#{msg.basicInfo}" title="#{msg.basicInfoToolTip}"/>
+                <h:commandButton  id="basicInfo" action="/basicInfo.xhtml?faces-redirect=true" title="#{msg.basicInfoToolTip}" image="resources/edit.gif"/>
+
+                <h:graphicImage id="execInfosStatus1" value="#{executableInfoBean.executableInfoStatus}" rendered="#{!webstartSelectionBean.webstartSet or executableInfoBean.executableInfoStatus=='resources/greenlight.gif'}"/>
+                <h:graphicImage id="execInfosStatus2" value="resources/yellowlight.gif" rendered="#{webstartSelectionBean.webstartSet and executableInfoBean.executableInfoStatus!='resources/greenlight.gif'}"/>
+                <h:outputText  value="#{msg.execInfos}" title="#{msg.execInfosToolTip}" />
+                <h:commandButton id="execInfos" action="/executableInfos.xhtml?faces-redirect=true" title="#{msg.execInfosToolTip}" image="resources/edit.gif"/>
+
+                <h:graphicImage id="authorInfoStatus" value="#{authorSelectionBean.authorStatus}"/>
+                <h:outputText  value="#{msg.authorSelection}" title="#{msg.authorSelectionToolTip}"/>
+                <h:commandButton id="authorInfo" action="/authorSelection.xhtml?faces-redirect=true" title="#{msg.authorSelectionToolTip}" image="resources/edit.gif" />
+
+                <h:graphicImage id="functionStatus2" value="resources/yellowlight.gif" rendered="#{webstartSelectionBean.webstartSet and functionSelectionBean.functionStatus!='resources/greenlight.gif'}"/>
+                <h:graphicImage id="functionStatus1" value="#{functionSelectionBean.functionStatus}" rendered="#{!webstartSelectionBean.webstartSet or functionSelectionBean.functionStatus=='resources/greenlight.gif'}"/>
+                <h:outputText  value ="#{msg.functionSelection}" title="#{msg.functionSelectionToolTip}"/>
+                <h:commandButton id="function" action="functionSelection.xhtml?faces-redirect=true" title="#{msg.functionSelectionToolTip}" image="resources/edit.gif"/>
+
+                <h:graphicImage id="manualStatus" value="#{manualBean.manualStatus}"/>
+                <h:outputText  value="#{msg.manual}" title="#{msg.manualToolTip}"/>
+                <h:commandButton id="manual" action="/manual.xhtml?faces-redirect=true" title="#{msg.manualToolTip}" image="resources/edit.gif" />
+
+                <h:graphicImage id="referenceStatus" value="#{referenceSelectionBean.referenceStatus}"/>
+                <h:outputText  value="#{msg.referenceSelection}" title="#{msg.referenceSelectionToolTip}"/>
+                <h:commandButton id="reference" action="/referenceSelection.xhtml?faces-redirect=true" title="#{msg.referenceSelectionToolTip}" image="resources/edit.gif" />
+
+                <h:graphicImage id="viewStatus" value="#{viewBean.viewStatus}"/>
+                <h:outputText  value="#{msg.viewSelection}" title="#{msg.viewSelectionToolTip}"/>
+                <h:commandButton id="view" action="/view.xhtml?faces-redirect=true" title="#{msg.viewSelectionToolTip}" image="resources/edit.gif" />
+
+                <h:graphicImage id="fileStatus" value="#{fileSelectionBean.fileStatus}"/>
+                <h:outputText  value="#{msg.fileSelection}" title="#{msg.fileSelectionToolTip}"/>
+                <h:commandButton id="files" action="/fileSelection.xhtml?faces-redirect=true" title="#{msg.fileSelectionToolTip}" image="resources/edit.gif" />
+                
+                <h:graphicImage id="webstartStatus" value="#{webstartSelectionBean.webstartStatus}"/>
+                <h:outputText  value="#{msg.webstartSelection}" title="#{msg.webstartSelectionToolTip}"/>
+                <h:commandButton id="webstarts" action="/webstartSelection.xhtml?faces-redirect=true" title="#{msg.webstartSelectionToolTip}" image="resources/edit.gif" />
+
+                <!-- Will not be implemented until further notice.
+                <h:panelGrid />
+                  <h:outputText  value="#{msg.addLang}" title="#{msg.addLangToolTip}" />
+                  <h:commandButton id="addLang" action="/addLanguage.xhtml" title="#{msg.addLangToolTip}" image="resources/edit.gif"/>-->
+            </h:panelGrid>
+
+        </h:panelGrid>
+    </ui:define>
+
+    <!--***************BOXES ON SIDE***************-->
+    <ui:define name="box">
+    </ui:define>
+
+    <!--***************BUTTONS ON THE BOTTOM***************-->
+    <ui:define name="buttons">
+        <h:panelGrid columns="4" styleClass="centered" border="0">
+            <p:commandButton ajax="false" id="loadXML"  value="#{msg.loadXML}" action="/loadXML.xhtml?faces-redirect=true" title="#{msg.loadXMLToolTip}"  />
+            <p:commandButton ajax="false" id="statusXML" value="#{msg.statusXMLButton}" action="/statusXml.xhtml?faces-redirect=true" title="#{msg.statusXMLButtonToolTip}" />
+            <p:commandButton ajax="false" id="createXML" onclick="showExport.show()"  value="#{msg.createXML}" action="/createXml.xhtml?faces-redirect=true" title="#{msg.createXMLToolTip}" />
+            <p:commandButton ajax="false" id="clear"  value="#{msg.clearSession}" action="#{overviewBean.clearSession()}" title="#{msg.clearSessionToolTip}"   />
+        </h:panelGrid>
+    </ui:define>
+
+
+</ui:composition>

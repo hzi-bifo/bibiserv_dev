@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="masterLayout.xhtml">
+
+    <!--***************JAVASCRIPT***************-->
+    <ui:define name="javascript">
+        <script language="javascript" type="text/javascript">
+
+        function handleWindow(xhr, status, args) {
+
+             if(!args.validationFailed) {
+
+               if(args.show){
+                    if(args.returns) {
+                        document.getElementById("form:OKredirect").style.display = "inline";
+                        document.getElementById("form:abort").style.display = "inline";
+                        document.getElementById("form:OK").style.display = "none";
+                        document.getElementById("form:errorMassage").style.display = "inline";
+
+                    } else {
+                        document.getElementById("form:OKredirect").style.display = "none";
+                        document.getElementById("form:abort").style.display = "none";
+                        document.getElementById("form:OK").style.display = "inline";
+                        if(args.error){
+                           document.getElementById("form:errorMassage").style.display = "inline";
+                        } else {
+                            document.getElementById("form:errorMassage").style.display = "none";
+                        }
+                    }
+                    confirmation.show()
+               }
+            }
+        }
+        </script>
+    </ui:define>
+    <!--***************INFOBOX***************-->
+    <ui:define name="infoBox">
+        #{msg.fileSelectionInfo}
+    </ui:define>
+    <!--***************HEADER***************-->
+    <ui:define name="header">
+        #{msg.fileSelection}
+    </ui:define>
+    <!--***************MAIN***************-->
+    <ui:define name="main">
+        <h:panelGrid columns="2"  styleClass="top centered twoColumnTable">
+
+            <h:outputLabel value="#{msg.files}:"/>
+
+            <h:dataTable id="usedFiles"  var="file" value="#{fileSelectionBean.selectedFilesWithId}">
+                <h:column>
+                    <h:panelGrid columns="4" styleClass="selectionTable">
+
+                        <h:selectOneMenu  value="#{file.second}" styleClass="elementWidth"
+                                          valueChangeListener="#{fileSelectionBean.dropDownValueChangeMethod}">
+                            <f:ajax render="@form" />
+                            <f:selectItem itemLabel="#{msg.chooseFile}" itemValue=""/>
+                            <f:selectItems value="#{fileSelectionBean.fileNamesList}" var="name"
+                                           itemLabel="#{name}" itemValue="#{name}"/>
+                        </h:selectOneMenu>
+
+
+                        <h:commandButton image="resources/plus.gif" title="#{msg.addFileDropdownToolTip}" action="#{fileSelectionBean.addDropdown(file.first)}">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+                        <h:commandButton image="resources/remove.gif" title="#{msg.removeFileDropdownToolTip}"  action="#{fileSelectionBean.removeDropdown(file.first)}" rendered="#{fileSelectionBean.showRemove}">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+                        <p:panel styleClass="removeButton" rendered="#{!fileSelectionBean.showRemove}"/>
+                    </h:panelGrid>
+                </h:column>
+            </h:dataTable>
+
+            <h:outputLabel value="#{msg.imageFiles}:"/>
+
+            <h:dataTable id="usedImageFiles"  var="file" value="#{imageFileSelectionBean.selectedStringsWithId}">
+                <h:column>
+                    <h:panelGrid columns="4" styleClass="selectionTable">
+
+                        <h:selectOneMenu  value="#{file.second}" styleClass="elementWidth"
+                                          valueChangeListener="#{imageFileSelectionBean.dropDownValueChangeMethod}">
+                            <f:ajax render="@form" />
+                            <f:selectItem itemLabel="#{msg.chooseFile}" itemValue=""/>
+                            <f:selectItems value="#{imageFileSelectionBean.instanceNamesList}" var="name"
+                                           itemLabel="#{name}" itemValue="#{name}"/>
+                        </h:selectOneMenu>
+
+
+                        <h:commandButton image="resources/plus.gif" title="#{msg.addImageFileDropdownToolTip}" action="#{imageFileSelectionBean.addDropdown(file.first)}">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+                        <h:commandButton image="resources/remove.gif" title="#{msg.removeImageFileDropdownToolTip}"  action="#{imageFileSelectionBean.removeDropdown(file.first)}" rendered="#{imageFileSelectionBean.showRemove}">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+
+                    </h:panelGrid>
+                </h:column>
+            </h:dataTable>
+
+        </h:panelGrid>
+    </ui:define>
+
+    <!--***************BOXES ON SIDE***************-->
+    <ui:define name="box">
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newfileGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.files}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addFileToolTip}" action="#{fileSelectionBean.newFile()}">
+                    </h:commandButton>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noFiles" value="#{msg.noFile}" rendered="#{fileSelectionBean.filesEmpty}" />
+            <h:dataTable id="fileBox" var="str" value="#{fileSelectionBean.fileList}">
+                <h:column>
+                    <h:graphicImage value="#{str.getSecond().getTrafficLight().getPath()}"/>
+                </h:column>
+                <h:column>
+                    <div class="forceWrapBoxExtraIcon">#{str.first}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editFileToolTip}" action="#{fileSelectionBean.editFile(str.first)}">
+                    </h:commandButton>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeFileToolTip}" action="#{fileSelectionBean.removeFile(str.first)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newImageFileGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.imageFiles}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addImageFileToolTip}" action="#{imageFileSelectionBean.newInstance()}">
+                    </h:commandButton>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noImageFiles" value="#{msg.noImageFile}" rendered="#{imageFileSelectionBean.noInstances()}" />
+            <h:dataTable id="imageFileBox" var="str" value="#{imageFileSelectionBean.instanceObjectList}">
+                <h:column>
+                    <h:graphicImage value="#{str.getCurrentState().getTrafficLight().getPath()}"/>
+                </h:column>
+                <h:column>
+                    <div class="forceWrapBoxExtraIcon">#{str.getName()}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editImageFileToolTip}" action="#{imageFileSelectionBean.editInstance(str.getName())}">
+                    </h:commandButton>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeImageFileToolTip}" action="#{imageFileSelectionBean.removeInstance(str.getName())}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+    </ui:define>
+
+    <!--***************BUTTONS ON THE BOTTOM***************-->
+    <ui:define name="buttons">
+        
+        <h:outputLabel id="changeLabel" value="#{msg.unsavedChanges} " title="#{msg.unsavedChangesTooltip}" rendered="#{fileSelectionBean.renderUnsavedChanges or imageFileSelectionBean.renderUnsavedChanges}" class="changeLabel" />
+        
+        <h:panelGrid columns="3" styleClass="centered" border="0">
+            <p:commandButton id="saveRetButton" value="#{msg.saveReturn}" update="@form" actionListener="#{fileSelectionBean.saveReturn}" oncomplete="handleWindow(xhr, status, args)"/>
+            <p:commandButton id="saveButton"  value="#{msg.save}" update="@form" actionListener="#{fileSelectionBean.save}" oncomplete="handleWindow(xhr, status, args)"/>
+            <p:commandButton ajax="false" id="cancel" action="#{fileSelectionBean.cancel}" immediate="true" value="#{msg.cancel}"  />
+        </h:panelGrid>
+    </ui:define>
+
+
+    <!--***************POPUP***************-->
+    <ui:define name="popup">
+        <p:confirmDialog header="#{msg.info}" severity="info" widgetVar="confirmation" styleClass="dialog">
+            <f:facet name="message">
+                <h:outputLabel id="errorMassage"  value="#{msg.savedWithWarning}" />
+                <p:messages id="error"/>
+            </f:facet>
+
+            <p:commandButton id="OKredirect" value="#{msg.ok}" ajax="false" oncomplete="confirmation.hide()"
+                             action="#{fileSelectionBean.returnToPrev}"/>
+            <p:commandButton id="abort" value="#{msg.stay}" onclick="confirmation.hide()" type="button" />
+            <p:commandButton id="OK" value="#{msg.ok}" onclick="confirmation.hide()" type="button" />
+        </p:confirmDialog>
+    </ui:define>
+
+    <!--***************ACTION ON ONLOAD***************-->
+    <ui:param name="onLoadFunction" value="#{fileSelectionBean.preRender()}" />
+
+</ui:composition>

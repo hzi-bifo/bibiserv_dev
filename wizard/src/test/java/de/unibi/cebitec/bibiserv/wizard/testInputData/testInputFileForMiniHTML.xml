@@ -1,0 +1,58 @@
+   <h4>headline</h4>
+    <p>Testparagraph1</p>
+    <u>Testlist</u>
+    <BigBadCodeInjection></BigBadCodeInjection>
+    PlainTextContent
+    <br/>
+    <a href="testlink.html" hreflang="en" badattribute="badcode">linktext</a><!--br-->
+    <br/>
+    <ul>
+        <br/>
+        <b>Testtext that should not be parsed</b>
+        <li>
+            <ol start="2">
+                <li><q cite="To be or not to be" badattribute="badcode"><br/><br/></q></li>
+                <li value="8"><cite>To <u>be</u> or not to <B>be</B></cite></li>
+                <br/>
+                <br/>
+            </ol>
+        </li>
+        <li badattribute="badcode"><img src="testbild.jpg" name="testbild" alt="testbild"
+            longdesc="Dies ist ein Testbild" badattribute="badcode" /></li>
+    </ul>
+    <function>Code</function>
+    <br/>
+    <br/>
+    <p badattribute="badcode">
+        <em>Testemphasized-Text <strong>testStrongText</strong>
+        </em>
+        <code><a href="testlink2.html">linktext2</a></code>
+    </p>
+    <bigbadfunction></bigbadfunction>
+    
+    <h5>Testtable</h5>
+    
+    <tr>testinvalidtablecontent</tr>
+    
+    <table summary="blablablasummary">
+        <caption>Testcaption<ul><li>This list should not be copied</li></ul></caption>
+        <thead>
+            <tr><th>testhead1</th>
+                <td abbr="testabbr" axis="testcategory" headers="testref" scope="row" rowspan="1" colspan="1" nowrap="nowrap" >testcontent1</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><th>testhead2</th>
+                <td>testcontent2</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr><th>testhead3</th>
+                <td>testcontent3</td>
+            </tr>
+        </tfoot>
+        <tr>
+            <th>testhead4</th>
+            <td>testcontent4</td>
+        </tr>
+    </table>

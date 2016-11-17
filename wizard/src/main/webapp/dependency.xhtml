@@ -1,0 +1,202 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="masterLayout.xhtml">
+
+    <!--***************JAVASCRIPT***************-->
+    <ui:define name="javascript">
+        <script src="resources/textareaLines/jquery-linedtextarea.js"></script>
+        <link href="resources/textareaLines/jquery-linedtextarea.css" type="text/css" rel="stylesheet" />
+        <script language="javascript" type="text/javascript">
+
+           function doGetCaretPosition () {
+                var ctrl = document.getElementById('form:dependencyDefinition');
+
+                var CaretPos = 0;	// IE Support
+                if (document.selection) {
+                    ctrl.focus ();
+                    var Sel = document.selection.createRange ();
+                    var Sel2 = document.selection.createRange ();
+                    var bm = document.selection.createRange().getBookmark();
+                    Sel2.moveToBookmark(bm);
+                    Sel.moveStart ('character', -ctrl.value.length);
+                    CaretPos = Sel.text.length;
+                    CaretEnd = Sel.text.length+Sel2.text.length;
+                }
+                // Firefox support
+                else if (ctrl.selectionStart || ctrl.selectionStart == '0') {
+                    CaretPos = ctrl.selectionStart;
+                    CaretEnd = ctrl.selectionEnd;
+                }
+
+                document.getElementById('form:hiddenposition').value = CaretPos;
+                document.getElementById('form:hiddenpositionEnd').value = CaretEnd;
+
+                var button = document.getElementById('form:startServerSideInsert');
+                button.click();
+            }
+
+            function setCaretPosition(pos)
+            {
+                var ctrl = document.getElementById('form:dependencyDefinition');
+                if(ctrl.setSelectionRange)
+                {
+                    ctrl.focus();
+                    ctrl.setSelectionRange(pos,pos);
+                }
+                else if (ctrl.createTextRange) {
+                    var range = ctrl.createTextRange();
+                    range.collapse(true);
+                    range.moveEnd('character', pos);
+                    range.moveStart('character', pos);
+                    range.select();
+                }
+            }
+
+            function handleWindow(xhr, status, args) {
+
+                     if(!args.validationFailed) {
+                         if(args.start){
+                            doGetCaretPosition ();
+                         } else {
+                            setCaretPosition(args.pos);
+                           //$(function() {$(".lined").linedtextarea();});
+
+                            var ctrl = document.getElementById('form:dependencyDefinition');
+                            ctrl.focus();
+                         }
+                    }
+                }
+
+             function showLinesAgain(xhr, status, args) {
+                // $(function() {$(".lined").linedtextarea();});
+             }
+
+             //$(function() {$(".lined").linedtextarea();});
+        </script>
+    </ui:define>
+    <!--***************INFOBOX***************-->
+    <ui:define name="infoBox">
+        #{msg.dependencyInfo}
+    </ui:define>
+    <!--***************HEADER***************-->
+    <ui:define name="header">
+        #{msg.dependency}
+    </ui:define>
+    <!--***************MAIN***************-->
+    <ui:define name="main">
+        <p:messages id="error" />
+        <script language="javascript" type="text/javascript">
+          $(function() {$(".lined").linedtextarea();});
+        </script>
+        
+        <h:panelGrid columns="2"  styleClass="top centered twoColumnTable">
+
+            <h:outputLabel value="#{msg.currentlyEditing}:" class="currentPos"/>
+            <h:outputLabel value="#{parameterBean.position}" class="currentPos"/>
+            
+            <f:ajax listener="#{dependencyBean.unsavedChange}" render="@form" execute="@form">
+            
+            <h:outputLabel value="#{msg.loadedFrom}: " title="#{msg.loadedFromTooTip}" rendered="#{dependencyBean.renderLoadedFrom}" />
+            <p:outputPanel rendered="#{dependencyBean.renderLoadedFrom}" >
+                <div class="forceWrap elementWidth">#{dependencyBean.loadedFrom}</div>
+            </p:outputPanel>
+
+            <h:outputLabel for="dependencyName" value="#{msg.name}:*" title="#{msg.dependencyNameToolTip}"/>
+            <h:inputText id="dependencyName" value="#{dependencyBean.name}" title="#{msg.dependencyNameToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel for="dependencyShortDescr" value="#{msg.shortDescription}: *" title="#{msg.dependencyShortDescriptionToolTip}" />
+            <h:inputTextarea id="dependencyShortDescr" value="#{dependencyBean.shortDescription}" title="#{msg.dependencyShortDescriptionToolTip}" styleClass="inputArea" >
+                <p:resizable  maxWidth="#{masterLayoutBean.standardResizeWidth}" minWidth="#{masterLayoutBean.standardResizeWidth}" for="dependencyShortDescr"/>
+            </h:inputTextarea>
+
+            <h:outputLabel  value="#{msg.description}:" title="#{msg.dependencyDescriptionToolTip}" />
+            <p:commandButton ajax="false"  action="#{dependencyBean.editDescription}" value="#{msg.openEditor}" title="#{msg.dependencyDescriptionToolTip}" />
+
+            <h:outputLabel for="dependencyDefinition" value="#{msg.dependencyDefinition}: *" title="#{msg.dependencyDefinitionToolTip}" />
+            <h:panelGrid columns="1">
+                <h:inputTextarea id="dependencyDefinition" value="#{dependencyBean.definition}" title="#{msg.dependencyDefinitionToolTip}" style="height:150px" styleClass="lined" cols="40"/>
+
+                <h:panelGrid columns="2"  styleClass="top centered twoColumnTable">
+                    <h:inputHidden id="hiddenposition" value="#{dependencyBean.hiddenpos}" />
+                    <h:inputHidden id="hiddenpositionEnd" value="#{dependencyBean.hiddenposEnd}" />
+                    <p:commandButton id="startServerSideInsert" value="" action="#{dependencyBean.insertText()}" update="@form" oncomplete="handleWindow(xhr, status, args)" style="display: none"/>
+                </h:panelGrid>
+
+                <p:dataGrid  var="para" value="#{dependencyBean.parameters}" styleClass="elementWidth noBorder">
+                    <p:column>
+                        <p:commandButton action="#{dependencyBean.startInsert(para)}" value="#{para}" oncomplete="handleWindow(xhr, status, args)" styleClass="dependencyParameter"/>
+                    </p:column>
+                </p:dataGrid>
+            </h:panelGrid>
+            
+            </f:ajax>
+
+            <h:outputLabel for="dependencyShortDescr" value="#{msg.testFunction}:" title="#{msg.dependencyLogToolTip}" />
+            <h:panelGrid columns="1">
+                <h:panelGrid columns="2"  styleClass="top">
+                    <h:selectOneMenu  value="#{dependencyBean.functionToTest}" styleClass="smallElementWidth">
+                        <f:selectItems value="#{dependencyBean.functionNameList}" var="name"
+                                       itemLabel="#{name}" itemValue="#{name}"/>
+                    </h:selectOneMenu>
+                    <p:commandButton id="testFunction" value="#{msg.testFunction}" action="#{dependencyBean.testFunction}" update="@form" title="#{msg.testFunctionToolTip}" oncomplete="showLinesAgain(xhr, status, args)"/>
+                </h:panelGrid>
+
+                <h:inputTextarea id="Errors" value="#{dependencyBean.errors}" title="#{msg.dependencyLogToolTip}" readonly="true" styleClass="inputArea">
+                    <p:resizable  maxWidth="#{masterLayoutBean.standardResizeWidth}" minWidth="#{masterLayoutBean.standardResizeWidth}" for="Errors"/>
+                </h:inputTextarea>
+            </h:panelGrid>
+        </h:panelGrid>
+    </ui:define>
+
+    <!--***************BOXES ON SIDE***************-->
+    <ui:define name="box">
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newViewGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.dependencies}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addDependencyToolTip}" action="#{dependencyBean.newDependency()}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noViews" value="#{msg.noDependency}" rendered="#{dependencyBean.dependenciesEmpty}" />
+            <h:dataTable id="ViewBox" var="str" value="#{dependencyBean.dependencyNamesList}">
+                <h:column>
+                    <div class="forceWrapBox">#{str}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editDependencyToolTip}" action="#{dependencyBean.editDependency(str)}">
+                        <p:ajax update="@form" oncomplete="showLinesAgain(xhr, status, args)"/>
+                    </h:commandButton>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeDependencyToolTip}" action="#{dependencyBean.removeDependency(str)}">
+                        <p:ajax update="@form" oncomplete="showLinesAgain(xhr, status, args)"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+    </ui:define>
+
+    <!--***************BUTTONS ON THE BOTTOM***************-->
+    <ui:define name="buttons">
+        
+        <h:outputLabel id="changeLabel" value="#{msg.unsavedChanges} " title="#{msg.unsavedChangesTooltip}" rendered="#{dependencyBean.renderUnsavedChanges}" class="changeLabel" />
+        
+        <h:panelGrid columns="3" styleClass="centered" border="0">
+            <p:commandButton update="@form" id="saveAndReturn" action="#{dependencyBean.saveReturn}" value="#{msg.saveReturn}" />
+            <p:commandButton update="@form" id="save" action="#{dependencyBean.save}" value="#{msg.save}" />
+            <p:commandButton ajax="false" id="cancel" action="#{dependencyBean.cancel}" value="#{msg.cancel}"  />
+        </h:panelGrid>
+    </ui:define>
+
+
+</ui:composition>

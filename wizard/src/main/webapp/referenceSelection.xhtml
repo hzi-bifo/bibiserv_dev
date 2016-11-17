@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="masterLayout.xhtml">
+
+    <!--***************JAVASCRIPT***************-->
+    <ui:define name="javascript">
+        <script language="javascript" type="text/javascript">
+
+                function handleWindow(xhr, status, args) {
+                     if(!args.validationFailed) {
+                       if(args.show){
+                            if(args.returns) {
+                                document.getElementById("form:OKredirect").style.display = "inline";
+                                document.getElementById("form:abort").style.display = "inline";
+                                document.getElementById("form:OK").style.display = "none";
+                                document.getElementById("form:errorMassage").style.display = "inline";
+
+                            } else {
+                                document.getElementById("form:OKredirect").style.display = "none";
+                                document.getElementById("form:abort").style.display = "none";
+                                document.getElementById("form:OK").style.display = "inline";
+                                if(args.error){
+                                   document.getElementById("form:errorMassage").style.display = "inline";
+                                } else {
+                                    document.getElementById("form:errorMassage").style.display = "none";
+                                }
+                            }
+                            confirmation.show()
+                       }
+                    }
+                }
+        </script>
+    </ui:define>
+    <!--***************INFOBOX***************-->
+    <ui:define name="infoBox">
+        #{msg.referenceSelectionInfo}
+    </ui:define>
+    <!--***************HEADER***************-->
+    <ui:define name="header">
+        #{msg.referenceSelection}
+    </ui:define>
+    <!--***************MAIN***************-->
+    <ui:define name="main">
+        <h:panelGrid columns="2"  styleClass="top centered twoColumnTable">
+
+            <h:outputLabel value="#{msg.references}:" title="#{msg.referencesToolTip}" styleClass="selectionLable"/>
+
+            <h:dataTable id="usedReferences"  var="ref" value="#{referenceSelectionBean.selectedReferencesWithId}">
+                <h:column>
+                    <h:panelGrid columns="4" styleClass="selectionTable">
+
+                        <h:selectOneMenu  value="#{ref.second}" styleClass="elementWidth"
+                                          valueChangeListener="#{referenceSelectionBean.dropDownValueChangeMethod}">
+                            <f:ajax render="usedReferences" />
+                            <f:selectItem itemLabel="#{msg.chooseReference}" itemValue=""/>
+                            <f:selectItems value="#{referenceSelectionBean.readyReferencesList}" var="name"
+                                           itemLabel="#{name}" itemValue="#{name}"/>
+                        </h:selectOneMenu>
+
+
+                        <h:commandButton image="resources/plus.gif" title="#{msg.addReferenceDropdownToolTip}" action="#{referenceSelectionBean.addDropdown(ref.first)}">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+                        <h:commandButton image="resources/remove.gif" title="#{msg.removeReferenceDropdownToolTip}"  action="#{referenceSelectionBean.removeDropdown(ref.first)}" rendered="#{referenceSelectionBean.showRemove}">
+                            <f:ajax render="@form" execute="@form"/>
+                        </h:commandButton>
+                         <p:panel styleClass="removeButton" rendered="#{!referenceSelectionBean.showRemove}"/>
+                    </h:panelGrid>
+                </h:column>
+            </h:dataTable>
+
+        </h:panelGrid>
+    </ui:define>
+
+    <!--***************BOXES ON SIDE***************-->
+    <ui:define name="box">
+        <p:panel styleClass="boxWidth" >
+            <f:facet name="header">
+                <h:panelGrid id="newReferenceGrid" columns="3" border="0" width="100%" style="display: inline">
+                    #{msg.references}
+                    &nbsp;
+                    <h:commandButton image="resources/plus.gif" title="#{msg.addReferenceToolTip}" action="#{referenceSelectionBean.newReference()}"/>
+                </h:panelGrid>
+            </f:facet>
+
+            <h:outputLabel id="noReferences" value="#{msg.noReference}" rendered="#{referenceBean.referencesEmpty}" />
+            <h:dataTable id="ReferenceBox" var="str" value="#{referenceSelectionBean.readyReferencesList}">
+                <h:column>
+                    <div class="forceWrapBox">#{str}</div>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/edit.gif" title="#{msg.editReferenceToolTip}" action="#{referenceSelectionBean.editReference(str)}"/>
+                </h:column>
+                <h:column>
+                    <h:commandButton image="resources/remove.gif" title="#{msg.removeReferenceToolTip}" action="#{referenceSelectionBean.removeReference(str)}">
+                        <f:ajax render="@form" execute="@form"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+        </p:panel>
+    </ui:define>
+
+    <!--***************BUTTONS ON THE BOTTOM***************-->
+    <ui:define name="buttons">
+        
+        <h:outputLabel id="changeLabel" value="#{msg.unsavedChanges} " title="#{msg.unsavedChangesTooltip}" rendered="#{referenceSelectionBean.renderUnsavedChanges}" class="changeLabel" />
+        
+        <h:panelGrid columns="3" styleClass="centered" border="0">
+            <p:commandButton id="saveRetButton" value="#{msg.saveReturn}" update="@form" actionListener="#{referenceSelectionBean.saveReturn}" oncomplete="handleWindow(xhr, status, args)"/>
+            <p:commandButton id="saveButton"  value="#{msg.save}" update="@form" actionListener="#{referenceSelectionBean.save}" oncomplete="handleWindow(xhr, status, args)"/>
+            <p:commandButton ajax="false" id="cancel" action="#{referenceSelectionBean.cancel}" immediate="true" value="#{msg.cancel}"  />
+        </h:panelGrid>
+    </ui:define>
+
+
+    <!--***************POPUP***************-->
+    <ui:define name="popup">
+        <p:confirmDialog header="#{msg.info}" severity="info" widgetVar="confirmation" width="600">
+            <f:facet name="message">
+                <h:outputLabel id="errorMassage"  value="#{msg.savedWithWarning}" />
+                <p:messages id="error"/>
+            </f:facet>
+
+            <p:commandButton id="OKredirect" value="#{msg.ok}" ajax="false" oncomplete="confirmation.hide()"
+                             action="#{functionSelectionBean.returnToPrev}"/>
+            <p:commandButton id="abort" value="#{msg.stay}" onclick="confirmation.hide()" type="button" />
+            <p:commandButton id="OK" value="#{msg.ok}" onclick="confirmation.hide()" type="button" />
+        </p:confirmDialog>
+    </ui:define>
+
+    <!--***************ACTION ON ONLOAD***************-->
+    <ui:param name="onLoadFunction" value="#{referenceSelectionBean.preRender()}" />
+
+
+</ui:composition>

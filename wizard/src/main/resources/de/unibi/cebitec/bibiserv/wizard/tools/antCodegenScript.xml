@@ -1,0 +1,126 @@
+
+<project name="wizardCodegenInterface" basedir="." default="help" xmlns:antcontrib="antlib:net.sf.antcontrib" xmlns:ivy="antlib:org.apache.ivy.ant">
+    
+    <!-- This ant script serves as an interface for the new BiBiServ2 Wizard to call the base-software.
+    The script was made based on Jan Kruegers build-file for the instantbibi-project.
+    
+    PLEASE DO NOT ALTER THIS CODE!
+    
+    The functionality of this script can be tested using tests of the Wizard source file.
+    
+    Benjamin Paassen - bpaassen@CeBiTec.uni-bielefeld.de
+    
+    -->
+    
+    <!-- following properties can be overwritten calling ant with -Dpropertyname=propertyvalue --> 
+    
+    <property name="bibiserv_url" value="http://bibiserv.cebitec.uni-bielefeld.de"/>
+    
+    <!-- main target using the other ones. -->
+    
+    <target name="codegen">
+        <echo>Calling codegen with output directory : ${output_dir} and bs2file : ${bs2file}</echo>
+        <antcall target=".clean"/>
+        <antcall target=".get"/>
+        <antcall target=".unzip"/>
+        <antcall target=".base"/>        
+    </target>
+    
+    <!-- Unzips the base zip retrieved from the BiBiServ -->
+    
+    <target name=".unzip">
+        <!-- base -->
+        <unzipResource resource=".cache/base.zip" depdir="base"/>
+    </target>
+    
+    <!-- Retrieves the base.zip fromt the BiBiServ -->
+    
+    <target name=".get">
+        <checkAndDownload resource="base.zip" url="${bibiserv_url}/resources" />
+    </target>
+    
+    <!-- base is called with sswap here, which does end up in problems sometimes.
+    This should probbaly be changed. -->
+    
+    <target name=".base">
+        <ant dir="base">
+            <property name="xml" value="${bs2file}"/>
+            <property name="project_dir" value="${output_dir}"/>
+        </ant>
+    </target>
+    
+    <!-- clean removes all cached files -->
+    
+    <target name=".clean">
+        <delete dir=".cache"/>
+        <delete dir="base"/>
+    </target>
+
+    <!-- download macro -->
+    
+    <macrodef name="checkAndDownload"
+              description="check if a resource is cached and up to date, otherwise download it from given url">
+        <attribute name="resource"/>
+        <attribute name="url"/>
+        <attribute name="checksum" default=""/>
+        <sequential>
+            <local name="local.md5"/>
+            <local name="url.md5"/>
+            <antcontrib:if>
+                <available file=".cache/@{resource}"/>
+                <antcontrib:then>
+                    <antcontrib:if>
+                        <equals arg1="@{checksum}" arg2="" trim="true" forcestring="true"/>
+                        <antcontrib:then>
+                            <loadresource property="url.md5">
+                                <url url="@{url}/@{resource}.md5"/>
+                            </loadresource>
+                        </antcontrib:then>
+                        <antcontrib:else>
+                            <property name="url.md5" value="@{checksum}"/>
+                        </antcontrib:else>
+                    </antcontrib:if>
+                    <checksum algorithm="md5" format="CHECKSUM" file=".cache/@{resource}"
+                              property="local.md5"/>
+                    <antcontrib:if>
+                        <equals trim="yes" forcestring="yes" arg1="${local.md5}" arg2="${url.md5}"/>
+                        <antcontrib:then>
+                            <echo>Cached resource '@{resource}' is up-to-date.</echo>
+                        </antcontrib:then>
+                        <antcontrib:else>
+                            <echo>Cached resource is out-of-date. Update resource from
+                                @{url}/resources/.
+                            </echo>
+                            <delete file=".cache/@{resource}"/>
+                            <get src="@{url}/@{resource}" dest=".cache/@{resource}"/>
+                        </antcontrib:else>
+                    </antcontrib:if>
+                </antcontrib:then>
+                <antcontrib:else>
+                    <echo>Download resource @{resource} from @{url}/resources/</echo>
+                    <mkdir dir=".cache"/>
+                    <get src="@{url}/@{resource}" dest=".cache/@{resource}"/>
+                </antcontrib:else>
+            </antcontrib:if>
+        </sequential>
+    </macrodef>
+    
+    <!-- unzip macro -->
+    
+    <macrodef name="unzipResource">
+        <attribute name="resource"/>
+        <attribute name="depdir"/>
+        <sequential>
+            <antcontrib:if>
+                <available file="@{depdir}"/>
+                <antcontrib:then>
+                    <echo>found previous @{depdir} installation ...</echo>
+                </antcontrib:then>
+                <antcontrib:else>
+                    <unzip src="@{resource}" dest="."/>
+                </antcontrib:else>
+            </antcontrib:if>
+        </sequential>
+    </macrodef>
+    
+</project>

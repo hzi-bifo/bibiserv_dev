@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<microhtml:microhtml xmlns:microhtml="bibiserv:de.unibi.techfak.bibiserv.cms.microhtml">
+    <microhtml:p>Testparagraph1</microhtml:p> Testlist <microhtml:a href="testlink.html"
+        hreflang="en">linktext</microhtml:a>
+    <microhtml:ul>
+        <microhtml:li>
+            <microhtml:ol start="2">
+                <microhtml:li>
+                    <microhtml:q cite="To be or not to be"/>
+                </microhtml:li>
+                <microhtml:li value="8">
+                    <microhtml:cite>
+                        To <microhtml:em>be</microhtml:em> or not to <microhtml:strong>be</microhtml:strong>
+                    </microhtml:cite>
+                </microhtml:li>
+            </microhtml:ol>
+        </microhtml:li>
+        <microhtml:li>
+            <microhtml:img src="testbild.jpg" alt="testbild" name="testbild" longdesc="Dies ist ein Testbild"/>
+        </microhtml:li>
+    </microhtml:ul>
+    Code
+    <microhtml:p>
+        <microhtml:em>Testemphasized-Text <microhtml:strong>testStrongText</microhtml:strong></microhtml:em>
+        <microhtml:code><microhtml:a href="testlink2.html">linktext2</microhtml:a></microhtml:code>
+    </microhtml:p>
+</microhtml:microhtml>
