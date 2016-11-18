@@ -22,9 +22,12 @@ import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
@@ -46,7 +49,7 @@ import org.xml.sax.SAXException;
 
 /**
  * CodeGen Main class
- * 
+ *
  * offers cmdline interface for CodeGen.
  *
  *
@@ -83,10 +86,9 @@ public class Main {
 
             switch (opt_g.getSelected()) {
                 case "V":
-                     try {
+                    try {
                         URL jarUrl = Main.class.getProtectionDomain().getCodeSource().getLocation();
                         String jarPath = URLDecoder.decode(jarUrl.getFile(), "UTF-8");
-                        System.out.println("JarPath : "+ jarPath);
                         JarFile jarFile = new JarFile(jarPath);
                         Manifest m = jarFile.getManifest();
                         StringBuilder versionInfo = new StringBuilder();
@@ -95,7 +97,7 @@ public class Main {
                         }
                         System.out.println(versionInfo.toString());
                     } catch (Exception e) {
-                        log.error("Version info could not be read.",e);
+                        log.error("Version info could not be read.");
                     }
                     break;
                 case "h":
@@ -109,15 +111,15 @@ public class Main {
                     break;
             }
         } catch (ParseException e) {
-            log.error("ParseException occurred while parsing cmdline arguments!", e);
+            log.error("ParseException occurred while parsing cmdline arguments!\n{}", e.getLocalizedMessage());
         }
 
     }
 
     private static boolean generateAppfromXML(String fn) {
-        
+
         long starttime = System.currentTimeMillis();
-        
+
         // fn must not be null or empty
         if (fn == null || fn.isEmpty()) {
             log.error("Empty filename!");
@@ -154,15 +156,14 @@ public class Main {
             log.error("Missing project name in description file!");
             return false;
         }
-        
-        String projectversion="unknown";
+
+        String projectversion = "unknown";
         try {
             projectversion = doc.getElementsByTagNameNS("bibiserv:de.unibi.techfak.bibiserv.cms", "version").item(0).getTextContent();
         } catch (NullPointerException e) {
             log.warn("Missing project version in description file!");
-          
+
         }
-        
 
         // fix this
         Properties prop = new Properties();
@@ -186,20 +187,25 @@ public class Main {
         }
 
         // copy files from SKELETON to projectdir and replace wildcard expression
-        String [] SKELETON_INPUT_ARRAY = {"/pom.xml","/src/main/config/log4j-tool.properties"};
+        String[] SKELETON_INPUT_ARRAY = {"/pom.xml", "/src/main/config/log4j-tool.properties"};
         String SKELETON_INPUT = null;
         try {
             for (int c = 0; c < SKELETON_INPUT_ARRAY.length; c++) {
                 SKELETON_INPUT = SKELETON_INPUT_ARRAY[c];
-               
-                CopyAndReplace(Main.class.getResourceAsStream("/SKELETON/"+SKELETON_INPUT), new FileOutputStream(new File(projectdir,SKELETON_INPUT)), projectid, projectname, projectversion);
+
+                InputStream in = Main.class.getResourceAsStream("/SKELETON" + SKELETON_INPUT);
+                if (in == null) {
+                    throw new IOException();
+                }
+
+                CopyAndReplace(in, new FileOutputStream(new File(projectdir, SKELETON_INPUT)), projectid, projectname, projectversion);
             }
-            
+
         } catch (IOException e) {
-            log.error("Exception occurred while calling 'copyAndReplace(/SKELETON/{},{}/{},{},{},{})'",SKELETON_INPUT, projectdir,SKELETON_INPUT, projectid,projectname,projectversion );
-       
+            log.error("Exception occurred while calling 'copyAndReplace(/SKELETON{},{}/{},{},{},{})'", SKELETON_INPUT, projectdir, SKELETON_INPUT, projectid, projectname, projectversion);
+            return false;
         }
-        
+
         log.info("Empty project created! ");
 
         try {
@@ -245,10 +251,10 @@ public class Main {
             generate(CodeGen_WebPage.class, runnableitem, projectdir, "/templates/pages", RESOURCETYPE.isDirectory);
 
             log.info("XHTML pages generated!");
-            
-            long time = (System.currentTimeMillis() - starttime)/1000 ;
-            
-            log.info("Project \"{}\" (id:{}, version:{}) created at '{}' in {} seconds.",projectname,projectid,projectversion,projectdir,time);
+
+            long time = (System.currentTimeMillis() - starttime) / 1000;
+
+            log.info("Project \"{}\" (id:{}, version:{}) created at '{}' in {} seconds.", projectname, projectid, projectversion, projectdir, time);
 
         } catch (CodeGenParserException e) {
             log.error("CodeGenParserException occurred :", e);
@@ -352,7 +358,7 @@ public class Main {
                         break;
                     case isDirectory:
                         for (String entry : getClasspathEntriesByPath(path)) {
-                            codegen.setTemplateResource(path + "/" + entry);
+                            codegen.setTemplateResource(entry);
                             codegen.generate();
                         }
                 }
@@ -377,8 +383,34 @@ public class Main {
      * @param path
      * @return
      * @throws IOException
+     * @throws de.unibi.techfak.bibiserv.util.codegen.CodeGenParserException
      */
     public static List<String> getClasspathEntriesByPath(String path) throws IOException, CodeGenParserException {
+
+        try {
+            List<String> tmp = new ArrayList<>();
+
+            URL jarUrl = Main.class.getProtectionDomain().getCodeSource().getLocation();
+            String jarPath = URLDecoder.decode(jarUrl.getFile(), "UTF-8");
+            JarFile jarFile = new JarFile(jarPath);
+
+            String prefix = path.startsWith("/") ? path.substring(1) : path;
+
+            Enumeration<JarEntry> enu = jarFile.entries();
+            while (enu.hasMoreElements()) {
+                JarEntry je = enu.nextElement();
+                if (!je.isDirectory()) {
+                    String name = je.getName();
+                    if (name.startsWith(prefix)) {
+                        tmp.add("/"+name);
+                    }
+                }
+            }
+            return tmp;
+        } catch (Exception e) {
+            // maybe we start Main.class not from Jar.
+        }
+
         InputStream is = Main.class.getResourceAsStream(path);
 
         if (is == null) {
@@ -391,11 +423,14 @@ public class Main {
         while (is.read(buffer) != -1) {
             sb.append(new String(buffer, Charset.defaultCharset()));
         }
+        is.close();
         return Arrays
                 .asList(sb.toString().split("\n")) // Convert StringBuilder to individual lines
                 .stream() // Stream the list
                 .filter(line -> line.trim().length() > 0) // Filter out empty lines
+                .map(line -> path+"/"+line)               // add path for each entry
                 .collect(Collectors.toList());            // Collect remaining lines into a List again
+        
     }
 
     /**
