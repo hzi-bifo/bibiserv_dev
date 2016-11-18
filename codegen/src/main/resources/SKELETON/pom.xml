@@ -47,25 +47,25 @@
         <dependency>
             <groupId>com.github.BiBiServ.bibiserv</groupId>
             <artifactId>bibimaininterfaces</artifactId>
-            <version>development-SNAPSHOT</version>
+            <version>2.1.0.alpha.1</version>
             <scope>compile</scope>
         </dependency> 
         <dependency>
             <groupId>com.github.BiBiServ.bibiserv</groupId>
             <artifactId>bibitools</artifactId>
-            <version>development-SNAPSHOT</version>
+            <version>2.1.0.alpha.1</version>
             <scope>compile</scope>
         </dependency> 
         <dependency>
             <groupId>com.github.BiBiServ.bibiserv</groupId>
             <artifactId>converter</artifactId>
-            <version>development-SNAPSHOT</version>
+            <version>2.1.0.alpha.1</version>
             <scope>compile</scope>
         </dependency> 
         <dependency>
             <groupId>com.github.BiBiServ.bibiserv</groupId>
             <artifactId>dependencyparser</artifactId>
-            <version>development-SNAPSHOT</version>
+            <version>2.1.0.alpha.1</version>
             <scope>compile</scope>
         </dependency> 
         
@@ -73,13 +73,13 @@
         <dependency>
             <groupId>com.github.BiBiServ.bibiserv</groupId>
             <artifactId>validator</artifactId>
-            <version>development-SNAPSHOT</version>
+            <version>2.1.0.alpha.1</version>
             <scope>compile</scope>
         </dependency> 
         <dependency>
             <groupId>com.github.BiBiServ.bibiserv</groupId>
             <artifactId>deploytools</artifactId>
-            <version>development-SNAPSHOT</version>
+            <version>2.1.0.alpha.1</version>
         </dependency>
         
         
@@ -88,26 +88,26 @@
         <dependency>
             <groupId>com.github.BiBiServ.bibiserv</groupId>
             <artifactId>rnastructml</artifactId>
-            <version>development-SNAPSHOT</version>
+            <version>2.1.0.alpha.1</version>
             <scope>compile</scope>
         </dependency> 
         
         <dependency>
             <groupId>com.github.BiBiServ.bibiserv</groupId>
             <artifactId>alignmentml</artifactId>
-            <version>development-SNAPSHOT</version>
+            <version>2.1.0.alpha.1</version>
             <scope>compile</scope>
         </dependency> 
         <dependency>
             <groupId>com.github.BiBiServ.bibiserv</groupId>
             <artifactId>sequenceml</artifactId>
-            <version>development-SNAPSHOT</version>
+            <version>2.1.0.alpha.1</version>
             <scope>compile</scope>
         </dependency> 
         <dependency>
             <groupId>com.github.BiBiServ.bibiserv</groupId>
             <artifactId>rnastructalignmentml</artifactId>
-            <version>development-SNAPSHOT</version>
+            <version>2.1.0.alpha.1</version>
             <scope>compile</scope>
         </dependency> 
     </dependencies>
