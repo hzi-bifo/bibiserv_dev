@@ -7,8 +7,6 @@
     <packaging>jar</packaging>
     <name>Sourcecode Generator</name>
     
-    
-    
     <repositories>
         <repository>
             <id>snapshot-repository.java.net</id>
@@ -95,16 +93,6 @@
             <version>development-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency> 
-
-
-
-        
-        
-
-
-        
-
-
     </dependencies>
     
 
@@ -114,6 +102,47 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
     
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.1</version>
+      
+                <configuration>  
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>de.unibi.techfak.bibiserv.util.codegen.Main</mainClass>
+                                </transformer>
+                            </transformers>
+                           
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     
     

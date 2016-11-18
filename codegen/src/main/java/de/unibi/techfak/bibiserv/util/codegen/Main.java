@@ -17,12 +17,16 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -42,6 +46,8 @@ import org.xml.sax.SAXException;
 
 /**
  * CodeGen Main class
+ * 
+ * offers cmdline interface for CodeGen.
  *
  *
  * @author Jan Krüger - jkrueger(at)cebitec.uni-bielefeld.de
@@ -77,11 +83,24 @@ public class Main {
 
             switch (opt_g.getSelected()) {
                 case "V":
-
+                     try {
+                        URL jarUrl = Main.class.getProtectionDomain().getCodeSource().getLocation();
+                        String jarPath = URLDecoder.decode(jarUrl.getFile(), "UTF-8");
+                        System.out.println("JarPath : "+ jarPath);
+                        JarFile jarFile = new JarFile(jarPath);
+                        Manifest m = jarFile.getManifest();
+                        StringBuilder versionInfo = new StringBuilder();
+                        for (Object key : m.getMainAttributes().keySet()) {
+                            versionInfo.append(key).append(":").append(m.getMainAttributes().getValue(key.toString())).append("\n");
+                        }
+                        System.out.println(versionInfo.toString());
+                    } catch (Exception e) {
+                        log.error("Version info could not be read.",e);
+                    }
                     break;
                 case "h":
                     HelpFormatter help = new HelpFormatter();
-                    String header = ""; //TODO: infotext (auf default props hinweisen); instanzgroessen auflisten
+                    String header = ""; //TODO: missing infotext 
                     StringBuilder footer = new StringBuilder("Supported configuration properties :");
                     help.printHelp("bibigrid -h | -V | -g  [...]", header, opt, footer.toString());
                     break;
@@ -122,7 +141,7 @@ public class Main {
             log.error("{} occured: {}", e.getClass().getSimpleName(), e.getLocalizedMessage());
             return false;
         }
-        // extract project id and name from it.
+        // extract project id, name  and version from it.
         String projectid = doc.getDocumentElement().getAttribute("id");
         if ((projectid == null) || projectid.isEmpty()) {
             log.error("Missing project id in description file!");
