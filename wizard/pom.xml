@@ -70,26 +70,26 @@
         <dependency>
             <groupId>com.github.BiBiServ.bibiserv</groupId>
             <artifactId>bibiservabstraction</artifactId>
-            <version>development-SNAPSHOT</version>
+            <version>2.1.0.alpha.1</version>
             <scope>compile</scope>
         </dependency> 
         <dependency>
             <groupId>com.github.BiBiServ.bibiserv</groupId>
             <artifactId>jnlp</artifactId>
-            <version>development-SNAPSHOT</version>
+            <version>2.1.0.alpha.1</version>
             <scope>compile</scope>
         </dependency> 
 
         <dependency>
             <groupId>com.github.BiBiServ.bibiserv</groupId>
             <artifactId>ontoaccess</artifactId>
-            <version>development-SNAPSHOT</version>
+            <version>2.1.0.alpha.1</version>
             <scope>compile</scope>
         </dependency> 
         <dependency>
             <groupId>com.github.BiBiServ.bibiserv</groupId>
             <artifactId>dependencyparser</artifactId>
-            <version>development-SNAPSHOT</version>
+            <version>2.1.0.alpha.1</version>
             <scope>compile</scope>
         </dependency> 
 
