@@ -23,6 +23,10 @@ import javax.faces.context.FacesContext;
 @SessionScoped
 public class ExecutableInfoBean {
 
+    
+    private String path = "";
+    private String image = "";
+    private String type = "docker";
     private String callingInfo = "";
     private String version = "";
     private String executableInfoStatus = TrafficLightEnum.RED.getPath();
@@ -50,7 +54,7 @@ public class ExecutableInfoBean {
             return;
         }
 
-        builder.createTexecutable(callingInfo, version);
+        builder.createTexecutable(type,path,callingInfo, image, version);
         renderUnsavedChanges = false;
     }
 
@@ -60,7 +64,7 @@ public class ExecutableInfoBean {
             return;
         }
 
-        builder.createTexecutable(callingInfo, version);
+        builder.createTexecutable(type,path,callingInfo, image, version);
 
         executableInfoStatus = TrafficLightEnum.GREEN.getPath();
 
@@ -87,6 +91,15 @@ public class ExecutableInfoBean {
     
     private boolean validate(boolean addmessage) {
         boolean ret = true;
+        
+        if ((!type.equals("docker")) || (!type.equals("binary"))) {
+            if (addmessage) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                        PropertyManager.getProperty("execTypeError"), ""));
+            }
+                
+        }
 
         if (callingInfo.equals("")) {
             if (addmessage) {
@@ -146,6 +159,32 @@ public class ExecutableInfoBean {
     public void setVersion(String version) {
         this.version = version;
     }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+    
+    
     
     public void unsavedChange(){
         renderUnsavedChanges = true;
@@ -153,5 +192,5 @@ public class ExecutableInfoBean {
     
     public boolean isRenderUnsavedChanges() {
         return renderUnsavedChanges;
-    }
+    }   
 }

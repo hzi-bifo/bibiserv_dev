@@ -39,18 +39,21 @@ public class ExecutableInfoBuilderTest {
 
         ExecutableInfoBuilder testExecutableInfoBuilder = new ExecutableInfoBuilder();
 
+        String type = "binary";
         String version = "0.1";
         String callingInfo = "testPath";
 
         Assert.assertNotNull(testExecutableInfoBuilder.getTexecutable());
         Assert.assertEquals("", testExecutableInfoBuilder.getVersion());
         Assert.assertEquals("", testExecutableInfoBuilder.getCallingInfo());
+        Assert.assertEquals("", testExecutableInfoBuilder.getType()); 
 
-        testExecutableInfoBuilder.createTexecutable(callingInfo, version);
+        testExecutableInfoBuilder.createTexecutable(type,"",callingInfo,"", version);
 
         Texecutable testTexecutableItem = testExecutableInfoBuilder.getTexecutable();
 
         Assert.assertEquals(version, testExecutableInfoBuilder.getVersion());
         Assert.assertEquals(callingInfo, testExecutableInfoBuilder.getCallingInfo());
+        Assert.assertEquals(type, testExecutableInfoBuilder.getType());
     }
 }

@@ -25,11 +25,11 @@ public class ExecutableInfoBuilder {
         this.executableItem = factory.createTexecutable();
     }
     
-    public void createTexecutable(String callingInfo, String version) {
+    public void createTexecutable(String type, String path, String callingInfo, String image, String version) {
 
-        //Add empty path (attribute is not needed anymore but still specified by schema)
-        //TODO: Remove this when not needed anymore.
-        setPath("");
+        setType(type);
+        setImage(image);    
+        setPath(path);
         setCallingInfo(callingInfo);
         setVersion(version);
     }
@@ -85,4 +85,56 @@ public class ExecutableInfoBuilder {
         }
         return executableItem.getVersion();
     }
+    
+    
+    /** added by jkrueger to support new executable item attributes */
+    
+    public void setType(String type){
+        TexecPath execpath;
+        
+        if (executableItem.getExecInfo() == null) {
+            execpath = new TexecPath();
+            executableItem.setExecInfo(execpath);
+        } else {
+            execpath = executableItem.getExecInfo();
+        }
+        execpath.setExecutableType(type);
+    }
+    
+    public String getType(){
+        if (executableItem.getExecInfo() == null
+                || !executableItem.getExecInfo().isSetExecutableType()) {
+            return "";
+        }
+        return executableItem.getExecInfo().getExecutableType();
+    }
+    
+    public void setImage(String image) {
+        TexecPath execpath;
+        
+        if (executableItem.getExecInfo() == null) {
+            execpath = new TexecPath();
+            executableItem.setExecInfo(execpath);
+        } else {
+            execpath = executableItem.getExecInfo();
+        }
+        
+        
+        execpath.setImage(image);
+        
+    }
+    
+    
+    public String getImage(){
+        if (executableItem.getExecInfo() == null
+                || !executableItem.getExecInfo().isSetImage()) {
+            return "";
+        }
+         
+        return executableItem.getExecInfo().getImage();
+    }
+ 
+ 
+    
 }
+

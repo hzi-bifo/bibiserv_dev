@@ -23,12 +23,22 @@
         <h:panelGrid columns="2"  styleClass="top centered twoColumnTable">
             
             <f:ajax listener="#{executableInfoBean.unsavedChange}" render="@form" execute="@form">
-                                         
+                
+            <h:outputLabel for="exectype" value="#{msg.execType}: *" title="#{msg.execTypeToolTip}"/>
+            <h:inputText id="exectype" value="#{executableInfoBean.type}" title="#{msg.execTypeToolTip}" styleClass="elementWidth"/>
+           
+            <h:outputLabel for="execimage" value="#{msg.execImage}" title="#{msg.execImageToolTip}"/>
+            <h:inputText id="execimage" value="#{executableInfoBean.image}" title="#{msg.execImageToolTip}" styleClass="elementWidth"/>
+
+            <h:outputLabel for="execpath" value="#{msg.execPath}" title="#{msg.execPathToolTip}"/>
+            <h:inputText id="execpath" value="#{executableInfoBean.path}" title="#{msg.execPathToolTip}" styleClass="elementWidth"/>
+
+            
             <h:outputLabel for="callingInfo" value="#{msg.callingInfo}: *" title="#{msg.execCallingToolTip}"/>
             <h:inputText id="callingInfo" value="#{executableInfoBean.callingInfo}" title="#{msg.execCallingToolTip}" styleClass="elementWidth"/>
             <h:outputLabel for="version" value="#{msg.version}: *" title="#{msg.execVersionToolTip}"/>
             <h:inputText id="version" value="#{executableInfoBean.version}" title="#{msg.execVersionToolTip}" styleClass="elementWidth"/>
-            
+                 
             </f:ajax>
         </h:panelGrid>        
     </ui:define>
