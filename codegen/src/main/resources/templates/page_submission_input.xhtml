@@ -50,8 +50,8 @@ Contributor(s): Jan Krueger , jkrueger(at)cebitec.uni-bielefeld.de
                 var redirect=args.redirection;
                 var loc=args.location;
                 if(valid) {
-                    dlg.hide();
-                    poll.stop(); 
+                    PF('dlg').hide();
+                    PF('poll').stop(); 
                 }
                 if(redirect){
                     if(loc) {
@@ -171,7 +171,7 @@ Contributor(s): Jan Krueger , jkrueger(at)cebitec.uni-bielefeld.de
                         onmouseover="setCSSclass('toolnext','tool_next tool_next_highlighted')" 
                         onmouseout="setCSSclass('toolnext','tool_next')">
                         #{messages.property('de.unibi.techfak.bibiserv.bibimainapp.NEXT')} &#x25BA;
-                        <p:remoteCommand name="toolnext" actionListener="#{<#getFunctionId/#>_controller.validate}" onstart="dlg.show();poll.start()"/>
+                        <p:remoteCommand name="toolnext" actionListener="#{<#getFunctionId/#>_controller.validate}" onstart="PF('dlg').show();PF('poll').start()"/>
                     </td> 
                 </tr>
             </table>
