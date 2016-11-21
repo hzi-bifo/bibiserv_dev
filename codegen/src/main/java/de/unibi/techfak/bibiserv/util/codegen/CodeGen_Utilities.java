@@ -22,14 +22,12 @@
  */
 package de.unibi.techfak.bibiserv.util.codegen;
 
-import de.unibi.cebitec.bibiserv.util.validate.ValidationException;
 import de.unibi.techfak.bibiserv.cms.TenumParam;
 import de.unibi.techfak.bibiserv.cms.TenumValue;
 import de.unibi.techfak.bibiserv.cms.Tparam;
 import de.unibi.techfak.bibiserv.cms.Tprimitive;
 import static de.unibi.techfak.bibiserv.util.codegen.Main.log;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
