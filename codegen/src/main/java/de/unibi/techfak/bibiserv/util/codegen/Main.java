@@ -119,7 +119,14 @@ public class Main {
                     // project dir
                     if (cl.hasOption("p")) {
                         File project = new File(cl.getOptionValue("p"));
-                         if (project.isDirectory() && project.canExecute() && project.canWrite()) {
+                        if (!project.exists()) {
+                            if (!project.mkdirs()) {
+                                log.error("Project dir '{}' can't be created!", cl.getOptionValue("p"));
+                                break;
+                            }
+                        }
+                        
+                        if (project.isDirectory() && project.canExecute() && project.canWrite()) {
                             config.setProperty("project.dir",cl.getOptionValue("p"));
                         } else {
                             log.error("Project dir '{}' is inaccessible!",cl.getOptionValue("p"));
