@@ -115,10 +115,10 @@ public class CreateXML {
     private WebstartSelectionBean webstartSelectionBean;
     
     private static final String referenceExportFormat = "bibtex";
-    // defines if the .bs2-download-button is shown.
+    // defines if the download-button is shown.
     private boolean renderLinks = false;
     // the xml-file containing the finished tool description.
-    private File bs2File;
+    private File xmlFile;
     // defines whether the .zip-download-button is shown.
     private boolean renderCodegenLink = false;
     // the .zip file containing all generated code for the finished tool description.
@@ -270,13 +270,13 @@ public class CreateXML {
     }
 
     /**
-     * This method does the .bs2 file creation. The method goes through the
+     * This method does the xml file creation. The method goes through the
      * following steps:
      *
      * 1.) validation - check if the user has entered enough data to create
-     * a valid .bs2 tool description
+     * a valid tool description
      * 2.) preprocessing - go through all managing beans and retrieve the data
-     * 3.) processing - marshall the .bs2
+     * 3.) processing - marshall the xml
      * 4.) postprocessing - restore the old state of the manager beans
      *
      * Further documentation can be found in the method itself.
@@ -1063,11 +1063,11 @@ public class CreateXML {
             final String filepath = editFileBean.getUploadedFilesBasePath()
                     + "/" + toolName;
 
-            final String bs2link = filepath + ".bs2";
-            bs2File = new File(bs2link);
-            bs2File.createNewFile();
+            final String xmllink = filepath + ".xml";
+            xmlFile = new File(xmllink);
+            xmlFile.createNewFile();
 
-            FileOutputStream outStream = new FileOutputStream(bs2File);
+            FileOutputStream outStream = new FileOutputStream(xmlFile);
 
             ObjectFactory factory = new ObjectFactory();
             marshaller.marshal(factory.createRunnableItem(runnable),
@@ -1100,7 +1100,7 @@ public class CreateXML {
             "../../tools/antCodegenScript.xml";
 
     /**
-     * This method uses the created .bs2 description to call the
+     * This method uses the created xml description to call the
      * base-code-creation. The created description is packed into a .zip-file.
      */
     public void startCodegen() {
@@ -1127,7 +1127,7 @@ public class CreateXML {
         //command
         commandLineOptions.add("codegen");
         //xml input file option
-        commandLineOptions.add("-Dbs2file=" + bs2File.getAbsolutePath());
+        commandLineOptions.add("-Dbs2file=" + xmlFile.getAbsolutePath());
         //output directory option
         commandLineOptions.add("-Doutput_dir=" + outputdirectory);
         //without_ws option
@@ -1417,7 +1417,7 @@ public class CreateXML {
     }
 
     /**
-     * @return defines if the .bs2-download-button is shown.
+     * @return defines if the download-button is shown.
      */
     public boolean getRenderLinks() {
         return renderLinks;
@@ -1427,16 +1427,16 @@ public class CreateXML {
      * This is no simple getter! It opens the stream for primefaces streamed
      * content!
      *
-     * @return streamed content for an existing bs2 file.
+     * @return streamed content for an existing xml file.
      */
-    public StreamedContent getBs2File() {
+    public StreamedContent getXMLFile() {
 
-        StreamedContent bs2StreamedContent = null;
+        StreamedContent xmlStreamedContent = null;
 
         try {
-            bs2StreamedContent =
-                    new DefaultStreamedContent(new FileInputStream(bs2File),
-                    "xml", toolName + ".bs2");
+            xmlStreamedContent =
+                    new DefaultStreamedContent(new FileInputStream(xmlFile),
+                    "xml", toolName + ".xml");
         } catch (FileNotFoundException e) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -1444,7 +1444,7 @@ public class CreateXML {
             renderLinks = false;
         }
 
-        return bs2StreamedContent;
+        return xmlStreamedContent;
     }
 
     /**

@@ -3,7 +3,7 @@ Introduction
 
 ##### 
 
-This manual describes the Wizard2011 for BiBiServ2 tool descriptions. The purpose of the Wizard 2011 is to enable tool developers to deploy their applicatons onto the BiBiServ without having to understand BiBiServ mechanics all too well.
+This manual describes the Wizard2011 for BiBiServ2 tool descriptions. The purpose of the Wizard is to enable tool developers to deploy their applicatons onto the BiBiServ without having to understand BiBiServ mechanics all too well.
 
 ##### 
 

@@ -92,7 +92,7 @@ public class ExecutableInfoBean {
     private boolean validate(boolean addmessage) {
         boolean ret = true;
         
-        if ((!type.equals("docker")) || (!type.equals("binary"))) {
+        if ((!type.equals("docker")) && (!type.equals("binary"))) {
             if (addmessage) {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -101,14 +101,6 @@ public class ExecutableInfoBean {
                 
         }
 
-        if (callingInfo.equals("")) {
-            if (addmessage) {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                        PropertyManager.getProperty("callingInfoError"), ""));
-            }
-            ret = false;
-        }
         if (version.equals("")) {
             if (addmessage) {
                 FacesContext.getCurrentInstance().addMessage(null,

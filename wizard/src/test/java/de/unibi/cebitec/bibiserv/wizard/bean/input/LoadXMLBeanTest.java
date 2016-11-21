@@ -28,7 +28,7 @@ import org.junit.Test;
  */
 public class LoadXMLBeanTest {
 
-    private static final String inputToolDescription = "testInputToolDescription.bs2";
+    private static final String inputToolDescription = "testInputToolDescription.xml";
 
     @BeforeClass
     public static void setUpClass() throws Exception {

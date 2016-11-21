@@ -4,8 +4,6 @@ import de.unibi.cebitec.bibiserv.wizard.testOutputData.OutputWriter;
 import de.unibi.techfak.bibiserv.cms.ObjectFactory;
 import de.unibi.techfak.bibiserv.cms.TrunnableItem;
 import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.Writer;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import org.junit.After;
@@ -21,7 +19,7 @@ import org.junit.Assert;
  */
 public class BasicInfoBuilderTest {
 
-    private static final String outputFileName = "test-basic-description.bs2";
+    private static final String outputFileName = "test-basic-description.xml";
 
     @BeforeClass
     public static void setUpClass() throws Exception {

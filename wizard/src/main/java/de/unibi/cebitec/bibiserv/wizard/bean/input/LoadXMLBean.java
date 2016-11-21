@@ -148,9 +148,9 @@ public class LoadXMLBean {
         overviewBean.clearSession();
 
         try {
-            //Unmarshall the input bs2-file.
+            //Unmarshall the input xml-file.
             TrunnableItem unmarshalledRunnableItem =
-                    unmarshallBS2(event.getFile().getInputstream());
+                    unmarshallXML(event.getFile().getInputstream());
             //Load the data into the different beans.
             loadTRunnableData(unmarshalledRunnableItem);
         } catch (IOException e) {
@@ -789,7 +789,7 @@ public class LoadXMLBean {
     }
 
     /**
-     * Loads the beans needed to load an existing .bs2-description.
+     * Loads the beans needed to load an existing tool-description.
      */
     private void loadAllBeans() {
 
@@ -1058,16 +1058,16 @@ public class LoadXMLBean {
     }
 
     /**
-     * does the unmarshalling of a bs2file given as an inputStream.
+     * does the unmarshalling of a xmlfile given as an inputStream.
      *
-     * @param bs2inputData a valid bs2-file as inputStream.
+     * @param inputData a valid xml-file as inputStream.
      */
-    public TrunnableItem unmarshallBS2(InputStream bs2inputData) {
+    public TrunnableItem unmarshallXML(InputStream inputData) {
 
         TrunnableItem unmarshalledRunnable;
 
-        if (!(bs2inputData instanceof BufferedInputStream)) {
-            bs2inputData = new BufferedInputStream(bs2inputData);
+        if (!(inputData instanceof BufferedInputStream)) {
+            inputData = new BufferedInputStream(inputData);
         }
 
         try {
@@ -1078,7 +1078,7 @@ public class LoadXMLBean {
 
             JAXBElement jaxbObject;
 
-            jaxbObject = (JAXBElement) unmarshaller.unmarshal(bs2inputData);
+            jaxbObject = (JAXBElement) unmarshaller.unmarshal(inputData);
 
             unmarshalledRunnable = (TrunnableItem) jaxbObject.getValue();
 

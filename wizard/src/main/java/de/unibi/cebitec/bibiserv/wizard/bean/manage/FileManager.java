@@ -53,7 +53,7 @@ public class FileManager {
         if (!file.isSetFilename()) {
             throw new BeansException(BeansExceptionTypes.NoNameSpecified);
         }
-
+        
         String name = file.getFilename();
 
         if (files.containsKey(name)) {

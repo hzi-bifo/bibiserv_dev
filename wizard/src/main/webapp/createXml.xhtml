@@ -44,10 +44,10 @@
         <p:messages id="error"/>
         <h:panelGrid id="optionpanel" columns="2"  styleClass="top centered twoColumnTable" >
             <h:outputLabel value="#{msg.startXMLFileCreation}: " title="#{msg.startXMLFileCreationToolTip}"/>
-            <p:commandButton id="createXML" actionListener="#{createXML.createXmlFile}" value="#{msg.createBs2}" title="#{msg.startXMLFileCreationToolTip}" update="buttons, error, optionpanel, codegenOutput" disabled="#{createXML.codegenButtonDisabled}"/>
-            <h:outputLabel id="downloadBS2Label" value="#{msg.bs2file}: " title="#{msg.bs2fileToolTip}" rendered="#{createXML.renderLinks}" />
-            <p:commandButton id="downloadBS2" value="#{msg.download}" title="#{msg.bs2fileToolTip}" ajax="false" rendered="#{createXML.renderLinks}" disabled="#{createXML.codegenButtonDisabled}" >
-                <p:fileDownload value="#{createXML.bs2File}"/>
+            <p:commandButton id="createXML" actionListener="#{createXML.createXmlFile}" value="#{msg.createXML}" title="#{msg.startXMLFileCreationToolTip}" update="buttons, error, optionpanel, codegenOutput" disabled="#{createXML.codegenButtonDisabled}"/>
+            <h:outputLabel id="downloadLabel" value="#{msg.xmlfile}: " title="#{msg.xmlfileToolTip}" rendered="#{createXML.renderLinks}" />
+            <p:commandButton id="download" value="#{msg.download}" title="#{msg.xmlfileToolTip}" ajax="false" rendered="#{createXML.renderLinks}" disabled="#{createXML.codegenButtonDisabled}" >
+                <p:fileDownload value="#{createXML.xmlFile}"/>
             </p:commandButton>
 
             <h:outputLabel id="downloadCodegenLabel" value="#{msg.zip}: " title="#{msg.zipToolTip}" rendered="#{createXML.renderCodegenLink}" />
