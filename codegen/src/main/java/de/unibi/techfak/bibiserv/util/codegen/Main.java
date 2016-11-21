@@ -59,17 +59,13 @@ import org.xml.sax.SAXException;
 public class Main {
 
     public static final Logger log = LoggerFactory.getLogger(Main.class);
+    
+    public static Properties config = new Properties();
 
     public enum RESOURCETYPE {
         isFile, isDirectory
     };
 
-    /* Configuration 
-    
-    
-    
-    
-     */
     public static void main(String[] args) {
         // check &   validate cmdline options
         OptionGroup opt_g = getCMDLineOptionsGroups();
@@ -107,6 +103,30 @@ public class Main {
                     help.printHelp("bibigrid -h | -V | -g  [...]", header, opt, footer.toString());
                     break;
                 case "g":
+                    // target dir
+                    if (cl.hasOption("t")) {   
+                        File target = new File(cl.getOptionValue("t"));
+                        if (target.isDirectory() && target.canExecute() && target.canWrite()) {
+                            config.setProperty("target.dir",cl.getOptionValue("t"));
+                        } else {
+                            log.error("Target dir '{}' is inaccessible!",cl.getOptionValue("t"));
+                            break;
+                        } 
+                    } else {
+                        config.setProperty("target.dir",System.getProperty("java.io.tmpdir"));
+                    }
+                    
+                    // project dir
+                    if (cl.hasOption("p")) {
+                        File project = new File(cl.getOptionValue("p"));
+                         if (project.isDirectory() && project.canExecute() && project.canWrite()) {
+                            config.setProperty("project.dir",cl.getOptionValue("p"));
+                        } else {
+                            log.error("Project dir '{}' is inaccessible!",cl.getOptionValue("p"));
+                            break;
+                        }                     
+                    } 
+                    
                     generateAppfromXML(cl.getOptionValue("g"));
                     break;
             }
@@ -165,11 +185,7 @@ public class Main {
 
         }
 
-        // fix this
-        Properties prop = new Properties();
-        prop.setProperty("project.dir", "/tmp/" + projectid);
-
-        File projectdir = new File(prop.getProperty("project.dir"));
+        File projectdir = new File( config.getProperty("project.dir",config.getProperty("target.dir")+"/"+projectid));
 
         mkdirs(projectdir + "/src/main/java");
         mkdirs(projectdir + "/src/main/config");
@@ -288,8 +304,9 @@ public class Main {
      */
     private static Options getCMDLineOptions() {
         Options cmdLineOptions = new Options();
-        cmdLineOptions.addOption("c", "config", true, "path to alternative config file");
-        cmdLineOptions.addOption("v", "verbose", true, "more verbose output");
+        cmdLineOptions.addOption("t", "target", true, "Path to target dir. If not set java temporary directory will be used!");
+        cmdLineOptions.addOption("p", "project",true, "Path to project dir. If unset ${target}+${toolid} will be used!");             
+        cmdLineOptions.addOption("v", "verbose", false, "more verbose output");
         return cmdLineOptions;
     }
 
