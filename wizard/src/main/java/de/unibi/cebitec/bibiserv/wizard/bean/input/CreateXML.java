@@ -334,7 +334,9 @@ public class CreateXML {
         TrunnableItem.Description runnableItemDescription = new Description();
         runnableItemDescription.setLang(originalRunnable.getDescription().get(0).
                 getLang());
-        runnableItemDescription.getContent().addAll(runnableDescriptionContent);
+        List l = runnableItemDescription.getContent();
+        l.addAll(runnableDescriptionContent);
+        //runnableItemDescription.getContent().addAll(runnableDescriptionContent);
         runnable.getDescription().add(runnableItemDescription);
         if (!originalRunnable.getCustomContent().isEmpty() && !originalRunnable.getCustomContent().get(0).getContent().isEmpty()) {
             List<Object> runnableCustomContent =
@@ -1326,21 +1328,11 @@ public class CreateXML {
 
         try {
 
-            Flow unmarshalledDescription =
-                    (Flow) unmarshalledMicrohtml.getValue();
+            Flow unmarshalledDescription = (Flow) unmarshalledMicrohtml.getValue();
 
             microHtmlNodes = unmarshalledDescription.getContent();
 
-        } catch (ClassCastException e) {
-            FacesContext context = FacesContext.getCurrentInstance();
-            if (context != null) {
-                context.addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                        PropertyManager.getProperty("descriptionBuildError"), ""));
-            } else {
-                e.printStackTrace();
-            }
-        } catch (NullPointerException e) {
+        } catch (ClassCastException | NullPointerException e) {
             FacesContext context = FacesContext.getCurrentInstance();
             if (context != null) {
                 context.addMessage(null,

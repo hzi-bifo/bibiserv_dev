@@ -33,7 +33,7 @@
     <!--***************MAIN***************-->
     <ui:define name="main">
         <p:ajaxStatus onstart="disable()" oncomplete="enable()"/>
-        <p:messages id="error"/>
+        <p:messages id="error" showDetail="false"/>
         <h:panelGrid columns="2"  styleClass="top centered twoColumnTable" style="width:100%">
          <h:outputLabel value="#{msg.loadXML}: " title="#{msg.loadXMLToolTip}" styleClass="selectionLable" />
         <p:panel id="uploadedFilesPanel" styleClass="elementWidth">

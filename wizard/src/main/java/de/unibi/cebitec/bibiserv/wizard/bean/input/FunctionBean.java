@@ -1105,8 +1105,7 @@ public class FunctionBean extends DescriptionBean {
             TenumParam param,
             String value, boolean validate) {
 
-        Tupel<Boolean, ExampleParameterEnumStore> newTupel =
-                new Tupel<Boolean, ExampleParameterEnumStore>();
+        Tupel<Boolean, ExampleParameterEnumStore> newTupel = new Tupel<>();
 
         String defaultValue = "";
 
@@ -1125,20 +1124,19 @@ public class FunctionBean extends DescriptionBean {
             //Append default separator if no separator is there.
             separator = ",";
         }
-        List<String> values = new ArrayList<String>();
-        List<Tupel<String, String>> enumValues =
-                new ArrayList<Tupel<String, String>>();
+        List<String> values = new ArrayList<>();
+        List<Tupel<String, String>> enumValues = new ArrayList<>();
         for (TenumValue enumVal : param.getValues()) {
-            values.add(enumVal.getValue());
+            values.add(enumVal.getKey()); // JK : use the key instead of the value for checks when using enum param
             String valueNameValue = enumVal.getName().get(0).getValue();
             valueNameValue += " / " + enumVal.getValue();
-            enumValues.add(new Tupel<String, String>(enumVal.getValue(),
+            enumValues.add(new Tupel<>(enumVal.getKey(),
                     valueNameValue));
             if (enumVal.isDefaultValue()) {
                 if (!defaultValue.isEmpty()) {
                     defaultValue += separator;
                 }
-                defaultValue += enumVal.getValue();
+                defaultValue += enumVal.getKey();
             }
         }
 
@@ -1175,8 +1173,7 @@ public class FunctionBean extends DescriptionBean {
             TinputOutput in,
             String value) {
 
-        Tupel<Boolean, ExampleInputStore> newTupel =
-                new Tupel<Boolean, ExampleInputStore>();
+        Tupel<Boolean, ExampleInputStore> newTupel = new Tupel<>();
         
         newTupel.setFirst(true);
         // use this line instaed if empty inputs are not allowed
@@ -1317,7 +1314,7 @@ public class FunctionBean extends DescriptionBean {
     /**
      * Validates the function and add error messages to context.
      *
-     * @return true: everything is OK; false: somethign is wrong
+     * @return true: everything is OK; false: something is wrong
      */
     private boolean validate() {
         boolean ret = true;
@@ -1325,21 +1322,21 @@ public class FunctionBean extends DescriptionBean {
         if (shortDescription.equals("")) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    PropertyManager.getProperty("shortDescriptionError"), ""));
+                    PropertyManager.getProperty("shortDescriptionError"), null));
             ret = false;
         }
 
         if (output == null || output.isEmpty()) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    PropertyManager.getProperty("specifyOutputError"), ""));
+                    PropertyManager.getProperty("specifyOutputError"),null));
             ret = false;
         }
 
         if (!exampleManager.isValid()) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    PropertyManager.getProperty("invalidExampleError"), ""));
+                    PropertyManager.getProperty("invalidExampleError"), null));
             ret = false;
         }
         return ret;
@@ -1450,11 +1447,11 @@ public class FunctionBean extends DescriptionBean {
                             new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             PropertyManager.getProperty(
                             "functionAlreadyExistsError"),
-                            ""));
+                            null));
                 } else {
                     FacesContext.getCurrentInstance().addMessage(null,
                             new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            PropertyManager.getProperty("couldNotSave"), ""));
+                            PropertyManager.getProperty("couldNotSave"), null));
                 }
                 context.addCallbackParam("show", true);
                 context.addCallbackParam("errors", true);
@@ -1474,11 +1471,11 @@ public class FunctionBean extends DescriptionBean {
                             new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             PropertyManager.getProperty(
                             "functionAlreadyExistsError"),
-                            ""));
+                            null));
                 } else {
                     FacesContext.getCurrentInstance().addMessage(null,
                             new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            PropertyManager.getProperty("couldNotSave"), ""));
+                            PropertyManager.getProperty("couldNotSave"), null));
                 }
                 context.addCallbackParam("show", true);
                 context.addCallbackParam("errors", true);
@@ -1493,7 +1490,7 @@ public class FunctionBean extends DescriptionBean {
             } else {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO,
-                        PropertyManager.getProperty("saveSuccesful"), ""));
+                        PropertyManager.getProperty("saveSuccesful"), null));
                 context.addCallbackParam("show", true);
             }
             context.addCallbackParam("errors", false);
