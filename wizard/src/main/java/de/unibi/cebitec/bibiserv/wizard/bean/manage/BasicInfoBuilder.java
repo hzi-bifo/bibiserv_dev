@@ -5,7 +5,6 @@ import de.unibi.cebitec.bibiserv.wizard.tools.IDGenerator;
 import de.unibi.techfak.bibiserv.cms.ObjectFactory;
 import de.unibi.techfak.bibiserv.cms.Titem;
 import de.unibi.techfak.bibiserv.cms.TrunnableItem;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.faces.bean.ManagedBean;

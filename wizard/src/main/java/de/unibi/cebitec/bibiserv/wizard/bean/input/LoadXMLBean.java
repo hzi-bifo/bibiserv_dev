@@ -41,6 +41,7 @@ import de.unibi.techfak.bibiserv.cms.Texample;
 import de.unibi.techfak.bibiserv.cms.Texecutable;
 import de.unibi.techfak.bibiserv.cms.Tfile;
 import de.unibi.techfak.bibiserv.cms.Tfunction;
+import de.unibi.techfak.bibiserv.cms.Tfunction.Description;
 import de.unibi.techfak.bibiserv.cms.TinputOutput;
 import de.unibi.techfak.bibiserv.cms.Titem;
 import de.unibi.techfak.bibiserv.cms.Tmanual;
@@ -71,6 +72,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.namespace.QName;
 import org.primefaces.event.FileUploadEvent;
 
 /**
@@ -198,7 +200,7 @@ public class LoadXMLBean {
         //load the description manually (if it is there).
         if (!runnableItem.getDescription().isEmpty()) {
             Titem.Description basicInfoDescription = new Titem.Description();
-            basicInfoDescription.getContent().add(getDescriptionContent(runnableItem.getDescription().get(0)));
+            basicInfoDescription.getContent().add(flowObjectList2String(runnableItem.getDescription().get(0).getContent()));
             basicInfoDescription.setLang(runnableItem.getDescription().get(0).getLang());
             newRunnable.getDescription().add(basicInfoDescription);
         }
@@ -259,8 +261,7 @@ public class LoadXMLBean {
             for (TinputOutput input : executable.getInput()) {
                 //Handle the description manually.
                 TinputOutput.Description inputDescription = new TinputOutput.Description();
-                inputDescription.getContent().add(getDescriptionContent(
-                        input.getDescription().get(0)));
+                inputDescription.getContent().add(flowObjectList2String(input.getDescription().get(0).getContent()));
                 inputDescription.setLang(input.getDescription().get(0).getLang());
                 input.getDescription().set(0, inputDescription);
 
@@ -314,8 +315,8 @@ public class LoadXMLBean {
                 //Handle the description manually.
                 if (!dependency.getDescription().isEmpty()) {
                     Tdependency.Description dependencyDescription = new Tdependency.Description();
-                    dependencyDescription.getContent().add(getDescriptionContent(
-                            dependency.getDescription().get(0)));
+                    dependencyDescription.getContent().add(flowObjectList2String(
+                            dependency.getDescription().get(0).getContent()));
                     dependencyDescription.setLang(dependency.getDescription().get(0).getLang());
                     dependency.getDescription().set(0, dependencyDescription);
                 }
@@ -356,8 +357,8 @@ public class LoadXMLBean {
             for (TinputOutput output : executable.getOutput()) {
                 //Handle the description manually.
                 TinputOutput.Description outputDescription = new TinputOutput.Description();
-                outputDescription.getContent().add(getDescriptionContent(
-                        output.getDescription().get(0)));
+                outputDescription.getContent().add(flowObjectList2String(
+                        output.getDescription().get(0).getContent()));
                 outputDescription.setLang(output.getDescription().get(0).getLang());
                 output.getDescription().set(0, outputDescription);
 
@@ -385,8 +386,8 @@ public class LoadXMLBean {
             for (Tparam parameter : executable.getParam()) {
                 //Handle the description manually.
                 Tparam.Description parameterDescription = new Tparam.Description();
-                parameterDescription.getContent().add(getDescriptionContent(
-                        parameter.getDescription().get(0)));
+                parameterDescription.getContent().add(flowObjectList2String(
+                        parameter.getDescription().get(0).getContent()));
                 parameterDescription.setLang(parameter.getDescription().get(0).getLang());
                 parameter.getDescription().set(0, parameterDescription);
 
@@ -417,8 +418,8 @@ public class LoadXMLBean {
             for (TenumParam enumParameter : executable.getEnumParam()) {
                 //Handle the description manually.
                 TenumParam.Description parameterDescription = new TenumParam.Description();
-                parameterDescription.getContent().add(getDescriptionContent(
-                        enumParameter.getDescription().get(0)));
+                parameterDescription.getContent().add(flowObjectList2String(
+                        enumParameter.getDescription().get(0).getContent()));
                 parameterDescription.setLang(enumParameter.getDescription().get(0).getLang());
                 enumParameter.getDescription().set(0, parameterDescription);
 
@@ -455,8 +456,8 @@ public class LoadXMLBean {
                 if (!paramGroup.getDescription().isEmpty()) {
                     TparamGroup.Description parameterGroupDescription =
                             new TparamGroup.Description();
-                    parameterGroupDescription.getContent().add(getDescriptionContent(
-                            paramGroup.getDescription().get(0)));
+                    parameterGroupDescription.getContent().add(flowObjectList2String(
+                            paramGroup.getDescription().get(0).getContent()));
                     parameterGroupDescription.setLang(paramGroup.getDescription().get(0).getLang());
                     paramGroup.getDescription().set(0, parameterGroupDescription);
                 }
@@ -491,8 +492,9 @@ public class LoadXMLBean {
                 //Handle the description manually (if there is one).
                 if (!function.getDescription().isEmpty()) {
                     Tfunction.Description functionDescription = new Tfunction.Description();
-                    functionDescription.getContent().add(getDescriptionContent(
-                            function.getDescription().get(0)));
+                    //validate content
+                    functionDescription.getContent().add(flowObjectList2String(function.getDescription().get(0).getContent()));
+                    
                     functionDescription.setLang(function.getDescription().get(0).getLang());
                     function.getDescription().set(0, functionDescription);
                 }
@@ -520,8 +522,8 @@ public class LoadXMLBean {
                         //Handle the description manually (if there is one).
                         if (!paramGroup.getDescription().isEmpty()) {
                             TparamGroup.Description paramGroupDescription = new TparamGroup.Description();
-                            paramGroupDescription.getContent().add(getDescriptionContent(
-                                    paramGroup.getDescription().get(0)));
+                            paramGroupDescription.getContent().add(flowObjectList2String(
+                                    paramGroup.getDescription().get(0).getContent()));
                             paramGroupDescription.setLang(paramGroup.getDescription().get(0).getLang());
                             paramGroup.getDescription().set(0, paramGroupDescription);
                         }
@@ -654,8 +656,8 @@ public class LoadXMLBean {
             //Handle the description manually (if there is one).
             if (!file.getDescription().isEmpty()) {
                 Tfile.Description fileDescription = new Tfile.Description();
-                fileDescription.getContent().add(getDescriptionContent(
-                        file.getDescription().get(0)));
+                fileDescription.getContent().add(flowObjectList2String(
+                        file.getDescription().get(0).getContent()));
                 fileDescription.setLang(file.getDescription().get(0).getLang());
                 file.getDescription().set(0, fileDescription);
             }
@@ -970,35 +972,33 @@ public class LoadXMLBean {
         return disambiguator.disambiguateName(input, typestring);
     }
 
+    
+
     /**
-     * Extracts the microhtml data of a description as String.
+     * Flatten a flow content (from a description), a list content objects, to 
+     * a string representation.
      *
-     * @param descriptionData input microhtml data (Flow root element).
-     * @return microhtml data as String.
+     * @param list of Flow content object
+     * @return content as String.
      */
-    public static String getDescriptionContent(Object descriptionData) {
+    public static String flowObjectList2String(List<Object> content) {
 
         StringWriter stringWriter = new StringWriter();
-
-        try {
-            Flow description = (Flow) descriptionData;
-
-            JAXBContext microHtmlContext = JAXBContext.newInstance(
-                    MICROHTMLNAMESPACE);
+        Flow flow = new Flow();
+        flow.getContent().addAll(content);
+             
+        try {      
+            JAXBContext microHtmlContext = JAXBContext.newInstance(MICROHTMLNAMESPACE);
 
             Marshaller microHTMLMarshaller = microHtmlContext.createMarshaller();
-            microHTMLMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
-                    Boolean.TRUE);
+            microHTMLMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-            de.unibi.techfak.bibiserv.cms.microhtml.ObjectFactory microHTMLFactory =
-                    new de.unibi.techfak.bibiserv.cms.microhtml.ObjectFactory();
-
-            microHTMLMarshaller.marshal(microHTMLFactory.createMicrohtml(description),
-                    stringWriter);
+            JAXBElement obj = new JAXBElement(new QName("bibiserv:de.unibi.techfak.bibiserv.cms.microhtml"),Flow.class,flow);
+            microHTMLMarshaller.marshal(obj, stringWriter);
 
             return stringWriter.toString();
-
         } catch (JAXBException e) {
+            e.printStackTrace(); //debug
             return PropertyManager.getProperty("couldNotLoadDescriptionError");
         } catch (ClassCastException e) {
             return PropertyManager.getProperty("couldNotLoadDescriptionError");

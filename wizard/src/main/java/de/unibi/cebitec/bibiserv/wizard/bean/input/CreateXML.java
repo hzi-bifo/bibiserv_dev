@@ -927,8 +927,8 @@ public class CreateXML {
             if (!param.getDescription().isEmpty() && !param.getDescription().get(
                     0).getContent().isEmpty()) {
                 Tparam.Description description = param.getDescription().get(0);
-                String descriptionContent = LoadXMLBean.getDescriptionContent(
-                        description);
+                String descriptionContent = LoadXMLBean.flowObjectList2String(
+                        description.getContent());
                 description.getContent().clear();
                 description.getContent().add(descriptionContent);
             }
@@ -943,8 +943,8 @@ public class CreateXML {
             if (!enumParam.getDescription().isEmpty() && !enumParam.getDescription().get(0).getContent().isEmpty()) {
                 TenumParam.Description description = enumParam.getDescription().
                         get(0);
-                String descriptionContent = LoadXMLBean.getDescriptionContent(
-                        description);
+                String descriptionContent = LoadXMLBean.flowObjectList2String(
+                        description.getContent());
                 description.getContent().clear();
                 description.getContent().add(descriptionContent);
             }
@@ -959,8 +959,8 @@ public class CreateXML {
             if (!paramGroup.getDescription().isEmpty() && !paramGroup.getDescription().get(0).getContent().isEmpty()) {
                 TparamGroup.Description description =
                         paramGroup.getDescription().get(0);
-                String descriptionContent = LoadXMLBean.getDescriptionContent(
-                        description);
+                String descriptionContent = LoadXMLBean.flowObjectList2String(
+                        description.getContent());
                 description.getContent().clear();
                 description.getContent().add(descriptionContent);
             }
@@ -976,8 +976,8 @@ public class CreateXML {
                     0).getContent().isEmpty()) {
                 TinputOutput.Description description = input.getDescription().
                         get(0);
-                String descriptionContent = LoadXMLBean.getDescriptionContent(
-                        description);
+                String descriptionContent = LoadXMLBean.flowObjectList2String(
+                        description.getContent());
                 description.getContent().clear();
                 description.getContent().add(descriptionContent);
             }
@@ -1000,8 +1000,8 @@ public class CreateXML {
                     get(0).getContent().isEmpty()) {
                 TinputOutput.Description description = output.getDescription().
                         get(0);
-                String descriptionContent = LoadXMLBean.getDescriptionContent(
-                        description);
+                String descriptionContent = LoadXMLBean.flowObjectList2String(
+                        description.getContent());
                 description.getContent().clear();
                 description.getContent().add(descriptionContent);
             }
