@@ -137,7 +137,7 @@ public class BasicInfoBean extends DescriptionBean {
 
         if (toolName.equals("") || shortDescription.equals("") || description.equals("")) {
             basicInfoStatus = TrafficLightEnum.RED.getPath();
-        } else if (customContent.equals("") || toolTipText.equals("") || keywords.equals("")) {
+        } else if (toolTipText.equals("") || keywords.equals("")) {
             basicInfoStatus = TrafficLightEnum.YELLOW.getPath();
         } else {
             basicInfoStatus = TrafficLightEnum.GREEN.getPath();

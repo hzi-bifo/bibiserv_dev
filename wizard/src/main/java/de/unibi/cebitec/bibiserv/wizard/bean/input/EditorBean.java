@@ -5,6 +5,8 @@ import de.unibi.cebitec.bibiserv.wizard.properties.PropertyManager;
 import de.unibi.cebitec.bibiserv.wizard.tools.MicroHTMLPostProcessor;
 import de.unibi.cebitec.bibiserv.wizard.tools.XSLTProcessor;
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -12,6 +14,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.xml.transform.TransformerException;
 import org.primefaces.context.RequestContext;
+import org.w3c.tidy.Tidy;
 
 /**
  * The bean for editor.xhtml.
@@ -177,11 +180,22 @@ public class EditorBean {
         // The html-data is wrapped in html-tags to create a well-formed root-element.
 
         String tmphtml = "<html>\n";
-        tmphtml += html;
+        tmphtml += html;  
         tmphtml += "\n</html>";
+        
+        StringWriter sw = new StringWriter();
+        
+       Tidy tidy = new Tidy();
+       tidy.setXHTML(true);
+       tidy.parse(new StringReader(tmphtml),sw);
+       
+       String tiddyhtml = sw.toString();
+       
+       
+        
         String microhtml = null;
         try {
-            microhtml = XSLTProcessor.doXSLTConversion(tmphtml, HTMLTOMICROHTMLXSLTFILE);
+            microhtml = XSLTProcessor.doXSLTConversion(tiddyhtml, HTMLTOMICROHTMLXSLTFILE);
         } catch (TransformerException e) {
             if (FacesContext.getCurrentInstance() != null) {
                 FacesContext.getCurrentInstance().addMessage(null,

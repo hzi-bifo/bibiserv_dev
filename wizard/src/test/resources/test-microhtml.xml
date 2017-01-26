@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<microhtml xmlns="bibiserv:de.unibi.techfak.bibiserv.cms.microhtml">
+
+        <!-- p -->
+        <p> A paragraph ! </p>
+        
+        <!-- br -->
+        Two newlines <br/><br/>
+                
+        <!-- img -->
+        <img src="https://bibiserv.cebitec.uni-bielefeld.de/misc/BIBISERV/css/css-images/head-fg.png" alt="BiBiServ head foreground image ..."/>
+        
+        
+        <!-- ol -->
+        <ol>
+            <li> first element </li>
+            <li> second element </li>
+            <li> third element </li>
+        </ol> 
+
+        <!-- ul -->
+        <ul>
+            <li> first element </li>
+            <li> second element </li>
+            <li> third element </li>
+        </ul>
+        
+        <!-- a -->
+        <a href="https://bibiserv.cebitec.uni-bielefeld.de"> BiBiServ Homepage</a>
+
+</microhtml>

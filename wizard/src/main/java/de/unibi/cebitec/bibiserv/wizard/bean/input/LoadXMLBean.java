@@ -183,6 +183,7 @@ public class LoadXMLBean {
      * the beans.
      *
      * @param runnableItem a valid TRunnable describing a BiBiServ2-tool.
+     * @throws java.io.IOException
      */
     public void loadTRunnableData(TrunnableItem runnableItem) throws IOException {
 
@@ -191,9 +192,9 @@ public class LoadXMLBean {
         boolean addingWorked = false;
 
         // list of all replacements that have to be done in dependencies
-        List<Tupel<String, String>> dependencyReplaceList = new ArrayList<Tupel<String, String>>();
+        List<Tupel<String, String>> dependencyReplaceList = new ArrayList<>();
         // list of all idreplacements tha need to be done in idrefs in examples
-        Map<String, String> exampleReplaceList = new HashMap<String, String>();
+        Map<String, String> exampleReplaceList = new HashMap<>();
 
         //load the runnableItem into the basicInfoBuilder.
         TrunnableItem newRunnable = CopyFactory.copyRunnable(runnableItem, "");
@@ -978,7 +979,7 @@ public class LoadXMLBean {
      * Flatten a flow content (from a description), a list content objects, to 
      * a string representation.
      *
-     * @param list of Flow content object
+     * @param content as list of Flow content object
      * @return content as String.
      */
     public static String flowObjectList2String(List<Object> content) {
@@ -993,7 +994,7 @@ public class LoadXMLBean {
             Marshaller microHTMLMarshaller = microHtmlContext.createMarshaller();
             microHTMLMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-            JAXBElement obj = new JAXBElement(new QName("bibiserv:de.unibi.techfak.bibiserv.cms.microhtml"),Flow.class,flow);
+            JAXBElement obj = new JAXBElement(new QName("microhtml"),Flow.class,flow);
             microHTMLMarshaller.marshal(obj, stringWriter);
 
             return stringWriter.toString();
