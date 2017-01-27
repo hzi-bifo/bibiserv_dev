@@ -85,10 +85,10 @@ public class FileSelectionBean {
                 ImageFileSelectionBean.class);
 
         // init the selected files with one element
-        selectedFiles = new ArrayList<String>();
+        selectedFiles = new ArrayList<>();
         selectedFiles.add("");
 
-        savedSelectedFiles = new ArrayList<String>();
+        savedSelectedFiles = new ArrayList<>();
 
         dataModelEdited = true;
         renderUnsavedChanges = false;
@@ -109,7 +109,7 @@ public class FileSelectionBean {
 
         if (dataModelEdited) {
             List<Tupel<Integer, String>> ret =
-                    new ArrayList<Tupel<Integer, String>>();
+                    new ArrayList<>();
 
             int i = 0;
             for (String str : selectedFiles) {
@@ -117,7 +117,7 @@ public class FileSelectionBean {
                 i++;
             }
 
-            tableModel = new ListDataModel<Tupel<Integer, String>>(ret);
+            tableModel = new ListDataModel<>(ret);
         }
         dataModelEdited = false;
         return tableModel;
@@ -276,7 +276,7 @@ public class FileSelectionBean {
 
     public void reload() {
         getLists();
-        List<String> newSaved = new ArrayList<String>();
+        List<String> newSaved = new ArrayList<>();
         for (String str : savedSelectedFiles) {
             if (fileNamesList.contains(str)) {
                 newSaved.add(str);
