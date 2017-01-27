@@ -44,17 +44,16 @@ public class FileManager {
      *
      * @param file file to add
      * @param state has file or has no file
-     * @param name This is put into the map with. 
      * @throws BeansException on error
      */
     public String addFile(Tfile file, FileStates state) throws
             BeansException {
 
-        if (!file.isSetFilename()) {
+        if (!file.isSetName() && file.getName().get(0) == null && file.getName().get(0).getValue().isEmpty()) {
             throw new BeansException(BeansExceptionTypes.NoNameSpecified);
         }
         
-        String name = file.getFilename();
+        String name = file.getName().get(0).getValue();
 
         if (files.containsKey(name)) {
             throw new BeansException(BeansExceptionTypes.AlreadyContainsName,

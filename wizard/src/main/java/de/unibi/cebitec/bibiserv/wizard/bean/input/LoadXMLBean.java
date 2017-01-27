@@ -664,20 +664,20 @@ public class LoadXMLBean {
             }
 
             //Create ID according to wizard nameconventions
-            String fileName = file.getName().get(0).getValue();
-            file.setId(IDGenerator.createTemporaryID(fileName, FileBuilder.getID_BASE_TYPE()));
+            String name = file.getName().get(0).getValue();
+            file.setId(IDGenerator.createTemporaryID(name, FileBuilder.getID_BASE_TYPE()));
 
             //Add the file to the manager bean.
             while (!addingWorked) {
                 try {
-                    String name = fileManager.addFile(file, FileStates.correctNoFile);
-                    fileSelectionBean.getSavedSelectedFiles().add(name);
+                    String id = fileManager.addFile(file, FileStates.correctNoFile);
+                    fileSelectionBean.getSavedSelectedFiles().add(id);
                     addingWorked = true;
                 } catch (BeansException e) {
                     //If this exception is thrown, the given name is ambigous.
-                    fileName = disambiguate(fileName, FileBuilder.getID_BASE_TYPE());
-                    file.getName().get(0).setValue(fileName);
-                    file.setId(IDGenerator.createTemporaryID(fileName, FileBuilder.getID_BASE_TYPE()));
+                    name = disambiguate(name, FileBuilder.getID_BASE_TYPE());
+                    file.getName().get(0).setValue(name);
+                    file.setId(IDGenerator.createTemporaryID(name, FileBuilder.getID_BASE_TYPE()));
                 }
             }
             addingWorked = false;
