@@ -100,7 +100,7 @@ public class Main {
                     HelpFormatter help = new HelpFormatter();
                     String header = ""; //TODO: missing infotext 
                     StringBuilder footer = new StringBuilder("Supported configuration properties :");
-                    help.printHelp("bibigrid -h | -V | -g  [...]", header, opt, footer.toString());
+                    help.printHelp("CodeGen -h | -V | -g  [...]", header, opt, footer.toString());
                     break;
                 case "g":
                     // target dir
