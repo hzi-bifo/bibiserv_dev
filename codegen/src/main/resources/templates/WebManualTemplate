@@ -35,7 +35,7 @@ Contributor(s):
 
    
     <ui:define name="app_title">
-        <h:outputText escape="false" class="title" value="#{messages.property('<#getToolId/#>_name')}"/>
+        <h4><h:outputText escape="false" class="title" value="#{messages.property('<#getToolId/#>_name')}"/></h4>
         <div class="separator"/>
     </ui:define>
 
