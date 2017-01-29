@@ -33,13 +33,14 @@ Contributor(s):
 
     <!-- for each start :: input create a file upload and a textarea box -->
     <ui:define name="app_title">
-        <h:outputText styleClass="title"
+        <h4><h:outputText styleClass="title"
                       escape="false"
                       value="#{messages.property('<#getToolId/#>_name')}[<#getFunctionId/#>]"/>
         <h:outputText styleClass="title"
                       escape="false"
                       value=" - #{toolChainingBean.getChainItem('<#getFunctionId/#>').chaintitle}" rendered="#{toolChainingBean.isChaining('<#getFunctionId/#>')}"/>
-        <div class="separator app_separator"/>
+        </h4>
+        <div class="separator"/>
     </ui:define>
     
  
@@ -61,6 +62,13 @@ Contributor(s):
             
                 
             <!-- Submission Navigation -->
+            <b:buttonGroup>
+                <b:button value="Left" />
+                <b:button value="Middle" />
+                <b:button value="Right" />
+            </b:buttonGroup>
+
+
             <table id="toolnavi" class="tool_navi">
                 <tr>
                     <!-- back navigation -->
