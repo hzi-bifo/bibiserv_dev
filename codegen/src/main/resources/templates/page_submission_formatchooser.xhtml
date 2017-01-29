@@ -52,13 +52,14 @@ Contributor(s): Jan Krueger , jkrueger(at)cebitec.uni-bielefeld.de
     
     <!-- for each start :: input create a file upload and a textarea box -->
     <ui:define name="app_title">
-        <h:outputText styleClass="title"
+        <h4><h:outputText styleClass="title"
                       escape="false"
                       value="#{messages.property('<#getToolId/#>_name')}[<#getFunctionId/#>]"/>
         <h:outputText styleClass="title"
                       escape="false"
                       value=" - #{toolChainingBean.getChainItem('<#getFunctionId/#>').chaintitle}" rendered="#{toolChainingBean.isChaining('<#getFunctionId/#>')}"/>
-        <div class="separator app_separator"/>
+        </h4>
+        <div class="separator"/>
     </ui:define>
     <ui:define name="app_content"> 
         <h:form id="<#getFunctionId/#>_input_form" enctype="multipart/form-data" prependId="false">

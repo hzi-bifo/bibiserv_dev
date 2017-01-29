@@ -32,13 +32,14 @@ Contributor(s):
 
 
     <ui:define name="app_title">
-         <h:outputText styleClass="title"
+         <h4><h:outputText styleClass="title"
                       escape="false"
                       value="#{messages.property('<#getToolId/#>_name')}[<#getFunctionId/#>] - Result"/>
          <h:outputText styleClass="title"
                       escape="false"
                       value=" - #{toolChainingBean.getChainItem('<#getFunctionId/#>').chaintitle}" rendered="#{toolChainingBean.isChaining('<#getFunctionId/#>')}"/>
-        <div class="separator app_separator"/>
+         </h4>
+        <div class="separator"/>
     </ui:define>
     
     <ui:define name="app_page_counter">
