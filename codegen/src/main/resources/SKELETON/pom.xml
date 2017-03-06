@@ -140,6 +140,13 @@
                                 
                                 
                                 
+                                <if> 
+				                    <isset property="${http.proxyHost}"/> 
+				                    <then> 	 
+					                   <setproxy  nonproxyhosts="${nonproxyhosts}"  proxyhost="${http.proxyHost}" proxyport="${http.proxyPort}"/>
+				                    </then>
+				                </if>
+
                                 <echo>Validate ${project.name} data</echo>
                                 <xmlvalidate file="${tooldescription}">
                                     <attribute name="http://apache.org/xml/features/validation/schema" value="true"/>
