@@ -27,7 +27,6 @@
     </repositories>
         
     <dependencies>
-        
         <!-- runtime dependencies -->
         <dependency>
             <groupId>com.github.BiBiServ.bibiserv</groupId>
@@ -137,10 +136,12 @@
                         <phase>validate</phase>
                         <configuration>
                             <target>
-                                
-                                
-                                
-                                <if> 
+				<taskdef resource="net/sf/antcontrib/antlib.xml">
+					  <classpath>
+						  <pathelement location="${HOME}/.ant/lib/ant-contrib-0.6.jar"/>
+				        </classpath>
+				</taskdef>				
+				<if> 
 				                    <isset property="${http.proxyHost}"/> 
 				                    <then> 	 
 					                   <setproxy  nonproxyhosts="${nonproxyhosts}"  proxyhost="${http.proxyHost}" proxyport="${http.proxyPort}"/>
